@@ -42,6 +42,7 @@ typedef struct{
 	bool SENSOR_U_ON = false;
 	bool SENSOR_W_ON = false;
 	string Type_Dev = "";
+	string router_ip;
 }config; 
 typedef struct {
 	int StatusIterfece=NOT_CONNECTED;
@@ -60,14 +61,17 @@ class WeildServer
 		WeildServer(string path_config, string path_log);
 		~WeildServer();
 		WeildStatus Status;
-		string DataToServer="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+		//string DataToServer="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		string DataOut;
 		config WeildConfig;
 		void WeildLoop();
 		string rfid = "0000000000";
+		string QrCode = "0000000000";
+		string UartPackage = "000000";
+		string Perefir = "000000";
 		bool NewDataInput=false;
 	private:
-		
+		string ORANGE_PROGRAM = "01";
 		string SendSoket;
 		
 		char  dataInput[100];
