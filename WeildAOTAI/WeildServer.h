@@ -13,6 +13,8 @@
 #include <arpa/inet.h>
 #include "MyTime.h"
 #include <functional>
+#include <vector>
+#include <string>
 using namespace std;
 
 #define SA struct sockaddr 
@@ -41,6 +43,7 @@ typedef struct{
 	bool SENSOR_I_ON=false;
 	bool SENSOR_U_ON = false;
 	bool SENSOR_W_ON = false;
+	bool WG35 = false;
 	string Type_Dev = "";
 	string router_ip;
 }config; 
@@ -70,6 +73,9 @@ class WeildServer
 		string UartPackage = "000000";
 		string Perefir = "000000";
 		bool NewDataInput=false;
+		uint8_t LedByte = 0;
+		bool BlokingPower = false;
+		bool StatusBloking = false;
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
@@ -96,5 +102,8 @@ class WeildServer
 		EventTime TimeEvent[MAX_EVET];
 		string convertToString(char* a, int size);
 		bool CheckComnd(char * buff, int len);
+		vector<string> ArrayVector;
+		vector<string>split(string strToSplit, char delimeter);
+		
 };
 

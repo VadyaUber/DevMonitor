@@ -2,7 +2,7 @@
 
 ParserPort::ParserPort(string port_name)
 {
-	port = serialOpen("/dev/ttyS1", 9600);
+	port = serialOpen(port_name.c_str(), 9600);
 	new thread ([&]() {
 		while (true)
 		{

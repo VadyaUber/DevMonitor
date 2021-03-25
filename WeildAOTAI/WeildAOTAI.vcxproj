@@ -90,6 +90,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClCompile Include="ElectricMeter.cpp" />
+    <ClCompile Include="LedGpio.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyTime.cpp" />
     <ClCompile Include="ParserPort.cpp" />
@@ -98,14 +99,17 @@
     <ClCompile Include="SPI.cpp" />
     <ClCompile Include="UBMLed.cpp" />
     <ClCompile Include="WeildLog.cpp" />
+    <ClCompile Include="WeildParseDev.cpp" />
     <ClCompile Include="WeildServer.cpp" />
     <ClCompile Include="WeildADC.cpp" />
+    <ClCompile Include="WeildUBM.cpp" />
     <ClCompile Include="weilgand.cpp" />
     <ClCompile Include="Wifi.cpp" />
     <ClCompile Include="wifi_scan.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h" />
+    <ClInclude Include="LedGpio.h" />
     <ClInclude Include="MyTime.h" />
     <ClInclude Include="ParserPort.h" />
     <ClInclude Include="pugiconfig.hpp" />
@@ -114,8 +118,10 @@
     <ClInclude Include="SPI.h" />
     <ClInclude Include="UBMLed.h" />
     <ClInclude Include="WeildLog.h" />
+    <ClInclude Include="WeildParseDev.h" />
     <ClInclude Include="WeildServer.h" />
     <ClInclude Include="WeildADC.h" />
+    <ClInclude Include="WeildUBM.h" />
     <ClInclude Include="weilgand.h" />
     <ClInclude Include="Wifi.h" />
     <ClInclude Include="wifi_scan.h" />
