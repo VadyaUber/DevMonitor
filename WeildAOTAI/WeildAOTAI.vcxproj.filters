@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyTime.cpp" />
+    <ClCompile Include="pugixml.cpp" />
+    <ClCompile Include="WeildLog.cpp" />
+    <ClCompile Include="WeildServer.cpp" />
+    <ClCompile Include="Wifi.cpp" />
+    <ClCompile Include="wifi_scan.c" />
+    <ClCompile Include="WeildADC.cpp" />
+    <ClCompile Include="SPI.cpp" />
+    <ClCompile Include="ShiftRegister.cpp" />
+    <ClCompile Include="UBMLed.cpp" />
+    <ClCompile Include="ElectricMeter.cpp" />
+    <ClCompile Include="ParserPort.cpp" />
+    <ClCompile Include="weilgand.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MyTime.h" />
+    <ClInclude Include="pugiconfig.hpp" />
+    <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="WeildLog.h" />
+    <ClInclude Include="WeildServer.h" />
+    <ClInclude Include="Wifi.h" />
+    <ClInclude Include="wifi_scan.h" />
+    <ClInclude Include="WeildADC.h" />
+    <ClInclude Include="SPI.h" />
+    <ClInclude Include="ShiftRegister.h" />
+    <ClInclude Include="UBMLed.h" />
+    <ClInclude Include="ElectricMeter.h" />
+    <ClInclude Include="ParserPort.h" />
+    <ClInclude Include="weilgand.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WeildAOTAI.vcxproj.user" />
+  </ItemGroup>
+</Project>
