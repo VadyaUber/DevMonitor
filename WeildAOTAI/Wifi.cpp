@@ -82,6 +82,7 @@ string Wifi::GetMyIpInterfece(string interfece)
 	freeifaddrs(interfaces);
 	return ipAddress;
 }
+
 string Wifi::GetIpInterf(string interf) {
 	string out_commad = set_comand_cmd("route -n | grep 'UG[ \t]'| grep " + interf + "| awk '{print $2}'");
 	out_commad = out_commad.substr(0, out_commad.length() - 1);

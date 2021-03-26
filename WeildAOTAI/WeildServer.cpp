@@ -1,11 +1,10 @@
 #include "WeildServer.h"
-
+#include <errno.h>
 WeildServer::WeildServer(string path_config, string path_log) {
 	ReadFileConfig(path_config);
 	if (WeildConfig.LOG_ON) {
 		Log.Init(path_log);
 	}
-	
 	TimeEvent[0].Timer.IntevralSleep = TIMOUT_SEND;
 	TimeEvent[0].func = &WeildServer::SendServer;
 	TimeEvent[1].Timer.IntevralSleep = TIMOUT_READ;
@@ -14,6 +13,7 @@ WeildServer::WeildServer(string path_config, string path_log) {
 	TimeEvent[2].func = &WeildServer::ConectServer;
 	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
 	TimeEvent[3].func = &WeildServer::FormatString;
+	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 }
 
 WeildServer::~WeildServer()
@@ -29,32 +29,26 @@ void WeildServer::WeildLoop() {
 		for (int i = 0; i < MAX_EVET; i++) {
 			if (TimeEvent[i].Timer.CheckTimeEvent()) {
 				(*this.*TimeEvent[i].func)();
-
 			}
 		}
-		
 	}
 }
 
 void WeildServer::ConnectInterfece() {
-	
 		if (WeildConfig.interface == "wlan0") {
-			
 				if (wifi.create_conect(WeildConfig.wifi_sid, WeildConfig.wifi_pass)) {
 					Status.StatusIterfece = CONNECTED;
 					WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
+					WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
 				}
-			
 		}
 		else if (WeildConfig.interface == "eth0") {
 			//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
 				Status.StatusIterfece = CONNECTED;
 				WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
+				WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
 			//}
 		}
-	
-	
-	
 }
 void WeildServer::ReadFileConfig(string path)
 {
@@ -96,12 +90,10 @@ void WeildServer::ReadFileConfig(string path)
 		line.erase(line.find(':'), 1);
 	}
 	WeildConfig.mac = line;
-
 }
 
 void WeildServer::CheckConnectInterface()
 {
-
 		if (!wifi.get_connect(sockfd, WeildConfig.interface)) {
 			Status.StatusIterfece = NOT_CONNECTED;
 			if (Status.StatusSocet == CONNECTED) {
@@ -109,15 +101,12 @@ void WeildServer::CheckConnectInterface()
 				shutdown(sockfd, SHUT_RDWR);
 				sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 			}
-			
 		}
-	 
 }
 int WeildServer::init_soket(string ip, int port) {
 	int sockfd = 0;
-
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-	int val = 300;//Время на прием данных
+	int val = 1000;//Время на прием данных
 	setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&val, sizeof(int));
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&val, sizeof(int));
 	servaddr.sin_family = AF_INET;
@@ -129,10 +118,13 @@ int WeildServer::init_soket(string ip, int port) {
 void WeildServer::ConectServer()
 {
 	if (Status.StatusSocet == NOT_CONNECTED) {
-		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {
+		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;
 		}
+		/*else {
+			printf("%d error \n\r", errno);
+		}*/
 	}
 }
 void WeildServer::RecvServer()
@@ -153,20 +145,18 @@ void WeildServer::RecvServer()
 			shutdown(sockfd, SHUT_RDWR);
 			close(sockfd);
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
-
 		}
 		else {
 			if (CheckComnd(dataInput, rads)) {
 				NewDataInput = true;
-
 			}
-	
 		}
 	}
 	else {
 		Log.WeildLogWrite(SendSoket);
 	}
 }
+
 void WeildServer::SendServer()
 {
 	if (Status.StatusSocet == CONNECTED) {
@@ -188,7 +178,6 @@ string WeildServer::currentDateTime() {
 	char       buf[80];
 	tstruct = *localtime(&now);
 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-
 	return buf;
 }
 void WeildServer::FormatString()

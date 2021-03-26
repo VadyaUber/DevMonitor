@@ -20,6 +20,7 @@ using namespace std;
 #define SA struct sockaddr 
 #define CONNECTED 1 
 #define NOT_CONNECTED 2
+
 #define TIMOUT_SEND 1000
 #define TIMOUT_READ 100
 #define TIMOUT_CONN 500
@@ -29,6 +30,14 @@ using namespace std;
 #define READ 1
 #define CONN 2
 #define DATA 3
+enum Rfid_Status
+{
+	Wait,
+	SendServer,
+	EroorRead,
+	
+
+};
 typedef struct{
     string ip_out;
     int port;
@@ -50,6 +59,8 @@ typedef struct{
 typedef struct {
 	int StatusIterfece=NOT_CONNECTED;
 	int StatusSocet = NOT_CONNECTED;
+	int StatusRfid1 = Wait;
+	bool StatusBloc = false;
 }WeildStatus;
 
 class WeildServer
@@ -76,6 +87,7 @@ class WeildServer
 		uint8_t LedByte = 0;
 		bool BlokingPower = false;
 		bool StatusBloking = false;
+
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;

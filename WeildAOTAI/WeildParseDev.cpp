@@ -1,11 +1,11 @@
 #include "WeildParseDev.h"
-#define WILDGANPIN0 1
-#define WILDGANPIN1 1
-#define WG35Pin  6 
-#define LED1 2
-#define LED2 3
-#define LED3 4
-#define LED4 5
+#define WILDGANPIN0 15
+#define WILDGANPIN1 16
+#define WG35Pin  4 
+#define LED1 5
+#define LED2 6
+#define LED3 10
+#define LED4 11
 WeildParseDev::WeildParseDev(WeildServer * server)
 {
 	ServerDev = server;
@@ -22,7 +22,10 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 	port = new ParserPort("/dev/ttyS1");
 
 	new thread([&]() {
-		led->LedLoop();
+		while (true) {
+			led->LedLoop();
+		}
+		
 		});
 	if (ServerDev->WeildConfig.WG35) {
 		digitalWrite(WG35Pin, HIGH);

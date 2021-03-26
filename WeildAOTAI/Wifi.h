@@ -19,6 +19,7 @@ public:
 	string GetIpInterf(string interf);
 	string get_bd(string interfece);
 	string GetMyIpInterfece(string interfece);
+
 private:
 	string set_comand_cmd(string command);
 	bool check_connect(string sid);

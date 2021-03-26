@@ -47,7 +47,9 @@
     <ClCompile Include="LedGpio.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="WeildUBM.cpp" />
+    <ClCompile Include="WeildUBM.cpp">
+      <Filter>WeildDev</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -98,7 +100,9 @@
     <ClInclude Include="LedGpio.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="WeildUBM.h" />
+    <ClInclude Include="WeildUBM.h">
+      <Filter>WeildDev</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />
