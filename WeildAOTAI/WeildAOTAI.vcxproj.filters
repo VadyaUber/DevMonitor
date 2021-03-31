@@ -50,6 +50,9 @@
     <ClCompile Include="WeildUBM.cpp">
       <Filter>WeildDev</Filter>
     </ClCompile>
+    <ClCompile Include="WeildMachineDev.cpp" />
+    <ClCompile Include="DigitaInput.cpp" />
+    <ClCompile Include="DigitalInput8bit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -103,6 +106,9 @@
     <ClInclude Include="WeildUBM.h">
       <Filter>WeildDev</Filter>
     </ClInclude>
+    <ClInclude Include="WeildMachineDev.h" />
+    <ClInclude Include="DigitaInput.h" />
+    <ClInclude Include="DigitalInput8bit.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />

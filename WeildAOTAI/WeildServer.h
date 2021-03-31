@@ -81,13 +81,13 @@ class WeildServer
 		void WeildLoop();
 		string rfid = "0000000000";
 		string QrCode = "0000000000";
-		string UartPackage = "000000";
+		string UartPackage = "000000000000";
 		string Perefir = "000000";
 		bool NewDataInput=false;
 		uint8_t LedByte = 0;
 		bool BlokingPower = false;
 		bool StatusBloking = false;
-
+		string uint8_to_hex_string(uint8_t *v, const size_t s);
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
@@ -103,7 +103,7 @@ class WeildServer
 		Wifi  wifi;
 		
 		string currentDateTime();
-		string uint8_to_hex_string(uint8_t *v, const size_t s);
+		
 		unsigned char Crc8(const char *pcBlock, unsigned char len);
 		int init_soket(string ip, int port);
 		void  ConectServer();

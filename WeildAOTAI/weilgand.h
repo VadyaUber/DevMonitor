@@ -4,4 +4,4 @@
 #include <iostream>
 #include <string>
 extern string weilgand_id;
-void wiegand_loop(int d0pin, int d1pin);
+void wiegand_loop(int d0pin, int d1pin,bool WG26);

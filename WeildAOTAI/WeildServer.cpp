@@ -14,6 +14,7 @@ WeildServer::WeildServer(string path_config, string path_log) {
 	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
 	TimeEvent[3].func = &WeildServer::FormatString;
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+
 }
 
 WeildServer::~WeildServer()
@@ -25,6 +26,7 @@ void WeildServer::WeildLoop() {
 		ConnectInterfece();
 	}
 	else {
+		//CheckComnd(":120101BDE9E4;01CD34567812AF;03;YYYYMMDDHHMMSS;11\r", 50);
 		//CheckConnectInterface();
 		for (int i = 0; i < MAX_EVET; i++) {
 			if (TimeEvent[i].Timer.CheckTimeEvent()) {
@@ -187,16 +189,16 @@ void WeildServer::FormatString()
 	SendSoket.append(";");
 	SendSoket.append(UartPackage);
 	SendSoket.append(";");
-	SendSoket.append(Perefir);
+	/*SendSoket.append(Perefir);
 	SendSoket.append(";");
 	SendSoket.append(rfid);
 	SendSoket.append(";");
 	SendSoket.append(QrCode);
-	SendSoket.append(";");
+	SendSoket.append(";");*/
 	SendSoket.append(wifi.get_bd(WeildConfig.interface));
 	SendSoket.append(";");
-	SendSoket.append(WeildConfig.router_ip);
-	SendSoket.append(";");
+	/*SendSoket.append(WeildConfig.router_ip);
+	SendSoket.append(";");*/
 	SendSoket.append(WeildConfig.ip_out);
 	SendSoket.append(";");
 	SendSoket.append(ORANGE_PROGRAM);
@@ -207,6 +209,9 @@ void WeildServer::FormatString()
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
 	printf(SendSoket.c_str());
+	string tmp = rfid + "\n\r";
+	printf(tmp.c_str());
+	
 }
 unsigned char WeildServer::Crc8(const char *pcBlock, unsigned char len)
 {
@@ -270,32 +275,43 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 	uint8_t tmp;
 	time_t unix_time;
 	string s = convertToString(buff, len);
+	
 	if (s.find("\r") != -1 && s.find(":") != -1) {
+		s.replace(s.find("\r"), 1,"");
+		s.replace(s.find("\n"), 1, "");
+		s.replace(s.find("\r"), 1, "");
+		s.replace(s.find("\n"), 1, "");
+		s.replace(s.find(":"), 1, "");
+		ArrayVector = split(s, ';');
 		
 
-		string comads = s.substr(s.find(":") + 1, s.find("\r") - s.find(":"));
+
+		try {
 
 
-		string mac_comand = comads.substr(0, s.find(";") - 3);
-		if (WeildConfig.mac == mac_comand) {
-			ArrayVector = split(comads, ':');
-			tmp = (uint8_t)stoi(ArrayVector[1], nullptr, 16); ;
-			
-			string data_crc = comads.substr(0, s.find(";", s.find(";")) + 1);
-			string crc_tmp = comads.substr(0, comads.rfind(";"));
-			string data_comand = data_crc.substr(data_crc.find(";") + 1, 2);
-			uint8_t crc_package = (uint8_t)stoi(comads.substr(comads.rfind(";") + 1, 2), nullptr, 16);
-			string data_server = comads.substr(s.find(";", s.find(";") + 1), comads.rfind(";") - s.find(";", s.find(";") + 1));
-			strptime(ArrayVector[2].c_str(), "%Y%m%d%H%M%S", &TimeServer);
-			unix_time = mktime(&TimeServer);
-			uint8_t crc_real = Crc8(crc_tmp.c_str(), crc_tmp.size());
-			if (crc_real == crc_package) {
-				LedByte = tmp;
-				StatusBloking = ((tmp & 1) != 0);
-				BlokingPower = ((tmp & 2) != 0);
-				DataOut = ArrayVector[0];
-				return true;
+			if (WeildConfig.mac == ArrayVector[0]) {
+
+				//tmp = (uint8_t)stoi(ArrayVector[2], nullptr, 16); ;
+
+
+				string crc_tmp = ArrayVector[0]+";"+ArrayVector[1] +";"+ ArrayVector[2];
+
+				uint8_t crc_package = (uint8_t)stoi(ArrayVector[3], nullptr, 16);
+
+				strptime(ArrayVector[2].c_str(), "%Y%m%d%H%M%S", &TimeServer);
+				unix_time = mktime(&TimeServer);
+				uint8_t crc_real = Crc8(crc_tmp.c_str(), crc_tmp.size());
+				if (crc_real == crc_package) {
+				//	LedByte = tmp;
+					StatusBloking = ((tmp & 1) != 0);
+					BlokingPower = ((tmp & 2) != 0);
+					DataOut = ";"+ArrayVector[1]+"\r\n";
+					return true;
+				}
 			}
+		}
+		catch (int a) {
+
 		}
 	}
 	printf("fault comand\n");

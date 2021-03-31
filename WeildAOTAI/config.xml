@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
     <version value="1.0.0.1" />
-    <type_dev value="AOTAI" />
+    <type_dev value="PARSER" />
     <wifi_ssid value="viptech" />
     <wifi_pass value="viptech666" />
     <server_host value="95.79.112.120" />

@@ -23,7 +23,9 @@ void ParserPort::GetParseData(string * data)
 
 void ParserPort::WriteData(string data)
 {
-	serialPuts(port, data.c_str());
+	const char * char_ref = data.c_str();
+	for (int i = 0; i < data.length(); i++)serialPutchar(port, char_ref[i]);
+	//serialPuts(port, data.c_str());
 }
 
 void ParserPort::PortLoop()
@@ -31,7 +33,7 @@ void ParserPort::PortLoop()
 	if (NewDataPort == false) {
 		if (serialDataAvail(port) != -1) {
 			ch = (char)serialGetchar(port);
-			if (ch != '\n' && ch != '\r') {
+			if (ch != '\n' && ch != '\r' && ch!=';') {
 				DataInput += ch;
 			}
 			else if (ch == '\n') {
@@ -40,5 +42,5 @@ void ParserPort::PortLoop()
 		}
 		
 	}
-	delayMicroseconds(100);
+	delayMicroseconds(1000);
 }

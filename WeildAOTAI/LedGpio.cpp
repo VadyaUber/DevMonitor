@@ -33,6 +33,7 @@ void LedGpio::LedLoop()
 		else if(Status->StatusRfid1 == SendServer)digitalWrite(Led1, HIGH);
 		else if(Status->StatusRfid1 == EroorRead)blinc(Led1, 3);
 	}
+	usleep(10000);
 }
 
 void LedGpio::blinc(uint8_t pin, uint8_t count)

@@ -11,7 +11,7 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 	ServerDev = server;
 	if (ServerDev->WeildConfig.RFID_ON) {
 		new thread([&]() {
-			wiegand_loop(WILDGANPIN0, WILDGANPIN1);
+			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!ServerDev->WeildConfig.WG35);
 			});
 
 	}
@@ -44,4 +44,5 @@ void WeildParseDev::WeildParseDevLoop()
 		ServerDev->NewDataInput = false;
 	}
 	ServerDev->rfid = weilgand_id;
+	usleep(10);
 }

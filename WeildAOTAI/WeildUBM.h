@@ -6,6 +6,7 @@
 #include "thread"
 #include "weilgand.h"
 #include "MyTime.h"
+#include"UBMLed.h"
 class WeildUBM
 {
 public:
@@ -18,5 +19,7 @@ private:
 	WeildADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;
 	MyTime * TimerCalculate;
+	UBMLed * Led;
+	
 };
 
