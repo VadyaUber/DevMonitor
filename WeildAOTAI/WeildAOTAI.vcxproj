@@ -97,6 +97,7 @@
     <ClCompile Include="MyTime.cpp" />
     <ClCompile Include="ParserPort.cpp" />
     <ClCompile Include="pugixml.cpp" />
+    <ClCompile Include="Rtc.cpp" />
     <ClCompile Include="ShiftRegister.cpp" />
     <ClCompile Include="SPI.cpp" />
     <ClCompile Include="UBMLed.cpp" />
@@ -119,6 +120,7 @@
     <ClInclude Include="ParserPort.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
+    <ClInclude Include="Rtc.h" />
     <ClInclude Include="ShiftRegister.h" />
     <ClInclude Include="SPI.h" />
     <ClInclude Include="UBMLed.h" />

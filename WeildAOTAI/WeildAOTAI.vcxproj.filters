@@ -53,6 +53,7 @@
     <ClCompile Include="WeildMachineDev.cpp" />
     <ClCompile Include="DigitaInput.cpp" />
     <ClCompile Include="DigitalInput8bit.cpp" />
+    <ClCompile Include="Rtc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -109,6 +110,7 @@
     <ClInclude Include="WeildMachineDev.h" />
     <ClInclude Include="DigitaInput.h" />
     <ClInclude Include="DigitalInput8bit.h" />
+    <ClInclude Include="Rtc.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />

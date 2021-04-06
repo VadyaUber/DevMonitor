@@ -54,13 +54,13 @@ void WeildMachineDev::WeildMachineDevLoop()
 		ServerDev->Perefir = "";
 		Digital->ReadData();
 		if (Digital->IsEnable) {
-			ServerDev->Perefir.append("02");
+			ServerDev->Perefir.append("03");
 			DigitaData = Digital->Value;
 			ServerDev->Perefir.append(ServerDev->uint8_to_hex_string((uint8_t *)&DigitaData,2));
 
 		}
 		else {
-			ServerDev->Perefir.append("02");
+			ServerDev->Perefir.append("03");
 			ServerDev->Perefir.append("0000");
 		}
 	}

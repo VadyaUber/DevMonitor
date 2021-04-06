@@ -88,6 +88,7 @@ class WeildServer
 		bool BlokingPower = false;
 		bool StatusBloking = false;
 		string uint8_to_hex_string(uint8_t *v, const size_t s);
+		
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
