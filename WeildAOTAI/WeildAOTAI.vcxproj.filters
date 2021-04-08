@@ -50,10 +50,17 @@
     <ClCompile Include="WeildUBM.cpp">
       <Filter>WeildDev</Filter>
     </ClCompile>
-    <ClCompile Include="WeildMachineDev.cpp" />
     <ClCompile Include="DigitaInput.cpp" />
-    <ClCompile Include="DigitalInput8bit.cpp" />
-    <ClCompile Include="Rtc.cpp" />
+    <ClCompile Include="DigitalInput8bit.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="Rtc.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="WeildMachineDev.cpp">
+      <Filter>WeildDev</Filter>
+    </ClCompile>
+    <ClCompile Include="WeildUBMLast.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -107,13 +114,23 @@
     <ClInclude Include="WeildUBM.h">
       <Filter>WeildDev</Filter>
     </ClInclude>
-    <ClInclude Include="WeildMachineDev.h" />
-    <ClInclude Include="DigitaInput.h" />
-    <ClInclude Include="DigitalInput8bit.h" />
-    <ClInclude Include="Rtc.h" />
+    <ClInclude Include="DigitaInput.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="DigitalInput8bit.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Rtc.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="WeildMachineDev.h">
+      <Filter>WeildDev</Filter>
+    </ClInclude>
+    <ClInclude Include="WeildUBMLast.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="WeildLib">

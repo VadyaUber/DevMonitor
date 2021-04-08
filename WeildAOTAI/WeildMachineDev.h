@@ -17,7 +17,7 @@ private:
 	LedGpio * led;
 	WeildServer * ServerDev;
 	MyTime * TimerCalculate;
-	SPI * spi;
+	SPI  spi;
 	DigitalInput8bit * Digital;
 	uint16_t DigitaData = 0;
 	

@@ -21,9 +21,9 @@
 WeildUBM::WeildUBM(WeildServer * server)
 {
 	UbmServer = server;
-	SpiDev = new SPI("/dev/spidev1.0", 5000000, 8, 2);
+	SpiDev = SPI("/dev/spidev1.0", 5000000, 8, 2);
 	Led = new UBMLed(DS_PIN, SH_PIN, ST_PIN, UbmServer->WeildConfig.WG35, LED1_PIN, LED2_PIN, LED3_PIN, LED4_PIN, WG35Pin, BEEPER_PIN);
-	if (UbmServer->WeildConfig.SENSOR_I_ON) {
+	/*if (UbmServer->WeildConfig.SENSOR_I_ON) {
 		I_Sensor = new WeildADC(CS_SENSOR_I, SpiDev, true, { 1.5828 ,606 ,1 });
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
@@ -32,7 +32,7 @@ WeildUBM::WeildUBM(WeildServer * server)
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
 		meter = new ElectricMeter(CS_METER, SpiDev, CICLE_METER);
 
-	}
+	}*/
 	
 
 	if (UbmServer->WeildConfig.RFID_ON) {
@@ -68,11 +68,11 @@ void WeildUBM::UbmLoop()
 		UbmServer->Perefir.append("01");
 		if (I_Sensor != NULL) {
 			I_Sensor->CalculateAdc();
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)I_Sensor->Value16Bit,2));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor->Value16Bit,2));
 		}else UbmServer->Perefir.append("0000");
 		if (U_Sensor != NULL) {
 			U_Sensor->CalculateAdc();
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)U_Sensor->Value16Bit, 2));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
 		UbmServer->Perefir.append("0000");//дискретные выходы

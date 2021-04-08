@@ -107,6 +107,7 @@
     <ClCompile Include="WeildServer.cpp" />
     <ClCompile Include="WeildADC.cpp" />
     <ClCompile Include="WeildUBM.cpp" />
+    <ClCompile Include="WeildUBMLast.cpp" />
     <ClCompile Include="weilgand.cpp" />
     <ClCompile Include="Wifi.cpp" />
     <ClCompile Include="wifi_scan.c" />
@@ -130,18 +131,21 @@
     <ClInclude Include="WeildServer.h" />
     <ClInclude Include="WeildADC.h" />
     <ClInclude Include="WeildUBM.h" />
+    <ClInclude Include="WeildUBMLast.h" />
     <ClInclude Include="weilgand.h" />
     <ClInclude Include="Wifi.h" />
     <ClInclude Include="wifi_scan.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="WeildAOTAI.vcxproj.user">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <Link>
-      <LibraryDependencies>wiringPi;mnl;pthread</LibraryDependencies>
+      <LibraryDependencies>wiringPi;mnl;pthread;</LibraryDependencies>
+      <ShowProgress>true</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">

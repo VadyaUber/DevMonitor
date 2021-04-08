@@ -8,9 +8,9 @@
     <server_port value="4000" />
     <connection_type value="wifi" />
     <LOG_ON value="1" />
-    <RFID_ON value="0" />
-    <SENSOR_I_ON value="0" />
-    <SENSOR_U_ON value="0" />
-    <SENSOR_W_ON value="0" />
+    <RFID_ON value="1" />
+    <SENSOR_I_ON value="1" />
+    <SENSOR_U_ON value="1" />
+    <SENSOR_W_ON value="1" />
     
 </config>

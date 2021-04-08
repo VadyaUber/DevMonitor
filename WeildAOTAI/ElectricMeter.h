@@ -146,28 +146,31 @@ public:
 	int SumPowerVa = 0;
 	int SumPowerWat = 0;
 	int SumPowerVar = 0;
-	ElectricMeter(uint8_t cs_pin, SPI * interfece, uint32_t Cicle);
+	ElectricMeter(uint8_t cs_pin, uint32_t Cicle);
 	void ReadValue();
 private:
-	SPI *spi_dev;
+	SPI  spi_dev;
 	uint32_t CS_PIN;
 	uint32_t ReadReg24(uint8_t adr);
 	uint16_t Read16bit(uint8_t adr);
 	void Write8bit(uint8_t adr, uint8_t value);
 	void Write16bit(uint8_t adr, uint16_t value);
 	uint32_t CicleMeter;
-	double AWhLSB = -1.38955e-05;
-	double BWhLSB = -1.35449e-05;
-	double CWhLSB = -0.000025;
+	double AWhLSB = -0.000011525;
+	double BWhLSB =- 0.000011554;
+	double CWhLSB = -0.000011575;
 
-	double AVARhLSB = -4.22228e-06;
-	double BVARhLSB = -4.3728e-06;
-	double CVARhLSB = -4.35909e-06;
+	double AVARhLSB = 0.000000011;
+	double BVARhLSB = 0.000000013;
+	double CVARhLSB = 0.000000008;
 
-	double AVAhLSB = 1.27461e-05;
-	double BVAhLSB = 1.2618e-05;
-	double CVAhLSB = 0.000024;
+	double AVAhLSB = 0.000011422;
+	double BVAhLSB = 0.000011475;
+	double CVAhLSB = 0.000011464;
 
 	double ValueRead;
+	double PowerVa = 0;
+	double PowerVar = 0;
+	double PowerWath = 0;
 };
 

@@ -1,12 +1,12 @@
 #include "WeildADC.h"
 
-WeildADC::WeildADC(uint8_t cs_pin, SPI * interfece, bool filter, MatParam param)
+WeildADC::WeildADC(uint8_t cs_pin, bool filter, MatParam param)
 {
 	if (wiringPiSetup() == -1) {
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	spi_dev = interfece;
+	spi_dev =  SPI("/dev/spidev1.0", 5000000, 8, 2);;
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
@@ -22,9 +22,9 @@ void WeildADC::ReadValue()
 		uint8_t tx[3] = { 0 };
 		uint16_t adc_out = 0;
 		uint8_t rx[3] = { 0 };
-
+		int tmp = 0;
 		digitalWrite(CS_PIN, LOW);
-		spi_dev->SpiWriteRead(tx, rx, 3);
+		tmp=spi_dev.SpiWriteRead(tx, rx, 3);
 		digitalWrite(CS_PIN, HIGH);
 		adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
 		if (rx[0] != 0) {

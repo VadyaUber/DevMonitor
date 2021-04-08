@@ -16,13 +16,13 @@ typedef struct {
 class WeildADC
 {
 public:
-	WeildADC(uint8_t cs_pin, SPI * interfece,bool filter, MatParam param);
+	WeildADC(uint8_t cs_pin,bool filter, MatParam param);
 	double Value;
 	uint16_t Value16Bit;
 	void ReadValue();
 	void CalculateAdc();
 private:
-	SPI * spi_dev;
+	SPI  spi_dev;
 	uint8_t CS_PIN;
 	double REF= 3.3 / 0XFFFF;
 	bool filter_on = true;

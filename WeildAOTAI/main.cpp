@@ -4,6 +4,7 @@
 #include"WeildMachineDev.h"
 #include "SPI.h"
 #include "Rtc.h"
+#include "WeildUBMLast.h"
 using namespace std;
 int main()
 {
@@ -11,11 +12,12 @@ int main()
 	WeildParseDev * ParserDev= NULL;
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;
-	MyTime  RtsEvent;
-	RtsEvent.IntevralSleep = 3600000;
-	SPI RtsSpi("/dev/spidev1.0",1000000,8,0);
-	Rtc rtc(&RtsSpi, 5);
-	rtc.GetRtc();
+	WeildUBMLast * UbmLast = NULL;
+	//MyTime  RtsEvent;
+	//RtsEvent.IntevralSleep = 3600000;
+	//SPI RtsSpi("/dev/spidev1.0",1000000,8,0);
+	/*Rtc rtc(&RtsSpi, 5);
+	rtc.GetRtc();*/
 
 
 	if (weild.WeildConfig.Type_Dev == "PARSER") {
@@ -27,10 +29,15 @@ int main()
 	else if (weild.WeildConfig.Type_Dev == "MACHIN") {
 		Machine = new WeildMachineDev(&weild);
 	}
-
-
+	else if (weild.WeildConfig.Type_Dev == "UBM4_LAST") {
+		UbmLast = new WeildUBMLast(&weild);
+	}
+	
+	//SPI spi = SPI ("/dev/spidev1.0", 5000000, 8, 2);
 	while (true)
 	{
+		/*uint8_t tx[3], rx[3];
+		spi.SpiWriteRead(tx, rx, 3);*/
 		if (ParserDev!=NULL) {
 			ParserDev->WeildParseDevLoop();
 		}
@@ -40,8 +47,12 @@ int main()
 		else if (Machine!=NULL) {
 			Machine->WeildMachineDevLoop();
 		}
-		if (RtsEvent.CheckTimeEvent()) {
-			rtc.SetRtc();
+		else if (UbmLast!=NULL) {
+			UbmLast->UbmLoop();
+
 		}
+		/*if (RtsEvent.CheckTimeEvent()) {
+			rtc.SetRtc();
+		}*/
 	}
 }

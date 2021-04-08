@@ -12,7 +12,7 @@
 #define REG_TEMP_LSB	0x12
 #define REG_RAM_ADDR	0x18
 #define REG_RAM_DATA	0x19
-Rtc::Rtc(SPI * spi_dev, uint8_t cs_dev)
+Rtc::Rtc(SPI & spi_dev, uint8_t cs_dev)
 {
 	wiringPiSetup();
 	CS = cs_dev;
@@ -39,7 +39,7 @@ void Rtc::GetRtc()
 	uint8_t tx[8] = { 0 };
 	uint8_t rx[8] = { 0 };
 	digitalWrite(CS, LOW);
-	spi->SpiWriteRead(tx, rx, 8);
+	spi.SpiWriteRead(tx, rx, 8);
 	digitalWrite(CS, HIGH);
 	struct tm tm;
 	tm.tm_sec = _decode(rx[1]);
@@ -72,6 +72,6 @@ void Rtc::write_reg_rtc(uint8_t reg, uint8_t data)
 
 	tx[1] = data;
 	digitalWrite(CS, LOW);
-	spi->SpiWriteRead(tx, rx, 2);
+	spi.SpiWriteRead(tx, rx, 2);
 	digitalWrite(CS, HIGH);
 }

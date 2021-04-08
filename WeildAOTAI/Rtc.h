@@ -8,12 +8,12 @@ using namespace std;
 class Rtc
 {
 public:
-	Rtc(SPI * spi_dev, uint8_t cs_dev);
+	Rtc(SPI &spi_dev, uint8_t cs_dev);
 	void SetRtc();
 	void GetRtc();
 	
 private:
-	SPI * spi;
+	SPI spi;
 	uint8_t CS;
 	uint8_t _encode(uint8_t value);
 	uint8_t _decode(uint8_t value);

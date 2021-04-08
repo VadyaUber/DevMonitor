@@ -189,16 +189,16 @@ void WeildServer::FormatString()
 	SendSoket.append(";");
 	SendSoket.append(UartPackage);
 	SendSoket.append(";");
-	/*SendSoket.append(Perefir);
+	SendSoket.append(Perefir);
 	SendSoket.append(";");
 	SendSoket.append(rfid);
 	SendSoket.append(";");
 	SendSoket.append(QrCode);
-	SendSoket.append(";");*/
+	SendSoket.append(";");
 	SendSoket.append(wifi.get_bd(WeildConfig.interface));
 	SendSoket.append(";");
-	/*SendSoket.append(WeildConfig.router_ip);
-	SendSoket.append(";");*/
+	SendSoket.append(WeildConfig.router_ip);
+	SendSoket.append(";");
 	SendSoket.append(WeildConfig.ip_out);
 	SendSoket.append(";");
 	SendSoket.append(ORANGE_PROGRAM);

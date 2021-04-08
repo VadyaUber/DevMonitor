@@ -19,7 +19,7 @@
 #define PIN8 8
 WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 {
-	spi= new SPI("/dev/spidev1.0", 1000000, 8, 2);
+	spi= SPI("/dev/spidev1.0", 1000000, 8, 2);
 	Digital = new DigitalInput8bit(spi, CS_PIN);
 	ServerDev = serv_inp;
 	if (ServerDev->WeildConfig.RFID_ON) {
