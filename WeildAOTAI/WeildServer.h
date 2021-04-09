@@ -30,6 +30,10 @@ using namespace std;
 #define READ 1
 #define CONN 2
 #define DATA 3
+
+#define NOT_DATA   1 
+#define NEW_DATA   2
+#define IDEL_DATA  3
 enum Rfid_Status
 {
 	Wait,
@@ -55,6 +59,7 @@ typedef struct{
 	bool WG35 = false;
 	string Type_Dev = "";
 	string router_ip;
+
 }config; 
 typedef struct {
 	int StatusIterfece=NOT_CONNECTED;
@@ -84,11 +89,11 @@ class WeildServer
 		string UartPackage = "000000000000";
 		string Perefir = "000000";
 		bool NewDataInput=false;
+
 		uint8_t LedByte = 0;
-		bool BlokingPower = false;
-		bool StatusBloking = false;
+		bool PowerOn = true;
 		string uint8_to_hex_string(uint8_t *v, const size_t s);
-		
+		uint8_t StatusServerRecv = NOT_DATA;
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;

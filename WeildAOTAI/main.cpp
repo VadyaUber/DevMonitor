@@ -13,13 +13,14 @@ int main()
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;
 	WeildUBMLast * UbmLast = NULL;
-	//MyTime  RtsEvent;
-	//RtsEvent.IntevralSleep = 3600000;
+	MyTime  RtsEvent;
+    RtsEvent.IntevralSleep = 3600000;
 	//SPI RtsSpi("/dev/spidev1.0",1000000,8,0);
 	/*Rtc rtc(&RtsSpi, 5);
 	rtc.GetRtc();*/
-
-
+	
+	/*rtc->SetRtc();
+	rtc->GetRtc();*/
 	if (weild.WeildConfig.Type_Dev == "PARSER") {
 		ParserDev = new WeildParseDev(&weild);
 	}
@@ -36,8 +37,7 @@ int main()
 	//SPI spi = SPI ("/dev/spidev1.0", 5000000, 8, 2);
 	while (true)
 	{
-		/*uint8_t tx[3], rx[3];
-		spi.SpiWriteRead(tx, rx, 3);*/
+		
 		if (ParserDev!=NULL) {
 			ParserDev->WeildParseDevLoop();
 		}
@@ -52,7 +52,7 @@ int main()
 
 		}
 		/*if (RtsEvent.CheckTimeEvent()) {
-			rtc.SetRtc();
+			rtc->SetRtc();
 		}*/
 	}
 }

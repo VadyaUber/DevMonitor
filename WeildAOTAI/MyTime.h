@@ -6,6 +6,7 @@ class MyTime
 {
 public:
 	MyTime();
+
 	uint32_t GetMilis();
 	uint32_t IntevralSleep;
 	bool CheckTimeEvent();

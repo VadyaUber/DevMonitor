@@ -7,6 +7,8 @@
 #include "weilgand.h"
 #include "MyTime.h"
 #include"UBMLed.h"
+#include "DigitalOutUbmLast.h"
+#include "Rtc.h"
 class WeildUBMLast
 {
 public:
@@ -20,6 +22,8 @@ private:
 	ElectricMeter * meter = NULL;
 	MyTime * TimerCalculate;
 	UBMLed * Led;
-	
+	DigitalOutUbmLast * Dout;
+	Rtc * rtc;
+	MyTime * RtcTime;
 };
 

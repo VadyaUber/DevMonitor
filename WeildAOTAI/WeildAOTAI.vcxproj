@@ -91,6 +91,7 @@
   <ItemGroup>
     <ClCompile Include="DigitaInput.cpp" />
     <ClCompile Include="DigitalInput8bit.cpp" />
+    <ClCompile Include="DigitalOutUbmLast.cpp" />
     <ClCompile Include="ElectricMeter.cpp" />
     <ClCompile Include="LedGpio.cpp" />
     <ClCompile Include="main.cpp" />
@@ -115,6 +116,7 @@
   <ItemGroup>
     <ClInclude Include="DigitaInput.h" />
     <ClInclude Include="DigitalInput8bit.h" />
+    <ClInclude Include="DigitalOutUbmLast.h" />
     <ClInclude Include="ElectricMeter.h" />
     <ClInclude Include="LedGpio.h" />
     <ClInclude Include="MyTime.h" />

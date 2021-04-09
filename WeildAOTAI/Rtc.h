@@ -8,7 +8,7 @@ using namespace std;
 class Rtc
 {
 public:
-	Rtc(SPI &spi_dev, uint8_t cs_dev);
+	Rtc( uint8_t cs_dev);
 	void SetRtc();
 	void GetRtc();
 	

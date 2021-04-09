@@ -6,23 +6,27 @@
 #define CICLE_METER 100
 #define WILDGANPIN0 4
 #define WILDGANPIN1 5
-#define DS_PIN 1
+#define RTC_CS 1
+
+#define DS_PIN 0
 #define SH_PIN 2
 #define ST_PIN 3
 
 
-
-#define LED1_PIN 1
-#define LED2_PIN 2
-#define LED3_PIN 3
-#define LED4_PIN 4
-#define BEEPER_PIN 5
-#define WG35Pin  6 
+#define RST_CLK_PIN 0x01
+#define POWER_PIN   0x02
+#define BEEEPER_PIN 0x08
+#define LED1_PIN    0x20
+#define LED2_PIN    0x40
+#define WG35Pin		0x80 
 WeildUBMLast::WeildUBMLast(WeildServer * server)
 {
 	UbmServer = server;
-	
-	
+	rtc = new Rtc(RTC_CS);
+	rtc->GetRtc();
+	RtcTime = new MyTime();
+	RtcTime->IntevralSleep = 3600000;
+	Dout = new DigitalOutUbmLast(DS_PIN, SH_PIN, ST_PIN, POWER_PIN, BEEEPER_PIN, RST_CLK_PIN, WG35Pin);
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
 		I_Sensor = new WeildADC(CS_SENSOR_I, true, { 1.586679 ,651.22388 ,1 });
 	}
@@ -31,7 +35,6 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 	}
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
 		meter = new ElectricMeter(CS_METER, CICLE_METER);
-
 	}
 	
 
@@ -40,6 +43,13 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
 			});
 	}
+	new thread([&]() {
+		while (true)
+		{
+			Dout->Loop();
+			usleep(10000);
+		}
+		});
 	if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
 		new thread([&]() {
 
@@ -48,14 +58,23 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 				if (I_Sensor != NULL) I_Sensor->ReadValue();
 				if (U_Sensor != NULL) U_Sensor->ReadValue();
 				if (meter != NULL) meter->ReadValue();
+				if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv==NEW_DATA) {
+					UbmServer->StatusServerRecv = IDEL_DATA;
+
+					rtc->SetRtc();
+				}
+
 				usleep(100);
 
 			}
 			});
 	}
-
+	
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
+
+
+
 }
 
 void WeildUBMLast::UbmLoop()
@@ -91,7 +110,9 @@ void WeildUBMLast::UbmLoop()
 			UbmServer->Perefir.append("00000000");
 		}
 	}
-
+	//Dout->Loop();
+	printf("PowerOn %d\n\r", Dout->PowerOn);
+	Dout->PowerOn = UbmServer->PowerOn;
 	usleep(100);
 
 

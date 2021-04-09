@@ -13,13 +13,13 @@ ShiftRegister::ShiftRegister(uint8_t Ds_pin, uint8_t SHcp_pin, uint8_t STcp_pin)
 
 void ShiftRegister::Write(uint8_t * value, uint8_t size)
 {
-	for (int i; i < size; i++) {
-		for (int k; k < 8; k++) {
+	for (int i=0; i < size; i++) {
+		for (int k = 7; k >= 0; k--) {
 			digitalWrite(Ds, (value[i] >> k) & 0x01);
 			Clock();
 		}
 	}
-
+	Strobe();
 }
 
 void ShiftRegister::Clock()

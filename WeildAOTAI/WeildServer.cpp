@@ -208,9 +208,9 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	printf(SendSoket.c_str());
+	//printf(SendSoket.c_str());
 	string tmp = rfid + "\n\r";
-	printf(tmp.c_str());
+    //printf(tmp.c_str());
 	
 }
 unsigned char WeildServer::Crc8(const char *pcBlock, unsigned char len)
@@ -271,49 +271,56 @@ string  WeildServer::uint8_to_hex_string(uint8_t *v, const size_t s) {
 	return data;
 }
 bool  WeildServer::CheckComnd(char * buff, int len ) {
-	struct tm TimeServer;
-	uint8_t tmp;
-	time_t unix_time;
-	string s = convertToString(buff, len);
-	
-	if (s.find("\r") != -1 && s.find(":") != -1) {
-		s.replace(s.find("\r"), 1,"");
-		s.replace(s.find("\n"), 1, "");
-		s.replace(s.find("\r"), 1, "");
-		s.replace(s.find("\n"), 1, "");
-		s.replace(s.find(":"), 1, "");
-		ArrayVector = split(s, ';');
-		
+	try {
+		struct tm TimeServer;
+		uint8_t tmp;
+		time_t unix_time;
+		string s = convertToString(buff, len);
+		//return false;
+		if (s.find("\r") != -1 && s.find(":") != -1) {
+			s.replace(s.find("\r"), 1, "");
+			s.replace(s.find("\n"), 1, "");
+			s.replace(s.find("\r"), 1, "");
+			s.replace(s.find("\n"), 1, "");
+			s.replace(s.find(":"), 1, "");
+			ArrayVector = split(s, ';');
 
 
-		try {
+
+			
 
 
-			if (WeildConfig.mac == ArrayVector[0]) {
+				if (WeildConfig.mac == ArrayVector[0]) {
 
-				//tmp = (uint8_t)stoi(ArrayVector[2], nullptr, 16); ;
+					tmp = (uint8_t)stoi(ArrayVector[2], nullptr, 16); ;
 
 
-				string crc_tmp = ArrayVector[0]+";"+ArrayVector[1] +";"+ ArrayVector[2];
+					string crc_tmp = ArrayVector[0] + ";" + ArrayVector[1] + ";" + ArrayVector[2]+";" + ArrayVector[3]+";";
 
-				uint8_t crc_package = (uint8_t)stoi(ArrayVector[3], nullptr, 16);
+					uint8_t crc_package = (uint8_t)stoi(ArrayVector[4], nullptr, 16);
 
-				strptime(ArrayVector[2].c_str(), "%Y%m%d%H%M%S", &TimeServer);
-				unix_time = mktime(&TimeServer);
-				uint8_t crc_real = Crc8(crc_tmp.c_str(), crc_tmp.size());
-				if (crc_real == crc_package) {
-				//	LedByte = tmp;
-					StatusBloking = ((tmp & 1) != 0);
-					BlokingPower = ((tmp & 2) != 0);
-					DataOut = ";"+ArrayVector[1]+"\r\n";
-					return true;
+					
+					uint8_t crc_real = Crc8(crc_tmp.c_str(), crc_tmp.size());
+					if (crc_real == crc_package) {
+						//	LedByte = tmp;
+						PowerOn = ((tmp & 1) == 0);
+						//printf("PowerON %d \n\r", PowerOn);
+						DataOut = ";" + ArrayVector[1] + "\r\n";
+						strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
+						unix_time = mktime(&TimeServer);
+						stime(&unix_time);
+						if (StatusServerRecv == NOT_DATA)StatusServerRecv = NEW_DATA;
+						return true;
+					}
 				}
 			}
-		}
-		catch (int a) {
-
-		}
+			
+		
 	}
+	catch (int a) {
+
+	}
+	
 	printf("fault comand\n");
 	return false;
 }

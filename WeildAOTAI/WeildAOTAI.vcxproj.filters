@@ -61,6 +61,7 @@
       <Filter>WeildDev</Filter>
     </ClCompile>
     <ClCompile Include="WeildUBMLast.cpp" />
+    <ClCompile Include="DigitalOutUbmLast.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -127,6 +128,7 @@
       <Filter>WeildDev</Filter>
     </ClInclude>
     <ClInclude Include="WeildUBMLast.h" />
+    <ClInclude Include="DigitalOutUbmLast.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />

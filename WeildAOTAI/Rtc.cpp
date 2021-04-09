@@ -12,11 +12,11 @@
 #define REG_TEMP_LSB	0x12
 #define REG_RAM_ADDR	0x18
 #define REG_RAM_DATA	0x19
-Rtc::Rtc(SPI & spi_dev, uint8_t cs_dev)
+Rtc::Rtc(uint8_t cs_dev)
 {
 	wiringPiSetup();
 	CS = cs_dev;
-	spi = spi_dev;
+	spi = SPI("/dev/spidev1.0", 1000000, 8, 1);
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, HIGH);
 }
