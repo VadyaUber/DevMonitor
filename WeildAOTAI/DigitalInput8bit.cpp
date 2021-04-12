@@ -2,9 +2,9 @@
 #define BIT_OTA  0x40
 #define BIT_UVA  0x80
 #define BIT_LOW  0x02
-DigitalInput8bit::DigitalInput8bit(SPI & spi_inp, uint8_t CS_pin)
+DigitalInput8bit::DigitalInput8bit( uint8_t CS_pin)
 {
-	
+	spi = SPI("/dev/spidev1.0", 1000000, 8, 2);
 	CS = CS_pin;
 	pinMode(CS, OUTPUT);
 }

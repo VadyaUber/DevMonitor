@@ -8,6 +8,7 @@
 #include "MyTime.h"
 #include"DigitalInput8bit.h"
 #include"SPI.h"
+#include"QrDev.h"
 class WeildMachineDev
 {
 public:
@@ -20,6 +21,6 @@ private:
 	SPI  spi;
 	DigitalInput8bit * Digital;
 	uint16_t DigitaData = 0;
-	
+	QrDev * qr;
 };
 

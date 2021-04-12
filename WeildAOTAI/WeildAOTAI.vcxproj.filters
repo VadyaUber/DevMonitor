@@ -50,7 +50,6 @@
     <ClCompile Include="WeildUBM.cpp">
       <Filter>WeildDev</Filter>
     </ClCompile>
-    <ClCompile Include="DigitaInput.cpp" />
     <ClCompile Include="DigitalInput8bit.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
@@ -60,8 +59,16 @@
     <ClCompile Include="WeildMachineDev.cpp">
       <Filter>WeildDev</Filter>
     </ClCompile>
-    <ClCompile Include="WeildUBMLast.cpp" />
-    <ClCompile Include="DigitalOutUbmLast.cpp" />
+    <ClCompile Include="DigitaInput.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="DigitalOutUbmLast.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="WeildUBMLast.cpp">
+      <Filter>WeildDev</Filter>
+    </ClCompile>
+    <ClCompile Include="QrDev.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -127,8 +134,13 @@
     <ClInclude Include="WeildMachineDev.h">
       <Filter>WeildDev</Filter>
     </ClInclude>
-    <ClInclude Include="WeildUBMLast.h" />
-    <ClInclude Include="DigitalOutUbmLast.h" />
+    <ClInclude Include="DigitalOutUbmLast.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="WeildUBMLast.h">
+      <Filter>WeildDev</Filter>
+    </ClInclude>
+    <ClInclude Include="QrDev.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />

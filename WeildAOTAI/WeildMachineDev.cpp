@@ -19,8 +19,8 @@
 #define PIN8 8
 WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 {
-	spi= SPI("/dev/spidev1.0", 1000000, 8, 2);
-	Digital = new DigitalInput8bit(spi, CS_PIN);
+	
+	Digital = new DigitalInput8bit( CS_PIN);
 	ServerDev = serv_inp;
 	if (ServerDev->WeildConfig.RFID_ON) {
 		new thread([&]() {
@@ -45,7 +45,7 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 	}
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
-
+	qr = new QrDev("/dev/ttyUSB0");
 }
 
 void WeildMachineDev::WeildMachineDevLoop()
@@ -65,8 +65,9 @@ void WeildMachineDev::WeildMachineDevLoop()
 		}
 	}
 	ServerDev->WeildLoop();
-	ServerDev->rfid = weilgand_id;
-	usleep(10);
+	qr->GetQrData(&ServerDev->QrCode);
+	//ServerDev->rfid = weilgand_id;
+	usleep(100);
 }
 
 

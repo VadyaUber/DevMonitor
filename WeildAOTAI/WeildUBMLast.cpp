@@ -111,8 +111,15 @@ void WeildUBMLast::UbmLoop()
 		}
 	}
 	//Dout->Loop();
-	printf("PowerOn %d\n\r", Dout->PowerOn);
-	Dout->PowerOn = UbmServer->PowerOn;
+	//printf("PowerOn %d\n\r", Dout->PowerOn);
+	if (UbmServer->WeildConfig.BlockMode == "ON")Dout->PowerOn = true;
+	if (UbmServer->WeildConfig.BlockMode == "OFF")Dout->PowerOn = true;
+	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
+		if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
+			Dout->PowerOn = UbmServer->PowerOn;
+		}
+	}
+	
 	usleep(100);
 
 

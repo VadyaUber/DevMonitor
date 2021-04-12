@@ -6,7 +6,7 @@ using namespace std;
 class DigitalInput8bit
 {
 public:
-	DigitalInput8bit(SPI & spi_inp,uint8_t CS_pin);
+	DigitalInput8bit(uint8_t CS_pin);
 	void ReadData();
 	uint8_t Value;
 	bool IsEnable=false;

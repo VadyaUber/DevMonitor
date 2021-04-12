@@ -57,9 +57,11 @@ typedef struct{
 	bool SENSOR_U_ON = false;
 	bool SENSOR_W_ON = false;
 	bool WG35 = false;
+	bool QR_ON = false;
 	string Type_Dev = "";
 	string router_ip;
-
+	string BlockMode = "";
+	int Compare_I = 0;
 }config; 
 typedef struct {
 	int StatusIterfece=NOT_CONNECTED;

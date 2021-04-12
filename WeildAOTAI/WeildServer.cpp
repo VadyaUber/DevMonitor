@@ -82,6 +82,10 @@ void WeildServer::ReadFileConfig(string path)
 	WeildConfig.SENSOR_I_ON = doc.child("config").child("SENSOR_I_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_U_ON = doc.child("config").child("SENSOR_U_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_W_ON = doc.child("config").child("SENSOR_W_ON").attribute("value").as_bool();
+	WeildConfig.BlockMode = doc.child("config").child("BLOCK_MODE").attribute("value").as_string();
+	WeildConfig.Compare_I= doc.child("config").child("COMPARE_I").attribute("value").as_int();
+	WeildConfig.WG35 = doc.child("config").child("WG35").attribute("value").as_bool(); 
+	WeildConfig.QR_ON= doc.child("config").child("QR_ON").attribute("value").as_bool();
 	WeildConfig.ver = doc.child("config").child("version").attribute("value").as_string();
 	WeildConfig.Type_Dev=doc.child("config").child("type_dev").attribute("value").as_string();
 	FileMac.open("/sys/class/net/" + WeildConfig.interface + "/address", ios::in);
