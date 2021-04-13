@@ -1,6 +1,6 @@
 #include "WeildADC.h"
 
-WeildADC::WeildADC(uint8_t cs_pin, bool filter, MatParam param)
+WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameConfig)
 {
 	if (wiringPiSetup() == -1) {
 		printf("Unable to start wiringPi: \n");
@@ -10,7 +10,8 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, MatParam param)
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
-	mat = param;
+	GetConfig(FileConfig, NameConfig);
+	//mat = param;
 }
 
 
@@ -59,6 +60,18 @@ void WeildADC::CalculateAdc()
 	MeasureEnable = true;
 
 
+}
+
+void WeildADC::GetConfig(string FileConfig, string NameConfig)
+{
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file(FileConfig.c_str());
+
+	if (!result)
+		return;
+	mat.multiplier= doc.child("config").child(NameConfig.c_str()).child("multiplier").attribute("value").as_double();
+	mat.offset = doc.child("config").child(NameConfig.c_str()).child("offset").attribute("value").as_double();
+	mat.divisor = doc.child("config").child(NameConfig.c_str()).child("divisor").attribute("value").as_double();
 }
 
 double WeildADC::FiltringADC(double * aray, int size) {

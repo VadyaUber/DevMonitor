@@ -21,18 +21,16 @@
 WeildUBM::WeildUBM(WeildServer * server)
 {
 	UbmServer = server;
-	SpiDev = SPI("/dev/spidev1.0", 5000000, 8, 2);
 	Led = new UBMLed(DS_PIN, SH_PIN, ST_PIN, UbmServer->WeildConfig.WG35, LED1_PIN, LED2_PIN, LED3_PIN, LED4_PIN, WG35Pin, BEEPER_PIN);
-	/*if (UbmServer->WeildConfig.SENSOR_I_ON) {
-		I_Sensor = new WeildADC(CS_SENSOR_I, SpiDev, true, { 1.5828 ,606 ,1 });
+	if (UbmServer->WeildConfig.SENSOR_I_ON) {
+		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml", "SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
-		U_Sensor = new WeildADC(CS_SENSOR_V, SpiDev, true, { 1.5828 ,60.882 ,10 });
+		U_Sensor = new WeildADC(CS_SENSOR_V, true, "/weildpath/modules.xml", "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
-		meter = new ElectricMeter(CS_METER, SpiDev, CICLE_METER);
-
-	}*/
+		meter = new ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
+	}
 	
 
 	if (UbmServer->WeildConfig.RFID_ON) {

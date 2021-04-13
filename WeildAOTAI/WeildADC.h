@@ -2,6 +2,7 @@
 #include <iostream>
 #include "SPI.h"
 #include<cmath>
+#include "pugixml.hpp"
 #define FILTER_SIZE 10000
 using namespace std;
 typedef struct {
@@ -16,11 +17,12 @@ typedef struct {
 class WeildADC
 {
 public:
-	WeildADC(uint8_t cs_pin,bool filter, MatParam param);
+	WeildADC(uint8_t cs_pin,bool filter, string FileConfig,string NameConfig);
 	double Value;
 	uint16_t Value16Bit;
 	void ReadValue();
 	void CalculateAdc();
+
 private:
 	SPI  spi_dev;
 	uint8_t CS_PIN;
@@ -30,8 +32,8 @@ private:
 	bool MeasureEnable = true;
 	bool PriznReadAdc = false;
 	double SummArray = 0;
-	MatParam mat;
+	void GetConfig(string FileConfig, string NameConfig);
 	double FiltringADC(double * aray, int size);
-
+	MatParam mat;
 };
 

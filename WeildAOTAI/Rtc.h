@@ -3,6 +3,7 @@
 #include "SPI.h"
 #include "wiringPi.h"
 #include <time.h>
+#include <sys/time.h>
 using namespace std;
 
 class Rtc

@@ -48,8 +48,14 @@ void Rtc::GetRtc()
 	tm.tm_mday = _decode(rx[5]);
 	tm.tm_mon = _decode(rx[6] & 0x1f) - 1;
 	tm.tm_year = ((_decode(rx[7]) + 2000) - 1900);
-	time_t unix_time = mktime(&tm);
-	stime(&unix_time);
+	unsigned char buff[32] = { 0 };
+	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	system((const char *)buff);
+	/*struct timeval  stime;
+	stime.tv_sec = mktime(&tm);
+	stime.tv_usec = 0;
+	if (stime.tv_sec < 0)stime.tv_sec = 0;
+	settimeofday(&stime, NULL);*/
 }
 
 uint8_t Rtc::_encode(uint8_t value)

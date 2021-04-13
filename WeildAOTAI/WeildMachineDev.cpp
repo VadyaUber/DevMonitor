@@ -45,7 +45,8 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 	}
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
-	qr = new QrDev("/dev/ttyUSB0");
+	if(ServerDev->WeildConfig.QR_ON)
+		qr = new QrDev("/dev/ttyUSB0");
 }
 
 void WeildMachineDev::WeildMachineDevLoop()

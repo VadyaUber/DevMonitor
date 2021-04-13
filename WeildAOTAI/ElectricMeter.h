@@ -3,6 +3,7 @@
 #include "SPI.h"
 #include <iostream>
 #include<cmath>
+#include "pugixml.hpp"
 #define CONVERT_FREQ  (x) (x*0.0625)
 #define CONVERT_PERuMS  (x) (x*9.6)
 #define CONVERT_CEL (x)(x*3)
@@ -115,13 +116,20 @@
 #define PHASE_C     2
 
 
-typedef struct {
-	
-	int  OutSumWAT = 0;
-	int  OutSumVAR = 0;
-	int  OutSumVA = 0;
+typedef struct 
+{
+	double AWhLSB = -0.000011525;
+	double BWhLSB = -0.000011554;
+	double CWhLSB = -0.000011575;
 
-}adevalue;
+	double AVARhLSB = 0.000000011;
+	double BVARhLSB = 0.000000013;
+	double CVARhLSB = 0.000000008;
+
+	double AVAhLSB = 0.000011422;
+	double BVAhLSB = 0.000011475;
+	double CVAhLSB = 0.000011464;
+}Kf_Meter;
 
 using namespace std;
 class ElectricMeter
@@ -146,8 +154,9 @@ public:
 	int SumPowerVa = 0;
 	int SumPowerWat = 0;
 	int SumPowerVar = 0;
-	ElectricMeter(uint8_t cs_pin, uint32_t Cicle);
+	ElectricMeter(uint8_t cs_pin, uint32_t Cicle,string FileConfig,string NameConfig);
 	void ReadValue();
+	
 private:
 	SPI  spi_dev;
 	uint32_t CS_PIN;
@@ -156,18 +165,8 @@ private:
 	void Write8bit(uint8_t adr, uint8_t value);
 	void Write16bit(uint8_t adr, uint16_t value);
 	uint32_t CicleMeter;
-	double AWhLSB = -0.000011525;
-	double BWhLSB =- 0.000011554;
-	double CWhLSB = -0.000011575;
-
-	double AVARhLSB = 0.000000011;
-	double BVARhLSB = 0.000000013;
-	double CVARhLSB = 0.000000008;
-
-	double AVAhLSB = 0.000011422;
-	double BVAhLSB = 0.000011475;
-	double CVAhLSB = 0.000011464;
-
+	void GetConfig(string FileConfig, string NameConfig);
+	Kf_Meter KF;
 	double ValueRead;
 	double PowerVa = 0;
 	double PowerVar = 0;

@@ -311,8 +311,13 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						//printf("PowerON %d \n\r", PowerOn);
 						DataOut = ";" + ArrayVector[1] + "\r\n";
 						strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
-						unix_time = mktime(&TimeServer);
-						stime(&unix_time);
+						unsigned char buff[32] = { 0 };
+						sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon, TimeServer.tm_mday, TimeServer.tm_year, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
+						system((const char *)buff);
+					
+						/*struct timeval  stime;
+						stime.tv_sec = mktime(&TimeServer);
+						settimeofday(&stime, NULL);*/
 						if (StatusServerRecv == NOT_DATA)StatusServerRecv = NEW_DATA;
 						return true;
 					}
