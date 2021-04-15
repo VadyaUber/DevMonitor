@@ -86,10 +86,10 @@ class WeildServer
 		string DataOut;
 		config WeildConfig;
 		void WeildLoop();
-		string rfid = "0000000000";
-		string QrCode = "0000000000";
-		string UartPackage = "000000000000";
-		string Perefir = "000000";
+		string rfid = "";
+		string QrCode = "";
+		string UartPackage = "";
+		string Perefir = "";
 		bool NewDataInput=false;
 
 		uint8_t LedByte = 0;
