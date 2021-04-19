@@ -17,6 +17,7 @@ typedef struct {
 class WeildADC
 {
 public:
+	WeildADC();
 	WeildADC(uint8_t cs_pin,bool filter, string FileConfig,string NameConfig);
 	double Value;
 	uint16_t Value16Bit;
@@ -24,7 +25,8 @@ public:
 	void CalculateAdc();
 
 private:
-	SPI  spi_dev;
+	int  spi_dev;
+	spi_ioc_transfer  tr;
 	uint8_t CS_PIN;
 	double REF= 3.3 / 0XFFFF;
 	bool filter_on = true;

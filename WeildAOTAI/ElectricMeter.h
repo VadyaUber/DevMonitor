@@ -154,11 +154,13 @@ public:
 	int SumPowerVa = 0;
 	int SumPowerWat = 0;
 	int SumPowerVar = 0;
+	ElectricMeter();
 	ElectricMeter(uint8_t cs_pin, uint32_t Cicle,string FileConfig,string NameConfig);
 	void ReadValue();
 	
 private:
-	SPI  spi_dev;
+	int  spi_dev;
+	spi_ioc_transfer  tr;
 	uint32_t CS_PIN;
 	uint32_t ReadReg24(uint8_t adr);
 	uint16_t Read16bit(uint8_t adr);
