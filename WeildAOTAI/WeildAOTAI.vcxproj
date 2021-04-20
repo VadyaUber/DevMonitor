@@ -101,7 +101,7 @@
     <ClCompile Include="QrDev.cpp" />
     <ClCompile Include="Rtc.cpp" />
     <ClCompile Include="ShiftRegister.cpp" />
-    <ClCompile Include="SPI.cpp" />
+    <ClCompile Include="SPI_C.cpp" />
     <ClCompile Include="UBMLed.cpp" />
     <ClCompile Include="WeildLog.cpp" />
     <ClCompile Include="WeildMachineDev.cpp" />
@@ -127,7 +127,7 @@
     <ClInclude Include="QrDev.h" />
     <ClInclude Include="Rtc.h" />
     <ClInclude Include="ShiftRegister.h" />
-    <ClInclude Include="SPI.h" />
+    <ClInclude Include="SPI_C.h" />
     <ClInclude Include="UBMLed.h" />
     <ClInclude Include="WeildLog.h" />
     <ClInclude Include="WeildMachineDev.h" />

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SPI.h"
+#include "SPI_C.h"
 #include <iostream>
 #include<cmath>
 #include "pugixml.hpp"
@@ -158,7 +158,7 @@ public:
 	void ReadValue();
 	
 private:
-	SPI  spi_dev;
+
 	uint32_t CS_PIN;
 	uint32_t ReadReg24(uint8_t adr);
 	uint16_t Read16bit(uint8_t adr);

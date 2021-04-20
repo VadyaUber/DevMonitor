@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "SPI.h"
+#include "SPI_C.h"
 #include "wiringPi.h"
 #include <time.h>
 #include <sys/time.h>
@@ -14,7 +14,7 @@ public:
 	void GetRtc();
 	
 private:
-	SPI spi;
+
 	uint8_t CS;
 	uint8_t _encode(uint8_t value);
 	uint8_t _decode(uint8_t value);

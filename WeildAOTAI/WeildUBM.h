@@ -1,6 +1,6 @@
 #pragma once
 #include"WeildServer.h"
-#include "SPI.h"
+#include "SPI_C.h"
 #include "WeildADC.h"
 #include"ElectricMeter.h"
 #include "thread"
@@ -14,7 +14,7 @@ public:
 	void UbmLoop();
 private:
 	WeildServer * UbmServer;
-	SPI  SpiDev;
+
 	WeildADC * I_Sensor =NULL;
 	WeildADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;

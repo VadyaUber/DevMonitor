@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "SPI.h"
+#include "SPI_C.h"
 #include<cmath>
 #include "pugixml.hpp"
 #define FILTER_SIZE 10000
@@ -24,7 +24,7 @@ public:
 	void CalculateAdc();
 
 private:
-	SPI  spi_dev;
+	
 	uint8_t CS_PIN;
 	double REF= 3.3 / 0XFFFF;
 	bool filter_on = true;

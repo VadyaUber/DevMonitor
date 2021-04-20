@@ -7,7 +7,7 @@
 #include "LedGpio.h"
 #include "MyTime.h"
 #include"DigitalInput8bit.h"
-#include"SPI.h"
+#include"SPI_C.h"
 #include"QrDev.h"
 class WeildMachineDev
 {
@@ -18,7 +18,7 @@ private:
 	LedGpio * led;
 	WeildServer * ServerDev;
 	MyTime * TimerCalculate;
-	SPI  spi;
+
 	DigitalInput8bit * Digital;
 	uint16_t DigitaData = 0;
 	QrDev * qr;

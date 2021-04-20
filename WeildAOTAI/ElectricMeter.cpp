@@ -6,7 +6,7 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	spi_dev  = SPI("/dev/spidev1.0", 5000000, 8, 2);;
+	init_SPI("/dev/spidev1.0", 4000000, 8, 2,"device");
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
@@ -22,6 +22,10 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 
 void ElectricMeter::ReadValue()
 {
+	if (NameSPI != "device") { 
+		DeInitSPI();
+		init_SPI("/dev/spidev1.0", 5000000, 8, 2, "device");
+	}
 	status= ReadReg24(STATUS);
 	
 	if ((status&(1 << LENERGY)) != 0) {
@@ -71,7 +75,7 @@ void ElectricMeter::Write8bit(uint8_t adr, uint8_t value) {
 	uint8_t tx[2] = { adr | 0x80,value };
 	uint8_t rx[3] = { 0 };
 	digitalWrite(CS_PIN, LOW);
-	spi_dev.SpiWriteRead(tx, rx, 2);
+	SpiWriteRead(tx, rx, 2);
 	digitalWrite(CS_PIN, HIGH);
 
 }
@@ -79,7 +83,7 @@ void ElectricMeter::Write16bit(uint8_t adr, uint16_t value) {
 	uint8_t tx[3] = { adr | 0x80,(uint8_t)(value >> 8),(uint8_t)value };
 	uint8_t rx[3] = { 0 };
 	digitalWrite(CS_PIN, LOW);
-	spi_dev.SpiWriteRead(tx, rx, 3);
+	SpiWriteRead(tx, rx, 3);
 	digitalWrite(CS_PIN, HIGH);
 }
 void ElectricMeter::GetConfig(string FileConfig, string NameConfig)
@@ -107,7 +111,7 @@ uint16_t ElectricMeter::Read16bit(uint8_t adr) {
 	uint8_t tx[3] = { adr,0,0 };
 	uint8_t rx[3] = { 0 };
 	digitalWrite(CS_PIN, LOW);
-	spi_dev.SpiWriteRead(tx, rx, 3);
+	SpiWriteRead(tx, rx, 3);
 	digitalWrite(CS_PIN, HIGH);
 	return rx[1] << 8 | rx[2];
 }
@@ -115,7 +119,7 @@ uint32_t ElectricMeter::ReadReg24(uint8_t adr) {
 	uint8_t tx[4] = { adr,0,0,0 };
 	uint8_t rx[4] = { 0 };
 	digitalWrite(CS_PIN, LOW);
-	spi_dev.SpiWriteRead(tx, rx, 4);
+	SpiWriteRead(tx, rx, 4);
 	digitalWrite(CS_PIN, HIGH);
 	return rx[1] << 16 | rx[2] << 8 | rx[3];
 }

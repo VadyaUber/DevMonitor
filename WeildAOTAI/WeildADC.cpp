@@ -6,7 +6,7 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameCo
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	spi_dev =  SPI("/dev/spidev1.0", 5000000, 8, 2);;
+	init_SPI("/dev/spidev1.0", 5000000, 8, 2,"device");
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
@@ -18,6 +18,11 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameCo
 
 void WeildADC::ReadValue()
 {
+
+	if (NameSPI != "device") { 
+		DeInitSPI();
+		init_SPI("/dev/spidev1.0", 5000000, 8, 2, "device");
+	}
 	if (MeasureEnable) {
 		PriznReadAdc = true;
 		uint8_t tx[3] = { 0 };
@@ -25,7 +30,8 @@ void WeildADC::ReadValue()
 		uint8_t rx[3] = { 0 };
 		int tmp = 0;
 		digitalWrite(CS_PIN, LOW);
-		tmp=spi_dev.SpiWriteRead(tx, rx, 3);
+		//tmp=spi_dev.SpiWriteRead(tx, rx, 3);
+		SpiWriteRead(tx, rx, 3);
 		digitalWrite(CS_PIN, HIGH);
 		adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
 		if (rx[0] != 0) {

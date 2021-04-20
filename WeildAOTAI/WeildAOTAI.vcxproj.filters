@@ -17,9 +17,6 @@
     <ClCompile Include="ShiftRegister.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="SPI.cpp">
-      <Filter>WeildLib</Filter>
-    </ClCompile>
     <ClCompile Include="UBMLed.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
@@ -69,6 +66,7 @@
       <Filter>WeildDev</Filter>
     </ClCompile>
     <ClCompile Include="QrDev.cpp" />
+    <ClCompile Include="SPI_C.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -87,9 +85,6 @@
       <Filter>WeildLib</Filter>
     </ClInclude>
     <ClInclude Include="ShiftRegister.h">
-      <Filter>WeildLib</Filter>
-    </ClInclude>
-    <ClInclude Include="SPI.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
     <ClInclude Include="UBMLed.h">
@@ -141,6 +136,7 @@
       <Filter>WeildDev</Filter>
     </ClInclude>
     <ClInclude Include="QrDev.h" />
+    <ClInclude Include="SPI_C.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />
