@@ -14,7 +14,8 @@ public:
 	bool Falult_Voltage = false;
 private:
 	uint8_t CS;
-	SPI  spi;
+	int  spi;
+	spi_ioc_transfer  tr;
 	uint8_t Buff[2];
 
 };
