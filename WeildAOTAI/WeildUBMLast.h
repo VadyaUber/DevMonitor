@@ -17,9 +17,9 @@ public:
 private:
 	WeildServer * UbmServer;
 	
-	WeildADC * I_Sensor =NULL;
-	WeildADC * U_Sensor = NULL;
-	ElectricMeter * meter = NULL;
+	WeildADC  I_Sensor ;
+	WeildADC  U_Sensor ;
+	ElectricMeter  meter ;
 	MyTime * TimerCalculate;
 	UBMLed * Led;
 	DigitalOutUbmLast * Dout;
