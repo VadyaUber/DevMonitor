@@ -14,11 +14,14 @@ class SPI
 {
 public:
 	SPI();
-	static void init(int & fd, spi_ioc_transfer & tr,string device, uint32_t speed_spi, uint8_t bits, uint8_t modes);
-	static int SpiWriteRead(int & fd, struct spi_ioc_transfer & tr,uint8_t * buffwrite, uint8_t * buffread, uint8_t len);
+	SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes);
+	int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len);
 private:
-	static uint8_t get_mode(uint8_t modes);
-
-	static void pabort(const char *s);
+	struct spi_ioc_transfer tr;
+	uint8_t get_mode(uint8_t modes);
+	int fd=0;
+	void pabort(const char *s);
+	uint32_t speed=0;
+	uint8_t bits=0;
 };
 

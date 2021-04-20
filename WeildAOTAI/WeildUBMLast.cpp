@@ -22,19 +22,19 @@
 WeildUBMLast::WeildUBMLast(WeildServer * server)
 {
 	UbmServer = server;
-	//rtc = new Rtc(RTC_CS);
-	//rtc->GetRtc();
+	rtc = new Rtc(RTC_CS);
+	rtc->GetRtc();
 	RtcTime = new MyTime();
 	RtcTime->IntevralSleep = 3600000;
 	Dout = new DigitalOutUbmLast(DS_PIN, SH_PIN, ST_PIN, POWER_PIN, BEEEPER_PIN, RST_CLK_PIN, WG35Pin);
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
-		I_Sensor =  WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
+		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
-		U_Sensor =  WeildADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
+		U_Sensor = new WeildADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
-		meter =  ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
+		meter = new ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
 	}
 	
 
@@ -58,11 +58,11 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 				if (I_Sensor != NULL) I_Sensor->ReadValue();
 				if (U_Sensor != NULL) U_Sensor->ReadValue();
 				if (meter != NULL) meter->ReadValue();
-				/*if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv==NEW_DATA) {
+				if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv==NEW_DATA) {
 					UbmServer->StatusServerRecv = IDEL_DATA;
 
 					rtc->SetRtc();
-				}*/
+				}
 
 				usleep(100);
 
@@ -115,10 +115,8 @@ void WeildUBMLast::UbmLoop()
 	if (UbmServer->WeildConfig.BlockMode == "ON")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "OFF")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
-		if (I_Sensor != NULL) {
-			if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
-				Dout->PowerOn = UbmServer->PowerOn;
-			}
+		if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
+			Dout->PowerOn = UbmServer->PowerOn;
 		}
 	}
 	

@@ -14,8 +14,7 @@ public:
 	void GetRtc();
 	
 private:
-	int spi;
-	spi_ioc_transfer  tr;
+	SPI spi;
 	uint8_t CS;
 	uint8_t _encode(uint8_t value);
 	uint8_t _decode(uint8_t value);
