@@ -4,8 +4,7 @@
 #define BIT_LOW  0x02
 DigitalInput8bit::DigitalInput8bit( uint8_t CS_pin)
 {
-	//spi = SPI("/dev/spidev1.0", 1000000, 8, 2);
-	SPI::init(spi, tr, "/dev/spidev1.0", 1000000, 8, 2);
+	spi = SPI("/dev/spidev1.0", 1000000, 8, 2);
 	CS = CS_pin;
 	pinMode(CS, OUTPUT);
 }
@@ -14,8 +13,7 @@ void DigitalInput8bit::ReadData()
 {
 	uint8_t byf_tx[2] = { 0 }, byf_rx[2] = { 0 };
 	digitalWrite(CS, LOW);
-	SPI::SpiWriteRead(spi, tr, byf_tx, byf_rx, 2);
-	//spi.SpiWriteRead(byf_tx, byf_rx, 2);
+	spi.SpiWriteRead(byf_tx, byf_rx, 2);
 	digitalWrite(CS, HIGH);
 	if (byf_rx[0] & BIT_LOW) {
 		IsEnable = false;
