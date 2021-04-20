@@ -1,9 +1,5 @@
 #include "ElectricMeter.h"
 
-ElectricMeter::ElectricMeter()
-{
-}
-
 ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, string NameConfig)
 {
 	if (wiringPiSetup() == -1) {
@@ -22,7 +18,6 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 	Write8bit(CPHCAL, 114);
 	CicleMeter = Cicle;
 	GetConfig(FileConfig, NameConfig);
-	Init = true;
 }
 
 void ElectricMeter::ReadValue()

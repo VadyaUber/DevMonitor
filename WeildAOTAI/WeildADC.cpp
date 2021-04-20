@@ -1,9 +1,5 @@
 #include "WeildADC.h"
 
-WeildADC::WeildADC()
-{
-}
-
 WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameConfig)
 {
 	if (wiringPiSetup() == -1) {

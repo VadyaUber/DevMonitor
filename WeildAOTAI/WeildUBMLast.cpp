@@ -28,13 +28,13 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 	RtcTime->IntevralSleep = 3600000;
 	Dout = new DigitalOutUbmLast(DS_PIN, SH_PIN, ST_PIN, POWER_PIN, BEEEPER_PIN, RST_CLK_PIN, WG35Pin);
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
-		I_Sensor =  WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
+		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
-		U_Sensor =  WeildADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
+		U_Sensor = new WeildADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
 	}
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
-		meter =  ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
+		meter = new ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
 	}
 	
 
@@ -50,14 +50,14 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 			usleep(10000);
 		}
 		});
-	if (I_Sensor.Init || U_Sensor.Init || meter.Init) {
+	if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
 		new thread([&]() {
 
 			while (true)
 			{
-				if (I_Sensor.Init) I_Sensor.ReadValue();
-				if (U_Sensor.Init) U_Sensor.ReadValue();
-				if (meter.Init) meter.ReadValue();
+				if (I_Sensor != NULL) I_Sensor->ReadValue();
+				if (U_Sensor != NULL) U_Sensor->ReadValue();
+				if (meter != NULL) meter->ReadValue();
 				if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv==NEW_DATA) {
 					UbmServer->StatusServerRecv = IDEL_DATA;
 
@@ -83,24 +83,24 @@ void WeildUBMLast::UbmLoop()
 	if (TimerCalculate->CheckTimeEvent()) {
 		UbmServer->Perefir = "";
 		UbmServer->Perefir.append("01");
-		if (I_Sensor.Init) {
-			I_Sensor.CalculateAdc();
+		if (I_Sensor != NULL) {
+			I_Sensor->CalculateAdc();
 		
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor.Value16Bit, 2));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
-		if (U_Sensor.Init) {
-			U_Sensor.CalculateAdc();
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor.Value16Bit, 2));
+		if (U_Sensor != NULL) {
+			U_Sensor->CalculateAdc();
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
 		UbmServer->Perefir.append("0000");//���������� ������
 
-		if (meter.Init) {
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter.status, 3));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter.SumPowerVa, 4));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter.SumEnergyWat, 4));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter.SumEnergyVar, 4));
+		if (meter != NULL) {
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->status, 3));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumPowerVa, 4));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyWat, 4));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyVar, 4));
 
 		}
 		else {
@@ -115,10 +115,8 @@ void WeildUBMLast::UbmLoop()
 	if (UbmServer->WeildConfig.BlockMode == "ON")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "OFF")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
-		if (I_Sensor.Init) {
-			if (I_Sensor.Value16Bit < UbmServer->WeildConfig.Compare_I) {
-				Dout->PowerOn = UbmServer->PowerOn;
-			}
+		if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
+			Dout->PowerOn = UbmServer->PowerOn;
 		}
 	}
 	
