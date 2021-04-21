@@ -61,7 +61,7 @@ int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len)
 	int ret;
 
 	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-	printf("ret %d \n", ret);
+	//printf("ret %d \n", ret);
 	//fprintf(stderr, "%s\n", explain_ioctl(fd, SPI_IOC_MESSAGE(1), &tr));
 	return ret;
 }

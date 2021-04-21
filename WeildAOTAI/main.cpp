@@ -2,7 +2,7 @@
 #include"WeildParseDev.h"
 #include"WeildUBM.h"
 #include"WeildMachineDev.h"
-#include "SPI.h"
+
 #include "Rtc.h"
 #include "WeildUBMLast.h"
 using namespace std;

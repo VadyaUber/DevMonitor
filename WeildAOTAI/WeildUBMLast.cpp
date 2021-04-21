@@ -23,7 +23,6 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 {
 	UbmServer = server;
 	rtc = new Rtc(RTC_CS);
-	//rtc->SetRtc();
 	rtc->GetRtc();
 
 

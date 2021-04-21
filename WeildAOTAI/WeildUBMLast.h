@@ -1,6 +1,6 @@
 #pragma once
 #include"WeildServer.h"
-#include "SPI.h"
+
 #include "WeildADC.h"
 #include"ElectricMeter.h"
 #include "thread"
