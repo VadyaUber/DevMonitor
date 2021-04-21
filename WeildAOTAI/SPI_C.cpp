@@ -50,6 +50,7 @@ void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes,str
 	}
 }
 void DeInitSPI() {
+	close(fd);
 	IsInitSPI = false;
 }
 int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len)
@@ -60,12 +61,13 @@ int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len)
 	int ret;
 
 	ret = ioctl(fd, SPI_IOC_MESSAGE(1), &tr);
-	//printf("ret %d \n", ret);
+	printf("ret %d \n", ret);
 	//fprintf(stderr, "%s\n", explain_ioctl(fd, SPI_IOC_MESSAGE(1), &tr));
 	return ret;
 }
 void pabort(const char *s)
 {
+
 	perror(s);
 	abort();
 }

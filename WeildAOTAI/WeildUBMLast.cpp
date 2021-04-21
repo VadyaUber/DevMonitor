@@ -23,7 +23,10 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 {
 	UbmServer = server;
 	rtc = new Rtc(RTC_CS);
+	//rtc->SetRtc();
 	rtc->GetRtc();
+
+
 	RtcTime = new MyTime();
 	RtcTime->IntevralSleep = 3600000;
 	Dout = new DigitalOutUbmLast(DS_PIN, SH_PIN, ST_PIN, POWER_PIN, BEEEPER_PIN, RST_CLK_PIN, WG35Pin);

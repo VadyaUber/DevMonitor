@@ -17,7 +17,7 @@ Rtc::Rtc(uint8_t cs_dev)
 	wiringPiSetup();
 	CS = cs_dev;
 	//spi = SPI("/dev/spidev1.0", 1000000, 8, 1);
-	init_SPI("/dev/spidev1.0", 1000000, 8, 1,"RTC");
+	init_SPI("/dev/spidev1.0", 1000000, 8, 0,"RTC");
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, HIGH);
 }
@@ -26,7 +26,7 @@ void Rtc::SetRtc()
 {
 	if (NameSPI != "RTC") {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 1000000, 8, 1, "RTC");
+		init_SPI("/dev/spidev1.0", 1000000, 8, 0, "RTC");
 
 	}
 	time_t t = time(NULL);
@@ -37,14 +37,14 @@ void Rtc::SetRtc()
 	write_reg_rtc(REG_HOUR, _encode(tm.tm_hour));
 	write_reg_rtc(REG_DATE, _encode(tm.tm_mday));
 	write_reg_rtc(REG_MON, _encode(tm.tm_mon + 1));
-	write_reg_rtc(REG_YEAR, _encode((tm.tm_year + 1900) - 2000));
+	write_reg_rtc(REG_YEAR, _encode((tm.tm_year-100)));
 }
 
 void Rtc::GetRtc()
 {
 	if (NameSPI != "RTC") {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 1000000, 8, 1, "RTC");
+		init_SPI("/dev/spidev1.0", 1000000, 8, 0, "RTC");
 
 	}
 	uint8_t tx[8] = { 0 };
@@ -58,9 +58,9 @@ void Rtc::GetRtc()
 	tm.tm_hour = _decode(rx[3] & 0x3f);
 	tm.tm_mday = _decode(rx[5]);
 	tm.tm_mon = _decode(rx[6] & 0x1f) - 1;
-	tm.tm_year = ((_decode(rx[7]) + 2000) - 1900);
+	tm.tm_year = _decode(rx[7]);
 	unsigned char buff[32] = { 0 };
-	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year + 2000, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	system((const char *)buff);
 	/*struct timeval  stime;
 	stime.tv_sec = mktime(&tm);
