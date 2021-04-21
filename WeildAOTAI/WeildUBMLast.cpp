@@ -4,8 +4,8 @@
 #define CS_SENSOR_V 10
 #define CS_METER    9
 #define CICLE_METER 100
-#define WILDGANPIN0 4
-#define WILDGANPIN1 5
+#define WILDGANPIN0 5
+#define WILDGANPIN1 4
 #define RTC_CS 1
 
 #define DS_PIN 0
