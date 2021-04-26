@@ -39,10 +39,10 @@ void getData1(void) {
 int wiegandInit(int d0pin, int d1pin) {
 	// Setup wiringPi
 	wiringPiSetup();
-	pinMode(d0pin, INPUT);
-	pinMode(d1pin, INPUT);
-	pullUpDnControl(d0pin, PUD_UP);
-	pullUpDnControl(d1pin, PUD_UP);
+	//pinMode(d0pin, INPUT);
+	//pinMode(d1pin, INPUT);
+	//pullUpDnControl(d0pin, PUD_UP);
+	//pullUpDnControl(d1pin, PUD_UP);
 	wiringPiISR(d0pin, INT_EDGE_FALLING, getData0);
 	wiringPiISR(d1pin, INT_EDGE_FALLING, getData1);
 
@@ -74,12 +74,14 @@ void wiegand_loop(int d0pin, int d1pin, bool WG26)
 			timeout = timeout - 1;
 			usleep(1000);
 			if (BitVal.length() > 1 && timeout == 0) {
-				tmp = BitVal + "\r\n";
+				//tmp = BitVal + "\r\n";
 				//printf(tmp.c_str());
 				//printf("%d \r\n ", );
 				uint32_t tmp = CovnerterToUint();
+				printf("%u \r\n", tmp);
 				weilgand_id = uint8_to_hex_string((uint8_t *)&tmp, 4);
 				BitVal = "";
+				
 			}
 		}
 		else {
