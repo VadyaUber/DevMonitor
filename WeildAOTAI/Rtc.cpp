@@ -47,8 +47,12 @@ void Rtc::GetRtc()
 		init_SPI("/dev/spidev1.0", 4000000, 8, 3, "RTC");
 
 	}
-	uint8_t tx[8] = { 0 };
 	uint8_t rx[8] = { 0 };
+	uint8_t tx[8] = { 0 };
+	digitalWrite(CS, LOW);
+	SpiWriteRead(tx, rx, 1);
+	digitalWrite(CS, HIGH);
+
 	digitalWrite(CS, LOW);
 	SpiWriteRead(tx, rx, 8);
 	digitalWrite(CS, HIGH);
@@ -62,6 +66,7 @@ void Rtc::GetRtc()
 	unsigned char buff[32] = { 0 };
 	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year + 2000, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	system((const char *)buff);
+
 	/*struct timeval  stime;
 	stime.tv_sec = mktime(&tm);
 	stime.tv_usec = 0;
