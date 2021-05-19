@@ -289,17 +289,18 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 			s.replace(s.find(":"), 1, "");
 			ArrayVector = split(s, ';');
 
-
-
 			
 
 
 				if (WeildConfig.mac == ArrayVector[0]) {
 
-					tmp = (uint8_t)stoi(ArrayVector[2], nullptr, 16); ;
+					if (ArrayVector[2].size() > 0)
+					{
+						tmp = (uint8_t)stoi(ArrayVector[2], nullptr, 16);
+					}
 
-
-					string crc_tmp = ArrayVector[0] + ";" + ArrayVector[1] + ";" + ArrayVector[2]+";" + ArrayVector[3]+";";
+					//string crc_tmp = ArrayVector[0] + ";" + ArrayVector[1] + ";" + ArrayVector[2]+";" + ArrayVector[3]+";";
+					string crc_tmp = s.substr(0, s.size() - 2);
 
 					uint8_t crc_package = (uint8_t)stoi(ArrayVector[4], nullptr, 16);
 

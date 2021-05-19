@@ -19,7 +19,7 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 	
 	led->Inerfece = &ServerDev->WeildConfig.interface;
 	led->Status = &ServerDev->Status;
-	port = new ParserPort("/dev/ttyS1");
+	port = new ParserPort("/dev/ttyS2");
 
 	new thread([&]() {
 		while (true) {
