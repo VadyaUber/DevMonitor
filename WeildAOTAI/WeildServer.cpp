@@ -313,7 +313,7 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						DataOut = ";" + ArrayVector[1] + "\r\n";
 						strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
 						unsigned char buff[32] = { 0 };
-						sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon, TimeServer.tm_mday, TimeServer.tm_year+1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
+						sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon+1, TimeServer.tm_mday, TimeServer.tm_year+1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
 						//strcat(buff, " > /dev/null");
 						system((const char *)buff);
 					
