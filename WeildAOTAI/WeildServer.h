@@ -100,12 +100,17 @@ class WeildServer
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
 		
+		string wifi_sid_reserved = "wpmconfig";
+		string wifi_pass_reserved = "wpmconfig";
+
 		char  dataInput[100];
 		struct sockaddr_in servaddr;
 		int sockfd;
 
 		WeildLog  Log;
-		void ConnectInterfece();
+		void ConnectInterfeceWIFI( string ssid, string pass);
+		void ConnectInterfeceLAN();
+		void ConnectInterfece(string ssid, string pass);
 		void ReadFileConfig(string path);
 		void CheckConnectInterface();
 		Wifi  wifi;
@@ -119,6 +124,9 @@ class WeildServer
 		void  RecvServer();
 		void  FormatString();
 		
+		bool lastconected = false;
+		bool LANcheckconect = false;
+		int count_try_connection = 0;
 		EventTime TimeEvent[MAX_EVET];
 		string convertToString(char* a, int size);
 		bool CheckComnd(char * buff, int len);

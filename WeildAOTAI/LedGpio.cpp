@@ -11,20 +11,22 @@ LedGpio::LedGpio(uint8_t LedPin1, uint8_t LedPin2, uint8_t LedPin3, uint8_t LedP
 	pinMode(Led2, OUTPUT);
 	pinMode(Led3, OUTPUT);
 	pinMode(Led4, OUTPUT);
+	Time = new MyTime();
+	Time->IntevralSleep = 1000;
 }
 
 void LedGpio::LedLoop()
 {
-	if (Time.CheckTimeEvent()) {
+	if (Time->CheckTimeEvent()) {
 		if (*Inerfece == "eth0") {
-			if (!Status->StatusIterfece)blinc(Led4, 1);
-			else if (!Status->StatusSocet)blinc(Led4, 2);
+			if (Status->StatusIterfece == NOT_CONNECTED)blinc(Led4, 1);
+			else if (Status->StatusSocet == NOT_CONNECTED)blinc(Led4, 2);
 			else digitalWrite(Led4, 1);
 
 		}
 		else {
-			if (!Status->StatusIterfece)blinc(Led3, 1);
-			else if (!Status->StatusSocet)blinc(Led3, 2);
+			if (Status->StatusIterfece == NOT_CONNECTED)blinc(Led3, 1);
+			else if (Status->StatusSocet == NOT_CONNECTED)blinc(Led3, 2);
 			else digitalWrite(Led3, 1);
 		}
 		if (Status->StatusBloc)digitalWrite(Led2, HIGH);
@@ -43,5 +45,6 @@ void LedGpio::blinc(uint8_t pin, uint8_t count)
 		digitalWrite(pin, HIGH);
 		delay(100);
 		digitalWrite(pin, LOW);
+		delay(100);
 	}
 }

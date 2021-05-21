@@ -22,10 +22,10 @@ WeildServer::~WeildServer()
 }
 
 void WeildServer::WeildLoop() {
-	if (Status.StatusIterfece == NOT_CONNECTED) {
-		ConnectInterfece();
-	}
-	else {
+	//if (Status.StatusIterfece == NOT_CONNECTED) {
+	//	ConnectInterfece();
+	//}
+	//else {
 		//CheckComnd(":120101BDE9E4;01CD34567812AF;03;YYYYMMDDHHMMSS;11\r", 50);
 		//CheckConnectInterface();
 		for (int i = 0; i < MAX_EVET; i++) {
@@ -33,23 +33,41 @@ void WeildServer::WeildLoop() {
 				(*this.*TimeEvent[i].func)();
 			}
 		}
+	//}
+}
+
+void WeildServer::ConnectInterfeceWIFI(string ssid, string pass)
+{
+	if (wifi.create_conect(ssid, pass)) {
+		Status.StatusIterfece = CONNECTED;
+		lastconected = true;
+		WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
+		WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
 	}
 }
 
-void WeildServer::ConnectInterfece() {
+void WeildServer::ConnectInterfeceLAN()
+{
+	//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
+	WeildConfig.ip_out = wifi.GetMyIpInterfece("eth0");
+	WeildConfig.router_ip = wifi.GetIpInterf("eth0");
+
+	if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
+	{
+		Status.StatusIterfece = CONNECTED;
+		WeildConfig.interface = "eth0";
+	}
+	//}
+}
+
+void WeildServer::ConnectInterfece(string ssid, string pass) {
+		
 		if (WeildConfig.interface == "wlan0") {
-				if (wifi.create_conect(WeildConfig.wifi_sid, WeildConfig.wifi_pass)) {
-					Status.StatusIterfece = CONNECTED;
-					WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
-					WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
-				}
+			ConnectInterfeceWIFI(ssid, pass);
 		}
-		else if (WeildConfig.interface == "eth0") {
-			//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
-				Status.StatusIterfece = CONNECTED;
-				WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
-				WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
-			//}
+		else if (WeildConfig.interface == "eth0") 
+		{
+			ConnectInterfeceLAN();
 		}
 }
 void WeildServer::ReadFileConfig(string path)
@@ -121,9 +139,36 @@ int WeildServer::init_soket(string ip, int port) {
 	fcntl(sockfd, F_SETFL, O_NONBLOCK);
 	return sockfd;
 }
+
+
 void WeildServer::ConectServer()
 {
-	if (Status.StatusSocet == NOT_CONNECTED) {
+	if (Status.StatusIterfece == NOT_CONNECTED) {
+		
+		if (!lastconected && !LANcheckconect)
+		{
+			ConnectInterfeceLAN();
+			if (count_try_connection > 6)
+			{
+				LANcheckconect = true;
+				count_try_connection = 0;
+			}
+		}
+		else if (count_try_connection > 10 && !lastconected)
+		{
+			ConnectInterfece(wifi_sid_reserved, wifi_pass_reserved);
+		}
+		else if (count_try_connection > 20)
+		{
+			count_try_connection = 0;
+		}
+		else 
+		{
+			ConnectInterfece(WeildConfig.wifi_sid, WeildConfig.wifi_pass);
+		}
+		count_try_connection++;
+	}
+	else if (Status.StatusSocet == NOT_CONNECTED) {
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;

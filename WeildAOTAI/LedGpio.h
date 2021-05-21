@@ -13,7 +13,7 @@ public:
 	WeildStatus * Status;
 	uint8_t * LedStatus;
 private:
-	MyTime Time;
+	MyTime * Time;
 	uint8_t Led1;
 	uint8_t Led2;
 	uint8_t Led3;
