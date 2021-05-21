@@ -6,8 +6,12 @@
 #define LED2 6
 #define LED3 10
 #define LED4 11
+#define RTC_CS 1
 WeildParseDev::WeildParseDev(WeildServer * server)
 {
+	rtc = new Rtc(RTC_CS);
+	rtc->GetRtc();
+
 	ServerDev = server;
 	if (ServerDev->WeildConfig.RFID_ON) {
 		new thread([&]() {

@@ -3,7 +3,7 @@
 #include"ParserPort.h"
 #include"wiringPi.h"
 #include"weilgand.h"
-
+#include "Rtc.h"
 #include <thread>
 #include "LedGpio.h"
 class WeildParseDev
@@ -15,5 +15,6 @@ private:
 	WeildServer * ServerDev;
 	ParserPort * port;
 	LedGpio * led;
+	Rtc* rtc;
 };
 
