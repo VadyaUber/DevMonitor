@@ -3,10 +3,10 @@
 #define WILDGANPIN1 16
 #define WG35Pin  4 
 #define LED1 5
-#define LED2 6
+#define LED2 7
 #define LED3 10
 #define LED4 11
-#define CS_PIN 2
+#define CS_PIN 4
 
 #define NONE_PIN 255
 #define PIN1 1
@@ -17,9 +17,13 @@
 #define PIN6 6
 #define PIN7 7
 #define PIN8 8
+#define RTC_CS 1
 WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 {
-	
+	RtcTime = new MyTime();
+	RtcTime->IntevralSleep = 3600000;
+	rtc = new Rtc(RTC_CS);
+	rtc->GetRtc();
 	Digital = new DigitalInput8bit( CS_PIN);
 	ServerDev = serv_inp;
 	if (ServerDev->WeildConfig.RFID_ON) {
@@ -37,6 +41,7 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 		}
 
 		});
+	
 	if (ServerDev->WeildConfig.WG35) {
 		digitalWrite(WG35Pin, HIGH);
 	}
@@ -65,8 +70,15 @@ void WeildMachineDev::WeildMachineDevLoop()
 			ServerDev->Perefir.append("0000");
 		}
 	}
+	if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
+		ServerDev->StatusServerRecv = IDEL_DATA;
+
+		rtc->SetRtc();
+	}
+
 	ServerDev->WeildLoop();
-	qr->GetQrData(&ServerDev->QrCode);
+	if (ServerDev->WeildConfig.QR_ON)
+		qr->GetQrData(&ServerDev->QrCode);
 	//ServerDev->rfid = weilgand_id;
 	usleep(100);
 }

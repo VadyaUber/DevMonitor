@@ -64,7 +64,7 @@ void Rtc::GetRtc()
 	tm.tm_mon = _decode(rx[6] & 0x1f);
 	tm.tm_year = _decode(rx[7]);
 	unsigned char buff[32] = { 0 };
-	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon+1, tm.tm_mday, tm.tm_year + 2000, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year + 2000, tm.tm_hour, tm.tm_min, tm.tm_sec);
 	system((const char *)buff);
 
 	/*struct timeval  stime;

@@ -9,6 +9,7 @@
 #include"DigitalInput8bit.h"
 #include"SPI_C.h"
 #include"QrDev.h"
+#include"Rtc.h"
 class WeildMachineDev
 {
 public:
@@ -18,7 +19,8 @@ private:
 	LedGpio * led;
 	WeildServer * ServerDev;
 	MyTime * TimerCalculate;
-
+	Rtc* rtc;
+	MyTime * RtcTime;
 	DigitalInput8bit * Digital;
 	uint16_t DigitaData = 0;
 	QrDev * qr;
