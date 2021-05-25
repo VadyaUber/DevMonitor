@@ -38,6 +38,11 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 	new thread([&]() {
 		while (true) {
 			led->LedLoop();
+			if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
+				ServerDev->StatusServerRecv = IDEL_DATA;
+
+				rtc->SetRtc();
+			}
 		}
 
 		});
@@ -51,7 +56,7 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
 	if(ServerDev->WeildConfig.QR_ON)
-		qr = new QrDev("/dev/ttyUSB0");
+		qr = new QrDev("/dev/ttyACM0");
 }
 
 void WeildMachineDev::WeildMachineDevLoop()

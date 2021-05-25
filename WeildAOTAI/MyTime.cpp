@@ -3,6 +3,7 @@
 MyTime::MyTime()
 {
 	TimeStart = GetMilis();
+	LastTime = GetMilis();
 }
 
 uint32_t MyTime::GetMilis()

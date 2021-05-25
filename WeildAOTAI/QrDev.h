@@ -2,7 +2,7 @@
 #include "iostream"
 #include "wiringPi.h"
 #include "wiringSerial.h"
-
+#include <thread>
 using namespace std;
 
 class QrDev
