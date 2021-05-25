@@ -21,14 +21,14 @@ void DigitalInput8bit::ReadData()
 	digitalWrite(CS, LOW);
 	SpiWriteRead(byf_tx, byf_rx, 2);
 	digitalWrite(CS, HIGH);
-	if (byf_rx[0] & BIT_LOW) {
+	if ((byf_rx[1] & BIT_LOW)!=0) {
 		IsEnable = false;
 		Value = 0;
 	}
 	else {
 		IsEnable = true;
-		Over_Temper = (byf_rx[0] & BIT_OTA);
-		Falult_Voltage=(byf_rx[0] & BIT_UVA);
-		Value = byf_rx[1];
+		Over_Temper = (byf_rx[1] & BIT_OTA)==0;
+		Falult_Voltage=(byf_rx[1] & BIT_UVA)==0 ;
+		Value = byf_rx[0];
 	}
 }
