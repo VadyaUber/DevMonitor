@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include "MyTime.h"
 #include <functional>
@@ -22,7 +23,7 @@ using namespace std;
 #define NOT_CONNECTED 2
 
 #define TIMOUT_SEND 1000
-#define TIMOUT_READ 100
+#define TIMOUT_READ 500
 #define TIMOUT_CONN 500
 #define TIMOUT_DATA 900
 #define MAX_EVET 4
@@ -106,6 +107,7 @@ class WeildServer
 		char  dataInput[100];
 		struct sockaddr_in servaddr;
 		int sockfd;
+		int wdserverrecv = 0;
 
 		WeildLog  Log;
 		void ConnectInterfeceWIFI( string ssid, string pass);
