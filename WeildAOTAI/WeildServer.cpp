@@ -198,9 +198,9 @@ void WeildServer::RecvServer()
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 		else {
-			/*if (CheckComnd(dataInput, rads)) {
+			if (CheckComnd(dataInput, rads)) {
 				NewDataInput = true;
-			}*/
+			}
 		}
 	}
 	else {
