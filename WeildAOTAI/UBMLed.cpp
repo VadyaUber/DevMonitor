@@ -17,7 +17,8 @@ UBMLed::UBMLed(uint8_t Ds_pin, uint8_t SHcp_pin, uint8_t STcp_pin,bool WG36, uin
 		Write((uint8_t*)WG24_36, 1);
 	}
 	else {
-		Write(0, 1);
+		ValueReg = 0;
+		Write(&ValueReg, 1);
 	}
 
 }
@@ -50,11 +51,10 @@ void UBMLed::Loop()
 void UBMLed::blink(uint8_t pin, uint8_t count)
 {
 	for (int i = 0; i < count; i++) {
-		ValueReg |= pin;
-		Write(&ValueReg, 1);
+	
+		SetPin(pin);
 		delay(100);
-		ValueReg &= ~(1 << pin);
-		Write(&ValueReg, 1);
+		ResetPin(pin);
 	}
 }
 
