@@ -6,7 +6,7 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	init_SPI("/dev/spidev1.0", 4000000, 8, 2,"device");
+	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2,"device");
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
@@ -24,7 +24,7 @@ void ElectricMeter::ReadValue()
 {
 	if (NameSPI != "device") { 
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 5000000, 8, 2, "device");
+		init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, "device");
 	}
 	status= ReadReg24(STATUS);
 	

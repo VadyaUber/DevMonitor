@@ -4,6 +4,7 @@
 #include<cmath>
 #include "pugixml.hpp"
 #define FILTER_SIZE 10000
+#define FREQ_CLK 2000000
 using namespace std;
 typedef struct {
 	double Array[FILTER_SIZE];

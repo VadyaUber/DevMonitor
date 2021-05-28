@@ -6,10 +6,11 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameCo
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	init_SPI("/dev/spidev1.0", 5000000, 8, 2,"device");
+	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2,"device");
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
+	
 	GetConfig(FileConfig, NameConfig);
 	//mat = param;
 }
@@ -21,7 +22,7 @@ void WeildADC::ReadValue()
 
 	if (NameSPI != "device") { 
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 5000000, 8, 2, "device");
+		init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, "device");
 	}
 	if (MeasureEnable) {
 		PriznReadAdc = true;
@@ -33,12 +34,14 @@ void WeildADC::ReadValue()
 		//tmp=spi_dev.SpiWriteRead(tx, rx, 3);
 		SpiWriteRead(tx, rx, 3);
 		digitalWrite(CS_PIN, HIGH);
-		adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
+		
+		//adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
 		if (rx[0] != 0) {
 		
 				if (FilterADC.Cnt >= FILTER_SIZE) {
 					FilterADC.Cnt = 0;
 				}
+			 	printf("adc val %f\n\r", (float)(adc_out*REF));
 				FilterADC.Array[FilterADC.Cnt] = pow(abs((adc_out*REF) - mat.offset) * mat.divisor, 2);
 				FilterADC.Cnt++;
 
@@ -89,7 +92,7 @@ double WeildADC::FiltringADC(double * aray, int size) {
 	}
 	MathWait = MathWait / size;
 	for (int i = 0; i < size; i++) {
-		if (aray[i] < (MathWait + MathWait * 0.3)) {
+		if (aray[i] < (MathWait + MathWait * 0.3) && aray[i] > (MathWait - MathWait * 0.3)) {
 			TekValue += aray[i];
 			n++;
 		}
