@@ -14,6 +14,8 @@ WeildServer::WeildServer(string path_config, string path_log) {
 	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
 	TimeEvent[3].func = &WeildServer::FormatString;
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+	ServTime = new MyTime();
+	ServTime->IntevralSleep = 60000;
 }
 
 WeildServer::~WeildServer()
@@ -345,7 +347,7 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	printf(SendSoket.c_str());
+	//printf(SendSoket.c_str());
 	string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
 	
