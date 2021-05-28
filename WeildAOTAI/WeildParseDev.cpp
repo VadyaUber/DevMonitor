@@ -12,6 +12,9 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 	rtc = new Rtc(RTC_CS);
 	rtc->GetRtc();
 
+	RtcTime = new MyTime();
+	RtcTime->IntevralSleep = 3600000;
+	//RtcTime->IntevralSleep = 60000;
 	ServerDev = server;
 	if (ServerDev->WeildConfig.RFID_ON) {
 		new thread([&]() {
@@ -48,5 +51,10 @@ void WeildParseDev::WeildParseDevLoop()
 		ServerDev->NewDataInput = false;
 	}
 	ServerDev->rfid = weilgand_id;
+
+	if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
+		ServerDev->StatusServerRecv = IDEL_DATA;
+		rtc->SetRtc();
+	}
 	usleep(10);
 }

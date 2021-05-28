@@ -6,6 +6,7 @@
 #include "Rtc.h"
 #include <thread>
 #include "LedGpio.h"
+#include "MyTime.h"
 class WeildParseDev
 {
 public:
@@ -16,5 +17,6 @@ private:
 	ParserPort * port;
 	LedGpio * led;
 	Rtc* rtc;
+	MyTime* RtcTime;
 };
 

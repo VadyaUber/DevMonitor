@@ -116,7 +116,6 @@ class WeildServer
 		void ReadFileConfig(string path);
 		void CheckConnectInterface();
 		Wifi  wifi;
-		
 		string currentDateTime();
 		
 		unsigned char Crc8(const char *pcBlock, unsigned char len);

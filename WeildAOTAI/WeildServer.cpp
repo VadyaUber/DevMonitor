@@ -14,7 +14,6 @@ WeildServer::WeildServer(string path_config, string path_log) {
 	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
 	TimeEvent[3].func = &WeildServer::FormatString;
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
-
 }
 
 WeildServer::~WeildServer()
@@ -55,6 +54,7 @@ void WeildServer::ConnectInterfeceLAN()
 	if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
 	{
 		Status.StatusIterfece = CONNECTED;
+		lastconected = true;
 		WeildConfig.interface = "eth0";
 	}
 	//}
@@ -128,14 +128,9 @@ void WeildServer::CheckConnectInterface()
 		}
 		unsigned int i;
 		fscanf(output, "%u", &i);
-		if (i >= 1)
-		{
-			//cerr << "There is internet connection\n";
-		}
-		else if (i == 0)
+		if (i <= 0)
 		{
 			Status.StatusIterfece = NOT_CONNECTED;
-			//cerr << "There is no internet connection\n";
 		}
 		pclose(output);
 	}
@@ -219,6 +214,7 @@ void WeildServer::ConectServer()
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;
+			StatusServerRecv = NOT_DATA;
 			
 		}
 		else {
@@ -292,9 +288,9 @@ void WeildServer::RecvServer()
 			}
 		}
 	}
-	else {
-		Log.WeildLogWrite(SendSoket);
-	}
+	//else {
+	//	Log.WeildLogWrite(SendSoket);
+	//}
 }
 
 void WeildServer::SendServer()
@@ -448,16 +444,21 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						PowerOn = ((tmp & 1) == 0);
 						//printf("PowerON %d \n\r", PowerOn);
 						DataOut = ";" + ArrayVector[1] + "\r\n";
-						strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
-						unsigned char buff[32] = { 0 };
-						sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon+1, TimeServer.tm_mday, TimeServer.tm_year+1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
-						//strcat(buff, " > /dev/null");
-						system((const char *)buff);
-					
+						if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)
+						{
+							strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
+							unsigned char buff[32] = { 0 };
+							sprintf((char*)buff, (const char*)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon + 1, TimeServer.tm_mday, TimeServer.tm_year + 1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
+							//strcat(buff, " > /dev/null");
+							system((const char*)buff);
+						}
 						/*struct timeval  stime;
 						stime.tv_sec = mktime(&TimeServer);
 						settimeofday(&stime, NULL);*/
-						if (StatusServerRecv == NOT_DATA)StatusServerRecv = NEW_DATA;
+						if (StatusServerRecv == NOT_DATA)
+						{
+							StatusServerRecv = NEW_DATA;
+						}
 						return true;
 					}
 				}
