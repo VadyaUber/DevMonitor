@@ -3,6 +3,13 @@
 QrDev::QrDev(string port_name)
 {
 	port = serialOpen(port_name.c_str(), 115200);
+	new thread([&]() {
+		while (true)
+		{
+			Loop();
+		}
+
+		});
 }
 
 void QrDev::GetQrData(string * data)

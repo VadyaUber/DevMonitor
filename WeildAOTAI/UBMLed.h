@@ -27,5 +27,6 @@ private:
 	void blink(uint8_t pin,uint8_t count);
 	void SetPin(uint8_t pin);
 	void ResetPin(uint8_t pin);
+	
 };
 

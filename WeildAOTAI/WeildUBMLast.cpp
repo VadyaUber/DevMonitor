@@ -96,7 +96,7 @@ void WeildUBMLast::UbmLoop()
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
-		UbmServer->Perefir.append("0000");//���������� ������
+		UbmServer->Perefir.append("0000");
 
 		if (meter != NULL) {
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->status, 3));
