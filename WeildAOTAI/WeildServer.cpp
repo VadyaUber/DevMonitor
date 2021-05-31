@@ -39,25 +39,43 @@ void WeildServer::WeildLoop() {
 
 void WeildServer::ConnectInterfeceWIFI(string ssid, string pass)
 {
-	if (wifi.create_conect(ssid, pass)) {
-		Status.StatusIterfece = CONNECTED;
-		lastconected = true;
-		WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
-		WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
+	try {
+		if (wifi.create_conect(ssid, pass)) {
+			Status.StatusIterfece = CONNECTED;
+			printf("Wifi interface connect successful");
+			lastconected = true;
+			WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
+			WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
+		}
+	}
+	catch (exception& e)
+	{
+		printf("error connect Wifi");
+		cerr << "Caught " << e.what() << endl;
+		cerr << "Type " << typeid(e).name() << endl;
 	}
 }
 
 void WeildServer::ConnectInterfeceLAN()
 {
-	//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
-	WeildConfig.ip_out = wifi.GetMyIpInterfece("eth0");
-	WeildConfig.router_ip = wifi.GetIpInterf("eth0");
+	try {
+		//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
+		WeildConfig.ip_out = wifi.GetMyIpInterfece("eth0");
+		WeildConfig.router_ip = wifi.GetIpInterf("eth0");
 
-	if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
+		if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
+		{
+			Status.StatusIterfece = CONNECTED;
+			printf("Lan interface connect successful");
+			lastconected = true;
+			WeildConfig.interface = "eth0";
+		}
+	}
+	catch (exception& e)
 	{
-		Status.StatusIterfece = CONNECTED;
-		lastconected = true;
-		WeildConfig.interface = "eth0";
+		printf("error connect Wifi");
+		cerr << "Caught " << e.what() << endl;
+		cerr << "Type " << typeid(e).name() << endl;
 	}
 	//}
 }
@@ -217,6 +235,7 @@ void WeildServer::ConectServer()
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;
 			StatusServerRecv = NOT_DATA;
+			printf("server connect successful");
 			
 		}
 		else {
@@ -470,6 +489,9 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 	}
 	catch (int a) {
 
+	}
+	catch (const std::out_of_range& oror) {
+		std::cerr << "Out of Range error: " << oror.what() << '\n';
 	}
 	
 	printf("fault comand\n");
