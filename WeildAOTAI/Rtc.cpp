@@ -16,10 +16,12 @@ Rtc::Rtc(uint8_t cs_dev)
 {
 	wiringPiSetup();
 	CS = cs_dev;
-	//spi = SPI("/dev/spidev1.0", 1000000, 8, 1);
-	init_SPI("/dev/spidev1.0", 4000000, 8, 3,"RTC");
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, HIGH);
+	
+	//spi = SPI("/dev/spidev1.0", 1000000, 8, 1);
+	init_SPI("/dev/spidev1.0", 4000000, 8, 3,"RTC");
+	
 }
 
 void Rtc::SetRtc()
@@ -47,25 +49,14 @@ void Rtc::GetRtc()
 		init_SPI("/dev/spidev1.0", 4000000, 8, 3, "RTC");
 
 	}
-	uint8_t rx[8] = { 0 };
-	uint8_t tx[8] = { 0 };
-	digitalWrite(CS, LOW);
-	SpiWriteRead(tx, rx, 1);
-	digitalWrite(CS, HIGH);
-
-	digitalWrite(CS, LOW);
-	SpiWriteRead(tx, rx, 8);
-	digitalWrite(CS, HIGH);
-	struct tm tm;
-	tm.tm_sec = _decode(rx[1]);
-	tm.tm_min = _decode(rx[2]);
-	tm.tm_hour = _decode(rx[3] & 0x3f);
-	tm.tm_mday = _decode(rx[5]);
-	tm.tm_mon = _decode(rx[6] & 0x1f);
-	tm.tm_year = _decode(rx[7]);
-	unsigned char buff[32] = { 0 };
-	sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tm.tm_mon, tm.tm_mday, tm.tm_year + 2000, tm.tm_hour, tm.tm_min, tm.tm_sec);
-	system((const char *)buff);
+	/*or (int i = 0; i < 5; i++) {
+		if (ValidDataRtc()) {*/
+			//break;
+		//}
+	ValidDataRtc();
+	//}
+	
+	
 
 	/*struct timeval  stime;
 	stime.tv_sec = mktime(&tm);
@@ -96,4 +87,44 @@ void Rtc::write_reg_rtc(uint8_t reg, uint8_t data)
 	digitalWrite(CS, LOW);
 	SpiWriteRead(tx, rx, 2);
 	digitalWrite(CS, HIGH);
+}
+
+bool Rtc::ValidDataRtc()
+{
+	struct timeval  stimeRtc, stimeOrange;
+	
+	uint8_t rx[8] = { 0 };
+	uint8_t tx[8] = { 0 };
+	digitalWrite(CS, LOW);
+	SpiWriteRead(tx, rx, 5);
+    digitalWrite(CS, HIGH);
+
+	digitalWrite(CS, LOW);
+	SpiWriteRead(tx, rx, 8);
+	digitalWrite(CS, HIGH);
+	struct tm  tim_RTC = { 0 };
+
+	tim_RTC.tm_sec = _decode(rx[1]);
+	tim_RTC.tm_min = _decode(rx[2]);
+	tim_RTC.tm_hour = _decode(rx[3] & 0x3f);
+	tim_RTC.tm_mday = _decode(rx[5]);
+	tim_RTC.tm_mon = _decode(rx[6] & 0x1f)-1;
+	tim_RTC.tm_year = _decode(rx[7]) + 100;
+
+	time_t t1 = mktime(&tim_RTC);
+	time_t t2 = time(NULL);
+	if ((t2-5*60*60) < t1) {
+		ReadOk = true;
+		CntError = 0;
+		unsigned char buff[32] = { 0 };
+		sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tim_RTC.tm_mon+1, tim_RTC.tm_mday, tim_RTC.tm_year + 1900, tim_RTC.tm_hour, tim_RTC.tm_min, tim_RTC.tm_sec);
+		system((const char *)buff);
+		return true;
+	}
+	else {
+		printf("error read RTC \n\r");
+		CntError++;
+	}
+
+	return false;
 }

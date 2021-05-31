@@ -23,5 +23,6 @@ private:
 	UBMLed * Led;
 	Rtc * rtc;
 	MyTime * RtcTime;
+	bool PriznEvent = false;
 };
 

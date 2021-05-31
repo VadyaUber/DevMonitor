@@ -6,9 +6,13 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 		printf("Unable to start wiringPi: \n");
 		return;
 	}
-	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2,"device");
+	
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
+	digitalWrite(CS_PIN, HIGH);
+	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, "device");
+	digitalWrite(CS_PIN, LOW);
+	usleep(1000);
 	digitalWrite(CS_PIN, HIGH);
 	Write8bit(MMODE, 0xFC | PHASE_A);
 	Write8bit(LCYCMODE, 0x3F);

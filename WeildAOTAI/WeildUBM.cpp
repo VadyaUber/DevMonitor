@@ -4,8 +4,8 @@
 #define CS_SENSOR_V 11
 #define CS_METER    8
 #define CICLE_METER 100
-#define WILDGANPIN0 15
-#define WILDGANPIN1 16
+#define WILDGANPIN0 16
+#define WILDGANPIN1 15
 #define DS_PIN 0
 #define SH_PIN 2
 #define ST_PIN 3
@@ -21,8 +21,9 @@
 WeildUBM::WeildUBM(WeildServer * server)
 {
 	UbmServer = server;
-	/*rtc = new Rtc(RTC_CS);
-	rtc->GetRtc();*/
+	rtc = new Rtc(RTC_CS);
+	//rtc->SetRtc();
+	rtc->GetRtc();
 
 	pinMode(SW_POWE, OUTPUT);
 	RtcTime = new MyTime();
@@ -61,15 +62,19 @@ WeildUBM::WeildUBM(WeildServer * server)
 
 			while (true)
 			{
+				
 				if (I_Sensor != NULL) I_Sensor->ReadValue();
-				//if (U_Sensor != NULL) U_Sensor->ReadValue();
-				//if (meter != NULL) meter->ReadValue();
-				/*if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv == NEW_DATA) {
+				if (U_Sensor != NULL) U_Sensor->ReadValue();
+				if (meter != NULL) meter->ReadValue();
+				if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv == NEW_DATA) {
 					UbmServer->StatusServerRecv = IDEL_DATA;
 
 					rtc->SetRtc();
-				}*/
-
+				}
+				if (!rtc->ReadOk and rtc->CntError< MAX_ERROR_RTC) {
+					rtc->GetRtc();
+				}
+				
 				usleep(1000);
 
 			}
@@ -77,7 +82,7 @@ WeildUBM::WeildUBM(WeildServer * server)
 	}
 	Led->Inerfece = &UbmServer->WeildConfig.interface;
 	Led->Status = &UbmServer->Status;
-//	new thread([&]() {while (true)Led->Loop(); });
+ 	new thread([&]() {while (true)Led->Loop(); });
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
 	if (UbmServer->WeildConfig.BlockMode == "ON")digitalWrite(SW_POWE,HIGH);
@@ -92,13 +97,13 @@ void WeildUBM::UbmLoop()
 		UbmServer->Perefir.append("01");
 		if (I_Sensor != NULL) {
 			I_Sensor->CalculateAdc();
-			printf(" I %d\n\r", I_Sensor->Value16Bit);
+			//printf(" I %d\n\r", I_Sensor->Value16Bit);
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor->Value16Bit,2));
 		}else UbmServer->Perefir.append("0000");
 		if (U_Sensor != NULL) {
 			U_Sensor->CalculateAdc();
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor->Value16Bit, 2));
-			printf(" V %d\n\r", U_Sensor->Value16Bit);
+			//printf(" V %d\n\r", U_Sensor->Value16Bit);
 		}
 		else UbmServer->Perefir.append("0000");
 		UbmServer->Perefir.append("0000");//дискретные выходы
@@ -117,7 +122,7 @@ void WeildUBM::UbmLoop()
 		}
 	}
 	
-	/*if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
+	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
 		if (I_Sensor != NULL) {
 			if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
 
@@ -125,8 +130,8 @@ void WeildUBM::UbmLoop()
 			}
 		}
 	
-	}*/
+	}
 	
 	UbmServer->rfid = weilgand_id;
-
+	
 }

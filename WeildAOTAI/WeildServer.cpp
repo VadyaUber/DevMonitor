@@ -345,7 +345,7 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	printf(SendSoket.c_str());
+	//printf(SendSoket.c_str());
 	string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
 	
@@ -444,14 +444,14 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						PowerOn = ((tmp & 1) == 0);
 						//printf("PowerON %d \n\r", PowerOn);
 						DataOut = ";" + ArrayVector[1] + "\r\n";
-						if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)
-						{
+						/*if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)
+						{*/
 							strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
 							unsigned char buff[32] = { 0 };
 							sprintf((char*)buff, (const char*)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon + 1, TimeServer.tm_mday, TimeServer.tm_year + 1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
 							//strcat(buff, " > /dev/null");
 							system((const char*)buff);
-						}
+						//}
 						/*struct timeval  stime;
 						stime.tv_sec = mktime(&TimeServer);
 						settimeofday(&stime, NULL);*/
