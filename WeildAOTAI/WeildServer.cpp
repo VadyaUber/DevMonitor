@@ -42,7 +42,7 @@ void WeildServer::ConnectInterfeceWIFI(string ssid, string pass)
 	try {
 		if (wifi.create_conect(ssid, pass)) {
 			Status.StatusIterfece = CONNECTED;
-			printf("Wifi interface connect successful");
+			printf("Wifi interface connect successful \n");
 			lastconected = true;
 			WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
 			WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
@@ -66,7 +66,7 @@ void WeildServer::ConnectInterfeceLAN()
 		if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
 		{
 			Status.StatusIterfece = CONNECTED;
-			printf("Lan interface connect successful");
+			printf("Lan interface connect successful \n");
 			lastconected = true;
 			WeildConfig.interface = "eth0";
 		}
@@ -97,7 +97,10 @@ void WeildServer::ReadFileConfig(string path)
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(path.c_str());
 	if (!result)
+	{
+		printf("ReadFileConfig error \n");
 		return;
+	}
 	string tmp1, tmp2;
 	string ip_tmp;
 	int n1;
@@ -144,7 +147,7 @@ void WeildServer::CheckConnectInterface()
 		string out_commad = "nmcli connection | grep -c " + WeildConfig.interface;
 		if (!(output = popen(out_commad.c_str(), "r")))
 		{
-			printf("error check interface connection");
+			printf("error check interface connection \n");
 		}
 		unsigned int i;
 		fscanf(output, "%u", &i);
@@ -235,7 +238,7 @@ void WeildServer::ConectServer()
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;
 			StatusServerRecv = NOT_DATA;
-			printf("server connect successful");
+			printf("server connect successful \n");
 			
 		}
 		else {
@@ -338,7 +341,8 @@ string WeildServer::currentDateTime() {
 	char       buf[80];
 	tstruct = *localtime(&now);
 	strftime(buf, sizeof(buf), "%Y%m%d%H%M%S", &tstruct);
-	return buf;
+	string bufstring(buf);
+	return bufstring;
 }
 void WeildServer::FormatString()
 {
@@ -465,14 +469,14 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						PowerOn = ((tmp & 1) == 0);
 						//printf("PowerON %d \n\r", PowerOn);
 						DataOut = ";" + ArrayVector[1] + "\r\n";
-						/*if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)
-						{*/
+						if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)
+						{
 							strptime(ArrayVector[3].c_str(), "%Y%m%d%H%M%S", &TimeServer);
 							unsigned char buff[32] = { 0 };
 							sprintf((char*)buff, (const char*)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", TimeServer.tm_mon + 1, TimeServer.tm_mday, TimeServer.tm_year + 1900, TimeServer.tm_hour, TimeServer.tm_min, TimeServer.tm_sec);
 							//strcat(buff, " > /dev/null");
 							system((const char*)buff);
-						//}
+						}
 						/*struct timeval  stime;
 						stime.tv_sec = mktime(&TimeServer);
 						settimeofday(&stime, NULL);*/
