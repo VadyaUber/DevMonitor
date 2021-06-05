@@ -65,8 +65,14 @@
     <ClCompile Include="WeildUBMLast.cpp">
       <Filter>WeildDev</Filter>
     </ClCompile>
-    <ClCompile Include="QrDev.cpp" />
-    <ClCompile Include="SPI_C.cpp" />
+    <ClCompile Include="SPI_C.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="QrDev.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="HaasMach.cpp" />
+    <ClCompile Include="PortDevMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -135,8 +141,14 @@
     <ClInclude Include="WeildUBMLast.h">
       <Filter>WeildDev</Filter>
     </ClInclude>
-    <ClInclude Include="QrDev.h" />
-    <ClInclude Include="SPI_C.h" />
+    <ClInclude Include="SPI_C.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="QrDev.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="HaasMach.h" />
+    <ClInclude Include="PortDevMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />

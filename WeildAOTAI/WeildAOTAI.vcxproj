@@ -94,10 +94,12 @@
     <ClCompile Include="DigitalInput8bit.cpp" />
     <ClCompile Include="DigitalOutUbmLast.cpp" />
     <ClCompile Include="ElectricMeter.cpp" />
+    <ClCompile Include="HaasMach.cpp" />
     <ClCompile Include="LedGpio.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyTime.cpp" />
     <ClCompile Include="ParserPort.cpp" />
+    <ClCompile Include="PortDevMachine.cpp" />
     <ClCompile Include="pugixml.cpp" />
     <ClCompile Include="QrDev.cpp" />
     <ClCompile Include="Rtc.cpp" />
@@ -120,9 +122,11 @@
     <ClInclude Include="DigitalInput8bit.h" />
     <ClInclude Include="DigitalOutUbmLast.h" />
     <ClInclude Include="ElectricMeter.h" />
+    <ClInclude Include="HaasMach.h" />
     <ClInclude Include="LedGpio.h" />
     <ClInclude Include="MyTime.h" />
     <ClInclude Include="ParserPort.h" />
+    <ClInclude Include="PortDevMachine.h" />
     <ClInclude Include="pugiconfig.hpp" />
     <ClInclude Include="pugixml.hpp" />
     <ClInclude Include="QrDev.h" />

@@ -370,7 +370,7 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	//printf(SendSoket.c_str());
+	printf(SendSoket.c_str());
 	string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
 	
