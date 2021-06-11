@@ -1,6 +1,6 @@
 #include "WeildMachineDev.h"
-#define WILDGANPIN0 15
-#define WILDGANPIN1 16
+#define WILDGANPIN0 16
+#define WILDGANPIN1 15
 #define WG35Pin  4 
 #define LED1 5
 #define LED2 7
@@ -38,15 +38,16 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 	new thread([&]() {
 		while (true) {
 			led->LedLoop();
-			if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
-				ServerDev->StatusServerRecv = IDEL_DATA;
+			//if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
+			//	ServerDev->StatusServerRecv = IDEL_DATA;
 
-				rtc->SetRtc();
-			}
+			//	rtc->SetRtc();
+			//}
 		}
 
 		});
-	
+
+
 	if (ServerDev->WeildConfig.WG35) {
 		digitalWrite(WG35Pin, HIGH);
 	}
@@ -61,6 +62,7 @@ WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 
 void WeildMachineDev::WeildMachineDevLoop()
 {
+	
 	if (TimerCalculate->CheckTimeEvent()) {
 		ServerDev->Perefir = "";
 		Digital->ReadData();
@@ -75,6 +77,7 @@ void WeildMachineDev::WeildMachineDevLoop()
 			ServerDev->Perefir.append("0000");
 		}
 	}
+	
 	if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
 		ServerDev->StatusServerRecv = IDEL_DATA;
 
@@ -84,8 +87,9 @@ void WeildMachineDev::WeildMachineDevLoop()
 	ServerDev->WeildLoop();
 	if (ServerDev->WeildConfig.QR_ON)
 		qr->GetQrData(&ServerDev->QrCode);
+	
 	//ServerDev->rfid = weilgand_id;
-	usleep(100);
+	usleep(1000);
 }
 
 

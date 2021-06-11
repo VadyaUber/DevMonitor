@@ -8,13 +8,14 @@ DigitalInput8bit::DigitalInput8bit( uint8_t CS_pin)
 	init_SPI("/dev/spidev1.0", 1000000, 8, 0,"DigitalInput");
 	CS = CS_pin;
 	pinMode(CS, OUTPUT);
+	digitalWrite(CS, HIGH);
 }
 
 void DigitalInput8bit::ReadData()
 {
 	if (NameSPI != "DigitalInput") {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 1000000, 8, 0, "DigitalInput");
+		init_SPI("/dev/spidev1.0", 2000000, 8, 0, "DigitalInput");
 
 	}
 	uint8_t byf_tx[2] = { 0 }, byf_rx[2] = { 0 };
