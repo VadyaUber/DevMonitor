@@ -88,7 +88,10 @@ void WeildMachineDev::WeildMachineDevLoop()
 	if (ServerDev->WeildConfig.QR_ON)
 		qr->GetQrData(&ServerDev->QrCode);
 	
-	//ServerDev->rfid = weilgand_id;
+	if (ServerDev->WeildConfig.RFID_ON)
+	{
+		ServerDev->rfid = weilgand_id;
+	}
 	usleep(1000);
 }
 

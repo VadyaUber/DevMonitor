@@ -1,24 +1,24 @@
 #include "SPI_C.h"
 using namespace std;
 
-
-
 static int fd;
 static struct spi_ioc_transfer tr;
 bool IsInitSPI = false;
-string NameSPI = "";
+uint8_t NameSPI = 0;
 uint8_t get_mode(uint8_t modes);
 void pabort(const char *s);
 
-void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes,string name ) {
+
+
+void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, uint8_t name ) {
 	if (!IsInitSPI) {
 		if (wiringPiSetup() == -1) {
 			printf("Unable to start wiringPi: \n");
 			return;
 		}
 		
-		pullUpDnControl(13, PUD_DOWN);
-		pullUpDnControl(12, PUD_DOWN);
+		//pullUpDnControl(13, PUD_DOWN);
+		//pullUpDnControl(12, PUD_DOWN);
 		NameSPI = name;
 		int ret;
 		uint8_t mode = get_mode(modes);
@@ -79,19 +79,19 @@ uint8_t get_mode(uint8_t modes)
 	switch (modes)
 	{
 	case 0:
-		pullUpDnControl(14, PUD_DOWN);
+		//pullUpDnControl(14, PUD_DOWN);
 		return SPI_MODE_0;
 		break;
 	case 1:
-		pullUpDnControl(14, PUD_DOWN);
+		//pullUpDnControl(14, PUD_DOWN);
 		return SPI_MODE_1;
 		break;
 	case 2:
-		pullUpDnControl(14, PUD_UP);
+		//pullUpDnControl(14, PUD_UP);
 		return SPI_MODE_2;
 		break;
 	case 3:
-		pullUpDnControl(14, PUD_UP);
+		//pullUpDnControl(14, PUD_UP);
 		return SPI_MODE_3;
 		break;
 

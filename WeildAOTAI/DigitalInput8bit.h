@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
-#include "wiringPi.h"
+//#include "wiringPi.h"
 #include "SPI_C.h"
-using namespace std;
+//using namespace std;
 class DigitalInput8bit
 {
 public:
@@ -14,8 +14,6 @@ public:
 	bool Falult_Voltage = false;
 private:
 	uint8_t CS;
-;
-	uint8_t Buff[2];
-
+	//uint8_t Buff[2];
 };
 

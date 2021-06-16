@@ -10,8 +10,13 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <map>
+
+#define dev 1
+#define RTC 2
+#define DigitalInput 3
+
 using namespace std;
-extern string NameSPI;
+extern uint8_t NameSPI;
 int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len);
-void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, string name);
+void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, uint8_t name);
 void DeInitSPI();

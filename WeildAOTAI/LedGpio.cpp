@@ -13,6 +13,9 @@ LedGpio::LedGpio(uint8_t LedPin1, uint8_t LedPin2, uint8_t LedPin3, uint8_t LedP
 	pinMode(Led4, OUTPUT);
 	Time = new MyTime();
 	Time->IntevralSleep = 1000;
+
+	digitalWrite(Led1, HIGH);
+	digitalWrite(Led2, HIGH);
 }
 
 void LedGpio::LedLoop()
@@ -29,11 +32,11 @@ void LedGpio::LedLoop()
 			else if (Status->StatusSocet == NOT_CONNECTED)blinc(Led3, 2);
 			else digitalWrite(Led3, 1);
 		}
-		if (Status->StatusBloc)digitalWrite(Led2, HIGH);
-		else digitalWrite(Led2, LOW);
-		if(Status->StatusRfid1==Wait)blinc(Led1, 2);
-		else if(Status->StatusRfid1 == SendServer)digitalWrite(Led1, HIGH);
-		else if(Status->StatusRfid1 == EroorRead)blinc(Led1, 3);
+		//if (Status->StatusBloc)digitalWrite(Led2, HIGH);
+		//else digitalWrite(Led2, LOW);
+		//if(Status->StatusRfid1==Wait)blinc(Led1, 2);
+		//else if(Status->StatusRfid1 == SendServer)digitalWrite(Led1, HIGH);
+		//else if(Status->StatusRfid1 == EroorRead)blinc(Led1, 3);
 	}
 	usleep(10000);
 }

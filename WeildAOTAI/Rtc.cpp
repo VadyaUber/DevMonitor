@@ -18,17 +18,16 @@ Rtc::Rtc(uint8_t cs_dev)
 	CS = cs_dev;
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, HIGH);
-	
 	//spi = SPI("/dev/spidev1.0", 1000000, 8, 1);
-	init_SPI("/dev/spidev1.0", 4000000, 8, 3,"RTC");
+	init_SPI("/dev/spidev1.0", 2000000, 8, 3, RTC);
 	
 }
 
 void Rtc::SetRtc()
 {
-	if (NameSPI != "RTC") {
+	if (NameSPI != RTC) {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 4000000, 8, 3, "RTC");
+		init_SPI("/dev/spidev1.0", 2000000, 8, 3, RTC);
 
 	}
 	time_t t = time(NULL);
@@ -44,9 +43,9 @@ void Rtc::SetRtc()
 
 void Rtc::GetRtc()
 {
-	if (NameSPI != "RTC") {
+	if (NameSPI != RTC) {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 4000000, 8, 3, "RTC");
+		init_SPI("/dev/spidev1.0", 4000000, 8, 3, RTC);
 
 	}
 	/*or (int i = 0; i < 5; i++) {

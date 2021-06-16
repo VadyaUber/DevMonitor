@@ -1,3 +1,4 @@
+/*
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -11,6 +12,14 @@
 #include <algorithm>
 #include <iomanip> 
 #include <sstream>
+*/
+
+#include "weilgand.h"
+#include <unistd.h>
+#include <sstream>
+#include <iostream>
+#include <iomanip> 
+#include <algorithm>
 
 using  namespace std;
 

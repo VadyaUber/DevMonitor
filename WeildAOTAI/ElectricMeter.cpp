@@ -10,7 +10,7 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 	CS_PIN = cs_pin;
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
-	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, "device");
+	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, dev);
 	digitalWrite(CS_PIN, LOW);
 	usleep(1000);
 	digitalWrite(CS_PIN, HIGH);
@@ -26,9 +26,9 @@ ElectricMeter::ElectricMeter(uint8_t cs_pin,uint32_t Cicle, string FileConfig, s
 
 void ElectricMeter::ReadValue()
 {
-	if (NameSPI != "device") { 
+	if (NameSPI != dev) {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, "device");
+		init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, dev);
 	}
 	status= ReadReg24(STATUS);
 	
