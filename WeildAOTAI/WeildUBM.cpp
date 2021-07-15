@@ -1,34 +1,48 @@
+/*----------
+	Маленький убм4 встраиваемого типа
+*/
 #include "WeildUBM.h"
 
-#define CS_SENSOR_I 10
-#define CS_SENSOR_V 11
+#define CS_SENSOR_I 11
+#define CS_SENSOR_V 10
 #define CS_METER    8
 #define CICLE_METER 100
 #define WILDGANPIN0 16
 #define WILDGANPIN1 15
+
+
 #define DS_PIN 0
 #define SH_PIN 2
 #define ST_PIN 3
+
 #define SW_POWE 5
 #define RTC_CS 1
 
-#define LED1_PIN 1
-#define LED2_PIN 2
-#define LED3_PIN 3
-#define LED4_PIN 4
-#define BEEPER_PIN 5
-#define WG35Pin  6 
+#define LED3_PIN 0x01
+#define LED4_PIN 0x02
+#define BEEPER_PIN 0x04
+#define LED2_PIN 0x08
+#define LED1_PIN 0x10
+#define WG36Pin  0x20 
 WeildUBM::WeildUBM(WeildServer * server)
 {
+	wiringPiSetup();
 	UbmServer = server;
 	rtc = new Rtc(RTC_CS);
 	//rtc->SetRtc();
 	rtc->GetRtc();
-
-	pinMode(SW_POWE, OUTPUT);
+	pullUpDnControl(13, PUD_DOWN);
+	pullUpDnControl(12, PUD_DOWN);
+	pullUpDnControl(14, PUD_UP);
+	//pinMode(SW_POWE, OUTPUT);
 	RtcTime = new MyTime();
 	RtcTime->IntevralSleep = 3600000;
-	Led = new UBMLed(DS_PIN, SH_PIN, ST_PIN, UbmServer->WeildConfig.WG35, LED1_PIN, LED2_PIN, LED3_PIN, LED4_PIN, WG35Pin, BEEPER_PIN);
+
+	Dout = new DigitalOutUbmSPI(ST_PIN, LED3_PIN, LED4_PIN, BEEPER_PIN, LED2_PIN, LED1_PIN, WG36Pin);
+	Dout->Inerfece = &UbmServer->WeildConfig.interface;
+	Dout->Status = &UbmServer->Status;
+	Dout->RFID = &UbmServer->RFID_status;
+
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
 		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml", "SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
@@ -57,6 +71,10 @@ WeildUBM::WeildUBM(WeildServer * server)
 			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
 			});
 	}
+
+	if (UbmServer->WeildConfig.QR_ON)
+		qr = new QrDev("/dev/ttyACM0");
+
 	if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
 		new thread([&]() {
 
@@ -74,19 +92,17 @@ WeildUBM::WeildUBM(WeildServer * server)
 				if (!rtc->ReadOk and rtc->CntError< MAX_ERROR_RTC) {
 					rtc->GetRtc();
 				}
-				
-				usleep(1000);
+				Dout->Loop();
+				usleep(10000);
 
 			}
 			});
 	}
-	Led->Inerfece = &UbmServer->WeildConfig.interface;
-	Led->Status = &UbmServer->Status;
- 	new thread([&]() {while (true)Led->Loop(); });
+
 	TimerCalculate = new MyTime();
-	TimerCalculate->IntevralSleep = 500;
-	if (UbmServer->WeildConfig.BlockMode == "ON")digitalWrite(SW_POWE,HIGH);
-	if (UbmServer->WeildConfig.BlockMode == "OFF")digitalWrite(SW_POWE, HIGH);
+	TimerCalculate->IntevralSleep = 5000;
+	//if (UbmServer->WeildConfig.BlockMode == "ON")digitalWrite(SW_POWE,HIGH);
+	//if (UbmServer->WeildConfig.BlockMode == "OFF")digitalWrite(SW_POWE, HIGH);
 }
 
 void WeildUBM::UbmLoop()
@@ -120,9 +136,17 @@ void WeildUBM::UbmLoop()
 			UbmServer->Perefir.append("00000000");
 			UbmServer->Perefir.append("00000000");
 		}
+
+		if (UbmServer->WeildConfig.QR_ON)
+			qr->GetQrData(&UbmServer->QrCode);
+
+		if (UbmServer->WeildConfig.RFID_ON)
+		{
+			UbmServer->rfid = weilgand_id;
+		}
 	}
 	
-	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
+	/*if (UbmServer->WeildConfig.BlockMode == "REMOTE") { //clarify and change
 		if (I_Sensor != NULL) {
 			if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
 
@@ -130,8 +154,7 @@ void WeildUBM::UbmLoop()
 			}
 		}
 	
-	}
+	}*/
 	
-	UbmServer->rfid = weilgand_id;
 	
 }

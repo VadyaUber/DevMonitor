@@ -10,7 +10,10 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameCo
 	pinMode(CS_PIN, OUTPUT);
 	digitalWrite(CS_PIN, HIGH);
 
-	init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, dev);
+	if (NameSPI != dev) {
+		DeInitSPI();
+		init_SPI("/dev/spidev1.0", FREQ_CLK, 8, 2, dev);
+	}
 	digitalWrite(CS_PIN, LOW);
 	usleep(1000);
 	digitalWrite(CS_PIN, HIGH);
@@ -39,13 +42,16 @@ void WeildADC::ReadValue()
 		digitalWrite(CS_PIN, HIGH);
 		
 		adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
-		if (rx[0] != 0) {
+		//if (rx[0] != 0) {
+		if (adc_out != 0) {
 		
 				if (FilterADC.Cnt >= FILTER_SIZE) {
 					FilterADC.Cnt = 0;
 				}
-			 //	printf("adc val %f\n\r", (float)(adc_out*REF));
-				FilterADC.Array[FilterADC.Cnt] = pow(abs((adc_out*REF) - mat.offset) * mat.divisor, 2);
+			  	//printf("adc val %f\n\r", (float)(adc_out*REF));
+				//printf("adc val %d\n\r", (adc_out));
+				//FilterADC.Array[FilterADC.Cnt] = pow(abs((adc_out*REF) - mat.offset) * mat.divisor, 2);
+				FilterADC.Array[FilterADC.Cnt] = adc_out;
 				FilterADC.Cnt++;
 
 		}
@@ -57,8 +63,19 @@ void WeildADC::CalculateAdc()
 {
 	while (PriznReadAdc);
 	MeasureEnable = false;
+	double tmp;
+	uint16_t tm;
 	if (filter_on) {
-		Value16Bit = (uint16_t)(sqrt(FiltringADC(FilterADC.Array, FilterADC.Cnt))) * mat.multiplier;
+		//tm = (FiltringADC(FilterADC.Array, FilterADC.Cnt));
+		//tmp = (tm * REF);
+		//tmp = (abs(tmp - mat.offset));
+		//tmp = ((tmp * mat.divisor));
+		//
+
+		//tmp = tmp * mat.multiplier;
+		tmp = (abs(((FiltringADC(FilterADC.Array, FilterADC.Cnt)) * REF) - mat.offset)) *mat.divisor;
+		//printf("val %f\n\r", tmp);
+		Value16Bit = (uint16_t) tmp;
 		FilterADC.Cnt = 0;
 	}
 	else {
@@ -70,8 +87,6 @@ void WeildADC::CalculateAdc()
 	
 
 	MeasureEnable = true;
-
-
 }
 
 void WeildADC::GetConfig(string FileConfig, string NameConfig)
@@ -86,20 +101,23 @@ void WeildADC::GetConfig(string FileConfig, string NameConfig)
 	mat.divisor = doc.child("config").child(NameConfig.c_str()).child("divisor").attribute("value").as_double();
 }
 
-double WeildADC::FiltringADC(double * aray, int size) {
-	double MathWait = 0;
-	double TekValue = 0;
+uint32_t WeildADC::FiltringADC(uint32_t* aray, int size) {
+	uint64_t MathWait = 0;
+	uint32_t TekValue = 0;
 	int n = 0;
+	if (size == 0) return 0;
 	for (int i = 0; i < size; i++) {
 		MathWait += aray[i];
 	}
 	MathWait = MathWait / size;
 	for (int i = 0; i < size; i++) {
-		if (aray[i] < (MathWait + MathWait * 0.3) && aray[i] > (MathWait - MathWait * 0.3)) {
+		if (aray[i] < (MathWait + MathWait * 0.3) && aray[i] > (MathWait - MathWait * 0.3)) 
+		{
 			TekValue += aray[i];
 			n++;
 		}
 	}
+	if (n == 0) return 0;
 	return  TekValue / n;
 }
 

@@ -5,7 +5,7 @@ ShiftRegister::ShiftRegister(uint8_t Ds_pin, uint8_t SHcp_pin, uint8_t STcp_pin)
 	Ds = Ds_pin;
 	SHcp = SHcp_pin;
 	STcp =STcp_pin;
-	wiringPiSetup();
+	//wiringPiSetup();
 	pinMode(Ds, OUTPUT);
 	pinMode(SHcp, OUTPUT);
 	pinMode(STcp, OUTPUT);

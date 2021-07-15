@@ -10,6 +10,8 @@
 #include <thread>
 #include "LedGpio.h"
 #include"QrDev.h"
+#include <stdio.h>
+
 typedef struct 
 {
 	string	Q100 = "";

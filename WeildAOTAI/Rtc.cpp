@@ -14,7 +14,7 @@
 #define REG_RAM_DATA	0x19
 Rtc::Rtc(uint8_t cs_dev)
 {
-	wiringPiSetup();
+	//wiringPiSetup();
 	CS = cs_dev;
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, HIGH);
@@ -45,7 +45,7 @@ void Rtc::GetRtc()
 {
 	if (NameSPI != RTC) {
 		DeInitSPI();
-		init_SPI("/dev/spidev1.0", 4000000, 8, 3, RTC);
+		init_SPI("/dev/spidev1.0", 2000000, 8, 3, RTC);
 
 	}
 	/*or (int i = 0; i < 5; i++) {

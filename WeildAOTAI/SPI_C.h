@@ -14,6 +14,7 @@
 #define dev 1
 #define RTC 2
 #define DigitalInput 3
+#define DigOutUbm 4
 
 using namespace std;
 extern uint8_t NameSPI;

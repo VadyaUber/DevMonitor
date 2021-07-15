@@ -7,7 +7,7 @@
 #define FREQ_CLK 2000000
 using namespace std;
 typedef struct {
-	double Array[FILTER_SIZE];
+	uint32_t Array[FILTER_SIZE];
 	uint32_t Cnt = 0;
 }Filter;
 typedef struct {
@@ -34,7 +34,7 @@ private:
 	bool PriznReadAdc = false;
 	double SummArray = 0;
 	void GetConfig(string FileConfig, string NameConfig);
-	double FiltringADC(double * aray, int size);
+	uint32_t FiltringADC(uint32_t* aray, int size);
 	MatParam mat;
 };
 

@@ -6,6 +6,7 @@
 #include <wiringPi.h>
 using namespace std;
 extern string weilgand_id;
+extern bool wg_upd;
 void wiegand_loop(int d0pin, int d1pin,bool WG26);
 void getData0(void);
 void getData1(void);

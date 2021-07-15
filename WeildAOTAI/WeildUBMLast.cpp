@@ -1,3 +1,6 @@
+/*----------
+	УБМ4 Внешнего типа
+*/
 #include "WeildUBMLast.h"
 
 #define CS_SENSOR_I 11
@@ -73,7 +76,7 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 	}
 	
 	TimerCalculate = new MyTime();
-	TimerCalculate->IntevralSleep = 500;
+	TimerCalculate->IntevralSleep = 1500;
 
 
 
@@ -87,12 +90,13 @@ void WeildUBMLast::UbmLoop()
 		UbmServer->Perefir.append("01");
 		if (I_Sensor != NULL) {
 			I_Sensor->CalculateAdc();
-		
+			printf(" I %d\n\r", I_Sensor->Value16Bit);
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
 		if (U_Sensor != NULL) {
 			U_Sensor->CalculateAdc();
+			printf(" V %d\n\r", U_Sensor->Value16Bit);
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&U_Sensor->Value16Bit, 2));
 		}
 		else UbmServer->Perefir.append("0000");
@@ -121,6 +125,7 @@ void WeildUBMLast::UbmLoop()
 			Dout->PowerOn = UbmServer->PowerOn;
 		}
 	}
+
 	
 	usleep(100);
 

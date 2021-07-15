@@ -29,6 +29,7 @@ using  namespace std;
 string  uint8_to_hex_string(uint8_t *v, const size_t s);
 //void * loop(void *);
 string weilgand_id="0000000000";
+bool wg_upd = false;
 string BitVal = "";
 int t = 15;
 int timeout = t;
@@ -47,7 +48,7 @@ void getData1(void) {
 
 int wiegandInit(int d0pin, int d1pin) {
 	// Setup wiringPi
-	wiringPiSetup();
+	//wiringPiSetup();
 	//pinMode(d0pin, INPUT);
 	//pinMode(d1pin, INPUT);
 	//pullUpDnControl(d0pin, PUD_UP);
@@ -56,10 +57,6 @@ int wiegandInit(int d0pin, int d1pin) {
 	wiringPiISR(d1pin, INT_EDGE_FALLING, getData1);
 
 }
-
-
-
-
 
 
 
@@ -90,11 +87,12 @@ void wiegand_loop(int d0pin, int d1pin, bool WG26)
 				printf("%u \r\n", tmp);
 				weilgand_id = uint8_to_hex_string((uint8_t *)&tmp, 4);
 				BitVal = "";
-				
+				//wg_upd = true;
+				wg_upd = !wg_upd;
 			}
 		}
 		else {
-			usleep(1000);
+			usleep(10000);
 		}
 	}
 

@@ -11,6 +11,26 @@
 #define CS_PIN 4
 HaasMach::HaasMach(WeildServer * server)
 {
+
+	//file.open("/weildpath/programm/write/5141.NC");
+	FILE* fs;
+	char buffer[30];
+
+	fs = fopen("/weildpath/programm/write/5141.NC", "r");
+
+	if (NULL == fs)
+	{
+		perror("opening fs");
+		usleep(1);
+	}
+
+	//while (EOF != fscanf(fs, "%[^\n]\n", buffer))
+	while (EOF != fscanf(fs, "%[^\n]\n", buffer))
+	{
+		printf("%s\n", buffer);
+	}
+	fclose(fs);
+
 	this->Server = server;
 	this->HaasPort = new PortDevMachine("/dev/ttyUSB0");
 	Tim = new MyTime();
@@ -61,7 +81,6 @@ void HaasMach::HaasLoop()
 			FormatServer();
 			Server->Perefir = FormatString;
 		}
-
 	}
 
 }

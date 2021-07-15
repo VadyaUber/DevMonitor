@@ -1,13 +1,14 @@
 #pragma once
-#include"WeildServer.h"
+#include "WeildServer.h"
 #include "SPI_C.h"
 #include "WeildADC.h"
-#include"ElectricMeter.h"
+#include "ElectricMeter.h"
 #include "thread"
 #include "weilgand.h"
 #include "MyTime.h"
-#include"UBMLed.h"
-#include"Rtc.h"
+#include "DigitalOutUbmSPI.h"
+#include "Rtc.h"
+#include "QrDev.h"
 class WeildUBM
 {
 public:
@@ -15,14 +16,13 @@ public:
 	void UbmLoop();
 private:
 	WeildServer * UbmServer;
-
 	WeildADC * I_Sensor =NULL;
 	WeildADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;
 	MyTime * TimerCalculate;
-	UBMLed * Led;
+	DigitalOutUbmSPI* Dout;
 	Rtc * rtc;
 	MyTime * RtcTime;
-	bool PriznEvent = false;
+	QrDev* qr;
 };
 

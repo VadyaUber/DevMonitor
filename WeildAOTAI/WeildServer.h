@@ -94,7 +94,9 @@ class WeildServer
 		bool NewDataInput=false;
 
 		uint8_t LedByte = 0;
-		bool PowerOn = true;
+		bool PowerOn = true; // 0 бит Ц команда сервера по управлению блокировкой
+		bool RFID_status = false; //1 бит Ц Ђ1ї - сервер прин€л код от RFID. Ђ0ї сервер не прин€л код от RFID.
+		bool QR_status = false; //2 бит Ц Ђ1ї - сервер прин€л код от сканера.Ђ0ї сервер не прин€л код от сканера.
 		string uint8_to_hex_string(uint8_t *v, const size_t s);
 		uint8_t StatusServerRecv = NOT_DATA;
 	private:

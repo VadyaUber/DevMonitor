@@ -11,14 +11,12 @@ void pabort(const char *s);
 
 
 void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, uint8_t name ) {
-	if (!IsInitSPI) {
-		if (wiringPiSetup() == -1) {
+		if (!IsInitSPI) 
+		{
+		/*if (wiringPiSetup() == -1) {
 			printf("Unable to start wiringPi: \n");
 			return;
-		}
-		
-		//pullUpDnControl(13, PUD_DOWN);
-		//pullUpDnControl(12, PUD_DOWN);
+		}*/
 		NameSPI = name;
 		int ret;
 		uint8_t mode = get_mode(modes);
@@ -50,7 +48,7 @@ void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, ui
 
 
 		IsInitSPI = true;
-	}
+		}
 }
 void DeInitSPI() {
 	close(fd);

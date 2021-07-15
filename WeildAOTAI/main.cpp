@@ -8,7 +8,7 @@
 using namespace std;
 int main()
 {
-	WeildServer weild("/weildpath/config.xml", "/weildpath/histoty.txt"); 
+	WeildServer weild("/weildpath/config.xml", "/weildpath/history.txt"); 
 	WeildParseDev * ParserDev= NULL;
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;

@@ -223,15 +223,15 @@ void WeildServer::ConectServer()
 		{
 			ConnectInterfeceWIFI(wifi_sid_reserved, wifi_pass_reserved);
 		}
-		else if (count_try_connection > 20)
-		{
-			count_try_connection = 0;
-		}
 		else 
 		{
 			ConnectInterfece(WeildConfig.wifi_sid, WeildConfig.wifi_pass);
 		}
 		count_try_connection++;
+		if (count_try_connection > 20)
+		{
+			count_try_connection = 0;
+		}
 	}
 	else if (Status.StatusSocet == NOT_CONNECTED) {
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
@@ -370,7 +370,7 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	printf(SendSoket.c_str());
+	//printf(SendSoket.c_str());
 	string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
 	
@@ -466,7 +466,9 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 					uint8_t crc_real = Crc8(crc_tmp.c_str(), crc_tmp.size());
 					if (crc_real == crc_package) {
 						//	LedByte = tmp;
-						PowerOn = ((tmp & 1) == 0);
+						PowerOn = ((tmp >> 0) & 1) == 0;
+						RFID_status = ((tmp >> 1) & 1) == 1;
+						QR_status = ((tmp >> 2) & 1) == 1;
 						//printf("PowerON %d \n\r", PowerOn);
 						DataOut = ";" + ArrayVector[1] + "\r\n";
 						if (ServTime->CheckTimeEvent()|| StatusServerRecv == NOT_DATA)

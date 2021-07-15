@@ -92,7 +92,9 @@
   <ItemGroup>
     <ClCompile Include="DigitaInput.cpp" />
     <ClCompile Include="DigitalInput8bit.cpp" />
+    <ClCompile Include="DigitalOutUbm.cpp" />
     <ClCompile Include="DigitalOutUbmLast.cpp" />
+    <ClCompile Include="DigitalOutUbmSPI.cpp" />
     <ClCompile Include="ElectricMeter.cpp" />
     <ClCompile Include="HaasMach.cpp" />
     <ClCompile Include="LedGpio.cpp" />
@@ -120,7 +122,9 @@
   <ItemGroup>
     <ClInclude Include="DigitaInput.h" />
     <ClInclude Include="DigitalInput8bit.h" />
+    <ClInclude Include="DigitalOutUbm.h" />
     <ClInclude Include="DigitalOutUbmLast.h" />
+    <ClInclude Include="DigitalOutUbmSPI.h" />
     <ClInclude Include="ElectricMeter.h" />
     <ClInclude Include="HaasMach.h" />
     <ClInclude Include="LedGpio.h" />

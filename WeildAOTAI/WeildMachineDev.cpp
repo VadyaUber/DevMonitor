@@ -8,18 +8,14 @@
 #define LED4 11
 #define CS_PIN 4
 
-#define NONE_PIN 255
-#define PIN1 1
-#define PIN2 2
-#define PIN3 3
-#define PIN4 4
-#define PIN5 5
-#define PIN6 6
-#define PIN7 7
-#define PIN8 8
 #define RTC_CS 1
+#define RL0 8
+#define RL1 9
+
 WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
 {
+	digitalWrite(RL0, LOW); //реле выключены
+	digitalWrite(RL1, LOW);
 	RtcTime = new MyTime();
 	RtcTime->IntevralSleep = 3600000;
 	rtc = new Rtc(RTC_CS);

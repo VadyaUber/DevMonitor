@@ -73,6 +73,12 @@
     </ClCompile>
     <ClCompile Include="HaasMach.cpp" />
     <ClCompile Include="PortDevMachine.cpp" />
+    <ClCompile Include="DigitalOutUbm.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
+    <ClCompile Include="DigitalOutUbmSPI.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -149,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="HaasMach.h" />
     <ClInclude Include="PortDevMachine.h" />
+    <ClInclude Include="DigitalOutUbm.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="DigitalOutUbmSPI.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="WeildAOTAI.vcxproj.user" />
