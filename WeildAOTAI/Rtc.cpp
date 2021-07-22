@@ -14,6 +14,8 @@
 #define REG_RAM_DATA	0x19
 Rtc::Rtc(uint8_t cs_dev)
 {
+	ReadOk = false;
+	CntError = 0;
 	//wiringPiSetup();
 	CS = cs_dev;
 	pinMode(CS, OUTPUT);
@@ -30,6 +32,7 @@ void Rtc::SetRtc()
 		init_SPI("/dev/spidev1.0", 2000000, 8, 3, RTC);
 
 	}
+	CntError = 0;
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 
@@ -121,6 +124,7 @@ bool Rtc::ValidDataRtc()
 		return true;
 	}
 	else {
+		ReadOk = false;
 		printf("error read RTC \n\r");
 		CntError++;
 	}

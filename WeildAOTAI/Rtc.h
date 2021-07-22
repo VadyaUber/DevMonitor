@@ -15,8 +15,8 @@ public:
 	Rtc( uint8_t cs_dev);
 	void SetRtc();
 	void GetRtc();
-	bool ReadOk = false;
-	int CntError = 0;
+	bool ReadOk;
+	int CntError;
 private:
 
 	uint8_t CS;
