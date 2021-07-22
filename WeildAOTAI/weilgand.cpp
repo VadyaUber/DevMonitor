@@ -115,7 +115,7 @@ void RFID::wiegand_loop(int d0pin, int d1pin, bool WG26)
 				else
 				{
 					Oldval = tmp;
-					weilgand_id = uint8_to_hex_string((uint8_t*)&tmp, 4);
+					weilgand_id = to_string(tmp);
 					wg_readed = true;
 				}
 				BitVal = "";
@@ -172,17 +172,4 @@ void RFID::set_led_state()
 		Led_RFID = Wait;
 	}
 
-}
-
-string  RFID::uint8_to_hex_string(uint8_t *v, const size_t s) {
-	stringstream ss;
-
-	ss << hex << setfill('0');
-
-	for (int i = s - 1; i >= 0; i--) {
-		ss << hex << setw(2) << static_cast<int>(v[i]);
-	}
-	string data = ss.str();
-	transform(data.begin(), data.end(), data.begin(), ::toupper);
-	return data;
 }

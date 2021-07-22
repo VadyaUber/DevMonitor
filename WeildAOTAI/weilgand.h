@@ -32,7 +32,6 @@ class RFID
 		bool* Serv_RFID;
 		string RFID_id = "";
 		Rfid_Led_Status Led_RFID;
-		//Led_status_rfid Led_RFID;
 		void wiegand_loop(int d0pin, int d1pin, bool WG26);
 		void set_led_state();
 	private:
@@ -48,7 +47,6 @@ class RFID
 		static int timeout;
 		static void getData0();
 		static void getData1();
-		string  uint8_to_hex_string(uint8_t* v, const size_t s);
 		int wiegandInit(int d0pin, int d1pin);
 		uint32_t CovnerterToUint();
 		bool getParity(uint32_t n);
