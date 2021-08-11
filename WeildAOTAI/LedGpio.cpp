@@ -14,8 +14,8 @@ LedGpio::LedGpio(uint8_t LedPin1, uint8_t LedPin2, uint8_t LedPin3, uint8_t LedP
 	Time = new MyTime();
 	Time->IntevralSleep = 1000;
 
-	digitalWrite(Led1, HIGH);
-	digitalWrite(Led2, HIGH);
+	//digitalWrite(Led1, HIGH);
+	//digitalWrite(Led2, HIGH);
 }
 
 void LedGpio::LedLoop()
