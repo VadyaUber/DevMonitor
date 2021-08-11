@@ -35,28 +35,32 @@ using namespace std;
 #define NOT_DATA   1 
 #define NEW_DATA   2
 #define IDEL_DATA  3
-enum Rfid_Status
-{
-	Wait,
-	SendServer,
-	EroorRead,
-	
-
-};
+//enum Rfid_Status
+//{
+//	Wait,
+//	SendServer,
+//	EroorRead,
+//	
+//
+//};
 typedef struct{
     string ip_out;
     int port;
     string server_ip;
     string wifi_sid;
     string wifi_pass;
+	string reserve_wifi_sid;
+	string reserve_wifi_pass;
     string interface;
     string mac;
     string ver;
 	bool RFID_ON = false;
 	bool LOG_ON= false;
+	uint16_t LOG_SIZE = 10;
 	bool SENSOR_I_ON=false;
 	bool SENSOR_U_ON = false;
 	bool SENSOR_W_ON = false;
+	bool RTC_ON = false;
 	bool WG35 = false;
 	bool QR_ON = false;
 	string Type_Dev = "";
@@ -67,7 +71,7 @@ typedef struct{
 typedef struct {
 	int StatusIterfece=NOT_CONNECTED;
 	int StatusSocet = NOT_CONNECTED;
-	int StatusRfid1 = Wait;
+	//int StatusRfid1 = Wait;
 	bool StatusBloc = false;
 }WeildStatus;
 
@@ -102,9 +106,7 @@ class WeildServer
 	private:
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
-		
-		string wifi_sid_reserved = "wpmconfig";
-		string wifi_pass_reserved = "wpmconfig";
+		string mutable_data; //UartPackage+Perefir+rfid+QrCode
 
 		char  dataInput[100];
 		struct sockaddr_in servaddr;

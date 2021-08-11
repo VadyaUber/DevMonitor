@@ -3,7 +3,7 @@
 WeildServer::WeildServer(string path_config, string path_log) {
 	ReadFileConfig(path_config);
 	if (WeildConfig.LOG_ON) {
-		Log.Init(path_log);
+		Log.Init(path_log,WeildConfig.LOG_SIZE);
 	}
 	TimeEvent[0].Timer.IntevralSleep = TIMOUT_SEND;
 	TimeEvent[0].func = &WeildServer::SendServer;
@@ -114,15 +114,19 @@ void WeildServer::ReadFileConfig(string path)
 		WeildConfig.interface = "wlan0";
 		WeildConfig.wifi_sid = doc.child("config").child("wifi_ssid").attribute("value").as_string();
 		WeildConfig.wifi_pass = doc.child("config").child("wifi_pass").attribute("value").as_string();
+		WeildConfig.reserve_wifi_sid = doc.child("config").child("reserve_wifi_ssid").attribute("value").as_string();
+		WeildConfig.reserve_wifi_pass = doc.child("config").child("reserve_wifi_pass").attribute("value").as_string();
 	}
 	else {
 		WeildConfig.interface = "eth0";
 	}
 	WeildConfig.LOG_ON = doc.child("config").child("LOG_ON").attribute("value").as_bool();
+	WeildConfig.LOG_SIZE = doc.child("config").child("LOG_SIZE").attribute("value").as_uint();
 	WeildConfig.RFID_ON = doc.child("config").child("RFID_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_I_ON = doc.child("config").child("SENSOR_I_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_U_ON = doc.child("config").child("SENSOR_U_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_W_ON = doc.child("config").child("SENSOR_W_ON").attribute("value").as_bool();
+	WeildConfig.RTC_ON = doc.child("config").child("RTC_ON").attribute("value").as_bool();
 	WeildConfig.BlockMode = doc.child("config").child("BLOCK_MODE").attribute("value").as_string();
 	WeildConfig.Compare_I= doc.child("config").child("COMPARE_I").attribute("value").as_int();
 	WeildConfig.WG35 = doc.child("config").child("WG35").attribute("value").as_bool(); 
@@ -221,7 +225,7 @@ void WeildServer::ConectServer()
 		}
 		else if (count_try_connection > 10 && !lastconected)
 		{
-			ConnectInterfeceWIFI(wifi_sid_reserved, wifi_pass_reserved);
+			ConnectInterfeceWIFI(WeildConfig.reserve_wifi_sid, WeildConfig.reserve_wifi_pass);
 		}
 		else 
 		{
@@ -325,13 +329,13 @@ void WeildServer::SendServer()
 		//sads = sendto(sockfd, SendSoket.c_str(), SendSoket.size(), 0, (SA*)&servaddr, sizeof(servaddr));
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) {
 			Status.StatusSocet = NOT_CONNECTED;
-			Log.WeildLogWrite(SendSoket);
+			if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
 			shutdown(sockfd, SHUT_RDWR);
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 	}
 	else {
-		Log.WeildLogWrite(SendSoket);
+		if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
 	}
 }
 
@@ -357,7 +361,10 @@ void WeildServer::FormatString()
 	SendSoket.append(";");
 	SendSoket.append(QrCode);
 	SendSoket.append(";");
-	SendSoket.append(wifi.get_bd(WeildConfig.interface));
+	if (WeildConfig.interface == "wlan0")
+		SendSoket.append(wifi.get_bd(WeildConfig.interface));
+	else
+		SendSoket.append("FF");
 	SendSoket.append(";");
 	SendSoket.append(WeildConfig.router_ip);
 	SendSoket.append(";");
@@ -371,9 +378,9 @@ void WeildServer::FormatString()
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
 	//printf(SendSoket.c_str());
-	string tmp = rfid + "\n\r";
+	//string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
-	
+	mutable_data = UartPackage + Perefir + rfid + QrCode;
 }
 unsigned char WeildServer::Crc8(const char *pcBlock, unsigned char len)
 {
@@ -500,7 +507,7 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 		std::cerr << "Out of Range error: " << oror.what() << '\n';
 	}
 	
-	printf("fault comand\n");
+	printf("fault check server comand:___%s\n",buff);
 	return false;
 }
 vector<string> WeildServer::split(string strToSplit, char delimeter)
