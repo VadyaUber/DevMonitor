@@ -2,6 +2,7 @@
 #include"WeildParseDev.h"
 #include"WeildUBM.h"
 #include"WeildMachineDev.h"
+#include"WeildMachineSpotDev.h"
 #include "HaasMach.h"
 #include "Rtc.h"
 #include "WeildUBMLast.h"
@@ -12,6 +13,7 @@ int main()
 	WeildParseDev * ParserDev= NULL;
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;
+	WeildMachineSpotDev* MachineSpot = NULL;
 	WeildUBMLast * UbmLast = NULL;
 	HaasMach * Haas = NULL;
 	MyTime  RtsEvent;
@@ -25,6 +27,9 @@ int main()
 	}
 	else if (weild.WeildConfig.Type_Dev == "MACHIN") {
 		Machine = new WeildMachineDev(&weild);
+	}
+	else if (weild.WeildConfig.Type_Dev == "SPOT_WELD_MACHIN") {
+		MachineSpot = new WeildMachineSpotDev(&weild);
 	}
 	else if (weild.WeildConfig.Type_Dev == "UBM4_LAST") {
 		UbmLast = new WeildUBMLast(&weild);
@@ -46,9 +51,11 @@ int main()
 		else if (Machine!=NULL) {
 			Machine->WeildMachineDevLoop();
 		}
+		else if (MachineSpot != NULL) {
+			MachineSpot->WeildMachineSpotDevLoop();
+		}
 		else if (UbmLast!=NULL) {
 			UbmLast->UbmLoop();
-
 		}
 		else if(Haas!=NULL)
 		{
