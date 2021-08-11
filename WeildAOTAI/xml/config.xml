@@ -1,17 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-    <version value="1.0.0.1" />
-    <type_dev value="UBM4_LAST" />
+    <version value="1.0.1.1" />
+    <type_dev value="UBM4" />
     <wifi_ssid value="viptech" />
     <wifi_pass value="viptech666" />
+    <reserve_wifi_ssid value="wpmconfig" />
+    <reserve_wifi_pass value="wpm1config2" />
     <server_host value="95.79.112.120" />
     <server_port value="4000" />
     <connection_type value="wifi" />
     <LOG_ON value="1" />
+    <LOG_SIZE value="20" />
     <RFID_ON value="1" />
     <SENSOR_I_ON value="1" />
-    <SENSOR_U_ON value="1" />
-    <SENSOR_W_ON value="1" />
+    <SENSOR_U_ON value="0" />
+    <SENSOR_W_ON value="0" />
+    <RTC_ON value="1" />
     <BLOCK_MODE  value="REMOTE"/>
     <COMPARE_I value="40"/>
     <WG35 value="0"/>
