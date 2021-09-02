@@ -7,6 +7,9 @@
 #include "wiringPi.h"
 using namespace std;
 
+
+
+
 class DigitalOutUbmSPI
 {
 
@@ -15,8 +18,8 @@ public:
 	
 	string* Inerfece;
 	WeildStatus* Status;
-	bool RFID;
-	bool RFID_upd;
+	volatile Rfid_Led_Status* Led_RFID;
+	bool RFID_upd = false;
 
 	bool LED3 = false;
 	bool LED4 = false;
@@ -31,7 +34,6 @@ private:
 	MyTime* Time;
 	uint8_t CS;
 	uint16_t LastVal = 0;
-	//uint16_t value=0xFFFF;
 	volatile uint16_t value = 0;
 	uint8_t LED3_Pin = 0;
 	uint8_t LED4_Pin = 0;
