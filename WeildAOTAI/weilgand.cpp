@@ -109,7 +109,7 @@ void RFID::wiegand_loop(int d0pin, int d1pin, bool WG26)
 				if (tmp == Oldval && (Led_RFID == AccesTrue))
 				{
 					Oldval = 0;
-					weilgand_id = "";
+					weilgand_id = "0000"; //deauthentication
 					wg_reseted = true;
 				}
 				else
@@ -132,7 +132,7 @@ void RFID::set_led_state()
 {
 	if (wg_readed)
 	{
-		RFID_id = "";
+		RFID_id = "0000";
 		wg_readed = false;
 		wg_upd = true;
 		Led_RFID = SendServer;
@@ -167,7 +167,7 @@ void RFID::set_led_state()
 	}
 	if (wg_reseted)
 	{
-		RFID_id = "";
+		RFID_id = "0000";
 		wg_reseted = false;
 		Led_RFID = Wait;
 	}
