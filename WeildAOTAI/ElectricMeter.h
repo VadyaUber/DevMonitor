@@ -117,6 +117,15 @@
 #define PHASE_B     1
 #define PHASE_C     2
 
+#define HzLSB	0.0625
+#define VOLTAGE_ASYMMETRY_MAX     4
+#define NOMINAL_SUPPLY_VOLTAGE     220
+#define VOLTAGE_DEVIATION_PERCENT_MAX     10
+#define VOLTAGE_DEVIATION_MAX     NOMINAL_SUPPLY_VOLTAGE*VOLTAGE_DEVIATION_PERCENT_MAX/100
+#define EM_SCALE_COEFFICIENT     100
+#define NOMINAL_POWER_FREQUENCY     50
+#define FREQUENCY_DEVIATION_MAX     0.4
+
 
 typedef struct 
 {
@@ -131,6 +140,14 @@ typedef struct
 	double AVAhLSB = 0.000011422;
 	double BVAhLSB = 0.000011475;
 	double CVAhLSB = 0.000011464;
+
+	double AVLSB = 1;
+	double BVLSB = 1;
+	double CVLSB = 1;
+
+	double AILSB = 1;
+	double BILSB = 1;
+	double CILSB = 1;
 }Kf_Meter;
 
 using namespace std;
@@ -138,6 +155,7 @@ class ElectricMeter
 {
 public:
 	uint32_t status;
+	uint8_t power_quality=0;
 	double SumWatA = 0;
 	double SumWatB = 0;
 	double SumWatC = 0;
@@ -150,6 +168,7 @@ public:
 	double SumWAT = 0;
 	double SumVAR = 0;
 	double SumVA = 0;
+	double freq = 0;
 	int SumEnergyWat = 0;
 	int SumEnergyVar = 0;
 	int SumEnergyVa = 0;
@@ -168,6 +187,8 @@ private:
 	void Write16bit(uint8_t adr, uint16_t value);
 	uint32_t CicleMeter;
 	void GetConfig(string FileConfig, string NameConfig);
+	void power_quality_analyze();
+	uint32_t getVRMS(uint8_t Phase);
 	Kf_Meter KF;
 	double ValueRead;
 	double PowerVa = 0;
