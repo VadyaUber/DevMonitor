@@ -54,7 +54,7 @@ string Wifi::get_bd(string interfece) {
 }
 string Wifi::GetMyIpInterfece(string interfece)
 {
-	string ipAddress = "Unable to get IP Address";
+	string ipAddress = "";
 	struct ifaddrs *interfaces = NULL;
 	struct ifaddrs *temp_addr = NULL;
 	string name = "";
