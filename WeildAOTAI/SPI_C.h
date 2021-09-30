@@ -17,7 +17,7 @@
 #define DigOutUbm 4
 
 using namespace std;
-extern uint8_t NameSPI;
+extern volatile uint8_t NameSPI;
 int SpiWriteRead(uint8_t * buffwrite, uint8_t * buffread, uint8_t len);
 void init_SPI(string device, uint32_t speed_spi, uint8_t bits, uint8_t modes, uint8_t name);
 void DeInitSPI();

@@ -4,7 +4,7 @@ using namespace std;
 static int fd;
 static struct spi_ioc_transfer tr;
 bool IsInitSPI = false;
-uint8_t NameSPI = 0;
+volatile uint8_t NameSPI = 0;
 uint8_t get_mode(uint8_t modes);
 void pabort(const char *s);
 
