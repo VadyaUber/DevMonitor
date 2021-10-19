@@ -28,12 +28,12 @@ void WeildServer::WeildLoop() {
 	//}
 	//else {
 		//CheckComnd(":120101BDE9E4;01CD34567812AF;03;YYYYMMDDHHMMSS;11\r", 50);
-		CheckConnectInterface();
 		for (int i = 0; i < MAX_EVET; i++) {
 			if (TimeEvent[i].Timer.CheckTimeEvent()) {
 				(*this.*TimeEvent[i].func)();
 			}
 		}
+	}
 	//}
 }
 
@@ -145,21 +145,28 @@ void WeildServer::ReadFileConfig(string path)
 
 void WeildServer::CheckConnectInterface()
 {
-	if (Status.StatusSocet == NOT_CONNECTED)
+	try
 	{
-		FILE* output;
-		string out_commad = "nmcli connection | grep -c " + WeildConfig.interface;
-		if (!(output = popen(out_commad.c_str(), "r")))
+		if (Status.StatusSocet == NOT_CONNECTED)
 		{
-			printf("error check interface connection \n");
+			FILE* output;
+			string out_commad = "nmcli connection | grep -c " + WeildConfig.interface;
+			if (!(output = popen(out_commad.c_str(), "r")))
+			{
+				printf("error check interface connection \n");
+			}
+			unsigned int i;
+			fscanf(output, "%u", &i);
+			if (i <= 0)
+			{
+				Status.StatusIterfece = NOT_CONNECTED;
+			}
+			pclose(output);
 		}
-		unsigned int i;
-		fscanf(output, "%u", &i);
-		if (i <= 0)
-		{
-			Status.StatusIterfece = NOT_CONNECTED;
-		}
-		pclose(output);
+	}
+	catch (const std::exception&ex)
+	{
+		printf("Error:___%s\n", ex);
 	}
 
 		/*if (!wifi.get_connect(sockfd, WeildConfig.interface)) {
@@ -237,18 +244,26 @@ void WeildServer::ConectServer()
 			count_try_connection = 0;
 		}
 	}
-	else if (Status.StatusSocet == NOT_CONNECTED) {
+	else if (Status.StatusSocet == NOT_CONNECTED) 
+	{
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
 			Log.WeildLogClose();
 			Status.StatusSocet = CONNECTED;
 			StatusServerRecv = NOT_DATA;
-			printf("server connect successful \n");
+			printf("socket connect successful \n");
 			
 		}
 		else {
+			CheckConnectInterface();
+			printf("socket connect failed \n");
 			printf("%d error \n\r", errno);
 			Status.StatusSocet = NOT_CONNECTED;
+			usleep(150000);
 		}
+	}
+	else if((Status.StatusIterfece == CONNECTED)&&(Status.StatusSocet == CONNECTED)&&(Status.StatusServer == NOT_CONNECTED))
+	{
+
 	}
 }
 void WeildServer::RecvServer()
@@ -266,32 +281,11 @@ void WeildServer::RecvServer()
 				close(sockfd);
 				sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 			}
-			//else
-			//{
-			//	int valopt;
-			//	socklen_t lon = sizeof(int);
-			//	bool sd;
-			//	socklen_t lon1 = sizeof(bool);
-			//	bool kol = getsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, (void*)(&sd), &lon1);
-
-			//	if (getsockopt(sockfd, SOL_SOCKET, SO_ERROR, (void*)(&valopt), &lon) < 0) {
-			//		fprintf(stderr, "Error in getsockopt() %d - %s\n", errno, strerror(errno));
-			//		Status.StatusSocet = NOT_CONNECTED;
-			//		//exit(0);
-			//	}
-			//	// Check the value returned... 
-			//	if (valopt) {
-			//		fprintf(stderr, "Error in delayed connection() %d - %s\n", valopt, strerror(valopt));
-			//		Status.StatusSocet = NOT_CONNECTED;
-			//		//exit(0);
-			//	}
-			//}
-		//}
-			
-			else if (wdserverrecv>60)
+			else if (wdserverrecv>20)
 			{
 				wdserverrecv = 0;
 				Status.StatusSocet = NOT_CONNECTED;
+				Status.StatusServer = NOT_CONNECTED;
 				shutdown(sockfd, SHUT_RDWR);
 				close(sockfd);
 				sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
@@ -307,12 +301,16 @@ void WeildServer::RecvServer()
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 
-		else 
+		else //пришли данные.. парсим,проверяем.
 		{
 			if (CheckComnd(dataInput, rads)) 
 			{
 				NewDataInput = true;
 				wdserverrecv = 0;
+			}
+			if (buff_str.length() > 0)
+			{
+				CheckComnd(0, 0);
 			}
 		}
 	}
@@ -323,18 +321,28 @@ void WeildServer::RecvServer()
 
 void WeildServer::SendServer()
 {
-	if (Status.StatusSocet == CONNECTED) {
-		//int sads = 0;
-		//sads = send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL);
-		//sads = sendto(sockfd, SendSoket.c_str(), SendSoket.size(), 0, (SA*)&servaddr, sizeof(servaddr));
-		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) {
+	if (Status.StatusSocet == CONNECTED && Status.StatusServer == CONNECTED)
+	{
+		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) 
+		{
 			Status.StatusSocet = NOT_CONNECTED;
 			if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
 			shutdown(sockfd, SHUT_RDWR);
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 	}
-	else {
+	else if (Status.StatusSocet == CONNECTED && Status.StatusServer == NOT_CONNECTED)
+	{
+		if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
+		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0)
+		{
+			Status.StatusSocet = NOT_CONNECTED;
+			shutdown(sockfd, SHUT_RDWR);
+			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+		}
+	}
+	else 
+	{
 		if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
 	}
 }
@@ -364,7 +372,7 @@ void WeildServer::FormatString()
 	if (WeildConfig.interface == "wlan0")
 		SendSoket.append(wifi.get_bd(WeildConfig.interface));
 	else
-		SendSoket.append("FF");
+		SendSoket.append("98");
 	SendSoket.append(";");
 	SendSoket.append(WeildConfig.router_ip);
 	SendSoket.append(";");
@@ -377,7 +385,9 @@ void WeildServer::FormatString()
 	uint8_t crc = Crc8(SendSoket.substr(1, SendSoket.size() - 1).c_str(), SendSoket.size() - 1);
 	SendSoket.append(uint8_to_hex_string(&crc, 1));
 	SendSoket.append("\r\n");
-	//printf(SendSoket.c_str());
+	/*printf("\r\n");
+	printf(SendSoket.c_str());
+	printf("\r\n");*/
 	//string tmp = rfid + "\n\r";
     //printf(tmp.c_str());
 	mutable_data = UartPackage + Perefir + rfid + QrCode;
@@ -444,17 +454,34 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 		struct tm TimeServer;
 		uint8_t tmp=0;
 		time_t unix_time;
-		string s = convertToString(buff, len);
-		//return false;
-		if (s.find("\r") != -1 && s.find(":") != -1) {
-			s.replace(s.find("\r"), 1, "");
-			s.replace(s.find("\n"), 1, "");
-			s.replace(s.find("\r"), 1, "");
-			s.replace(s.find("\n"), 1, "");
-			s.replace(s.find(":"), 1, "");
+		uint32_t lenMsg;
+		if(len!=0)
+			buff_str += convertToString(buff, len);
+		uint16_t last_delimiter_index = buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 2; //конец пакета 
+		if (last_delimiter_index >= 0) //еcли что-то пришло
+		{
+			string s = buff_str.substr(buff_str.find(":") + 1, buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 3);
+			if ((count(s.begin(), s.end(), ';')) < 4)
+				return false;
 			ArrayVector = split(s, ';');
-
-			
+			lenMsg = last_delimiter_index + 4;
+			if (buff_str.length() > lenMsg) //Еcли разделитель не поcледний cимвол
+			{
+				buff_str = buff_str.substr(lenMsg, buff_str.length());
+			}
+			else
+			{
+				buff_str = "";
+			}
+		//}
+		//string s = convertToString(buff, len);
+		////return false;
+		//if (s.find("\r") != -1 && s.find(":") != -1 && s.find_first_of(":") == 2) {
+		//	s.replace(s.find("\r"), 1, "");
+		//	s.replace(s.find("\n"), 1, "");
+		//	s = s.substr(s.find(":")+1, s.find("\r")-1);
+		//	ArrayVector = split(s, ';');
+		//	
 
 
 				if (WeildConfig.mac == ArrayVector[0]) {
@@ -493,15 +520,23 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 						{
 							StatusServerRecv = NEW_DATA;
 						}
+						Status.StatusServer = CONNECTED; //данные с сервера пришли 
 						return true;
+					}
+					else
+					{
+						printf("Error check crc\n");
 					}
 				}
 			}
-			
+		else
+		{
+			printf("Can't find |r or : in buff\n");
+		}
 		
 	}
 	catch (int a) {
-
+		printf("Error:___%d\n", a);
 	}
 	catch (const std::out_of_range& oror) {
 		std::cerr << "Out of Range error: " << oror.what() << '\n';

@@ -69,8 +69,9 @@ typedef struct{
 	int Compare_I = 0;
 }config; 
 typedef struct {
-	int StatusIterfece=NOT_CONNECTED;
+	int StatusIterfece = NOT_CONNECTED;
 	int StatusSocet = NOT_CONNECTED;
+	int StatusServer = NOT_CONNECTED;
 	//int StatusRfid1 = Wait;
 	bool StatusBloc = false;
 }WeildStatus;
@@ -104,6 +105,7 @@ class WeildServer
 		string uint8_to_hex_string(uint8_t *v, const size_t s);
 		uint8_t StatusServerRecv = NOT_DATA;
 	private:
+		string buff_str = "";
 		string ORANGE_PROGRAM = "01";
 		string SendSoket;
 		string mutable_data; //UartPackage+Perefir+rfid+QrCode
