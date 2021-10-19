@@ -11,7 +11,13 @@ void WeildLog::Init(std::string path, uint16_t msizefile)
 	olddata = ' ';
 }
 void WeildLog::WeildLogOpen() {
-	FileWeld= open(PathFile.c_str(), O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+	if (access(PathFile.c_str(), 0)) //if a file exist
+	{
+		FileWeld = open(PathFile.c_str(), O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
+		chmod(PathFile.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
+	}
+	else
+		FileWeld = open(PathFile.c_str(), O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
 	FileIsOpen = true;
 }
 void WeildLog::WeildLogWrite(std::string WeildData, std::string FrameData)
