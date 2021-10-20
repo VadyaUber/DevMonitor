@@ -3,19 +3,17 @@
 */
 #include "WeildUBM.h"
 
+
 #define CS_SENSOR_I 11
 #define CS_SENSOR_V 10
-#define CS_METER    8
+#define CS_METER    9		// в образце используем как индикатор блокировки
 #define CICLE_METER 100
 #define WILDGANPIN0 16
 #define WILDGANPIN1 15
 
+#define CS_DOUT_PIN 3
 
-#define DS_PIN 0
-#define SH_PIN 2
-#define ST_PIN 3
-
-#define SW_POWE 5
+#define SW_POWER 8
 #define RTC_CS 1
 
 #define LED3_PIN 0x01
@@ -24,25 +22,38 @@
 #define LED2_PIN 0x08
 #define LED1_PIN 0x10
 #define WG36Pin  0x20 
+//bool wg_sendet = false;
 WeildUBM::WeildUBM(WeildServer * server)
 {
 	wiringPiSetup();
 	UbmServer = server;
-	rtc = new Rtc(RTC_CS);
-	//rtc->SetRtc();
-	rtc->GetRtc();
 	pullUpDnControl(13, PUD_DOWN);
 	pullUpDnControl(12, PUD_DOWN);
 	pullUpDnControl(14, PUD_UP);
-	//pinMode(SW_POWE, OUTPUT);
-	RtcTime = new MyTime();
-	RtcTime->IntevralSleep = 3600000;
-
-	Dout = new DigitalOutUbmSPI(ST_PIN, LED3_PIN, LED4_PIN, BEEPER_PIN, LED2_PIN, LED1_PIN, WG36Pin);
+	pinMode(SW_POWER, OUTPUT);
+	digitalWrite(SW_POWER, HIGH);
+	pinMode(CS_METER, OUTPUT);
+	digitalWrite(CS_METER, LOW);
+	wiegand = new RFID();
+	wiegand->Serv_RFID = &UbmServer->RFID_status;
+	error.err = 0;
+	Dout = new DigitalOutUbmSPI(CS_DOUT_PIN, LED3_PIN, LED4_PIN, BEEPER_PIN, LED2_PIN, LED1_PIN, WG36Pin);
 	Dout->Inerfece = &UbmServer->WeildConfig.interface;
 	Dout->Status = &UbmServer->Status;
-	Dout->RFID = &UbmServer->RFID_status;
+	Dout->Led_RFID = &wiegand->Led_RFID;
+	Dout->UsbBlink = &logtousb.USBblink;
 
+	//Dout->RFID = &UbmServer->RFID_status;
+	
+
+
+	if (UbmServer->WeildConfig.RTC_ON)
+	{
+		rtc = new Rtc(RTC_CS);
+		rtc->GetRtc();
+		RtcTime = new MyTime();
+		RtcTime->IntevralSleep = 3600000;
+	}
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
 		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml", "SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
@@ -57,52 +68,67 @@ WeildUBM::WeildUBM(WeildServer * server)
 		pinMode(CS_SENSOR_V, OUTPUT);
 		digitalWrite(CS_SENSOR_V, HIGH);
 	}
-	if (UbmServer->WeildConfig.SENSOR_W_ON) {
+	/*if (UbmServer->WeildConfig.SENSOR_W_ON) {
 		meter = new ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");
 	}
 	else {
 		pinMode(CS_METER, OUTPUT);
 		digitalWrite(CS_METER, HIGH);
-	}
+	}*/
 	
 
 	if (UbmServer->WeildConfig.RFID_ON) {
 		new thread([&]() {
-			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
+			wiegand->wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
 			});
 	}
 
 	if (UbmServer->WeildConfig.QR_ON)
 		qr = new QrDev("/dev/ttyACM0");
+	if (UbmServer->WeildConfig.USB_OUT)
+		logtousb.Init(UbmServer->WeildConfig.mac);
 
-	if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
+	//if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
 		new thread([&]() {
 
 			while (true)
 			{
 				
 				if (I_Sensor != NULL) I_Sensor->ReadValue();
+				usleep(500);
 				if (U_Sensor != NULL) U_Sensor->ReadValue();
+				usleep(500);
 				if (meter != NULL) meter->ReadValue();
-				if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv == NEW_DATA) {
-					UbmServer->StatusServerRecv = IDEL_DATA;
-
-					rtc->SetRtc();
-				}
-				if (!rtc->ReadOk and rtc->CntError< MAX_ERROR_RTC) {
-					rtc->GetRtc();
+				usleep(500);
+				if (UbmServer->WeildConfig.RTC_ON)
+				{
+					if (RtcTime->CheckTimeEvent() || UbmServer->StatusServerRecv == NEW_DATA) {
+						UbmServer->StatusServerRecv = IDEL_DATA;
+						rtc->SetRtc();
+					}
+					if (!rtc->ReadOk) {
+						if(rtc->CntError < MAX_ERROR_RTC)
+							rtc->GetRtc();
+						error.clock = !rtc->ReadOk;
+					}
+					else 
+					{
+						error.clock = !rtc->ReadOk;
+					}
 				}
 				Dout->Loop();
 				usleep(10000);
 
 			}
 			});
-	}
-
+	//}
+		
 	TimerCalculate = new MyTime();
-	TimerCalculate->IntevralSleep = 5000;
-	//if (UbmServer->WeildConfig.BlockMode == "ON")digitalWrite(SW_POWE,HIGH);
-	//if (UbmServer->WeildConfig.BlockMode == "OFF")digitalWrite(SW_POWE, HIGH);
+	TimerCalculate->IntevralSleep = 500;
+	if (UbmServer->WeildConfig.BlockMode == "ON")
+		digitalWrite(SW_POWER,HIGH);
+	if (UbmServer->WeildConfig.BlockMode == "OFF")
+		digitalWrite(SW_POWER, LOW);
 }
 
 void WeildUBM::UbmLoop()
@@ -113,8 +139,8 @@ void WeildUBM::UbmLoop()
 		UbmServer->Perefir.append("01");
 		if (I_Sensor != NULL) {
 			I_Sensor->CalculateAdc();
-			//printf(" I %d\n\r", I_Sensor->Value16Bit);
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&I_Sensor->Value16Bit,2));
+			//printf(" I %d\n\r", I_Sensor->Value16Bit);
 		}else UbmServer->Perefir.append("0000");
 		if (U_Sensor != NULL) {
 			U_Sensor->CalculateAdc();
@@ -122,39 +148,53 @@ void WeildUBM::UbmLoop()
 			//printf(" V %d\n\r", U_Sensor->Value16Bit);
 		}
 		else UbmServer->Perefir.append("0000");
-		UbmServer->Perefir.append("0000");//дискретные выходы
 		
 		if (meter != NULL) {
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)meter->status, 3));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)meter->SumPowerVa, 4));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)meter->SumEnergyWat, 4));
-			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)meter->SumEnergyVar, 4));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->power_quality, 1));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumPowerVa, 4));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyVa, 4));
 		}
 		else {
-			UbmServer->Perefir.append("000000");
-			UbmServer->Perefir.append("00000000");
+			UbmServer->Perefir.append("0000");
 			UbmServer->Perefir.append("00000000");
 			UbmServer->Perefir.append("00000000");
 		}
+		UbmServer->Perefir.append(UbmServer->uint8_to_hex_string(&error.err, 1));
 
 		if (UbmServer->WeildConfig.QR_ON)
 			qr->GetQrData(&UbmServer->QrCode);
 
 		if (UbmServer->WeildConfig.RFID_ON)
 		{
-			UbmServer->rfid = weilgand_id;
+			wiegand->set_led_state();
+			UbmServer->rfid = wiegand->RFID_id;
+		}
+		
+		if (UbmServer->WeildConfig.USB_OUT)
+		{
+			logtousb.USBconnect();
+			if (logtousb.USBblink)
+			{
+				USBBlinkCount++;
+				if (USBBlinkCount > 40)
+				{
+					logtousb.USBblink = false;
+					USBBlinkCount = 0;
+				}
+			}
 		}
 	}
 	
-	/*if (UbmServer->WeildConfig.BlockMode == "REMOTE") { //clarify and change
+	if (UbmServer->WeildConfig.BlockMode == "REMOTE") { //clarify and change
 		if (I_Sensor != NULL) {
 			if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
 
-				digitalWrite(SW_POWE, UbmServer->PowerOn);
+				digitalWrite(SW_POWER, UbmServer->PowerOn);
+				digitalWrite(CS_METER, !UbmServer->PowerOn);
 			}
 		}
 	
-	}*/
+	}
 	
 	
 }

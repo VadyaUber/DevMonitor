@@ -15,19 +15,19 @@ class DigitalOutUbmSPI
 
 public:
 	DigitalOutUbmSPI(uint8_t cs_dev, uint8_t LED3_Pin, uint8_t LED4_Pin, uint8_t Beeper_Pin, uint8_t LED2_Pin, uint8_t LED1_Pin, uint8_t WG_36_Pin);
-	
+	void Loop();
 	string* Inerfece;
 	WeildStatus* Status;
 	volatile Rfid_Led_Status* Led_RFID;
 	bool RFID_upd = false;
-
 	bool LED3 = false;
 	bool LED4 = false;
 	bool Beeper = false;
 	bool LED2 = false;
 	bool LED1 = false;
 	bool WG_36 = false;
-	void Loop();
+	bool* UsbBlink;
+	
 	
 private:
 	uint64_t LastTime;

@@ -20,17 +20,25 @@ DigitalOutUbmSPI::DigitalOutUbmSPI(uint8_t cs_dev, uint8_t LED3_Pin, uint8_t LED
 void DigitalOutUbmSPI::Loop()
 {
 		if (*Inerfece == "eth0") {
-			if (Status->StatusIterfece == NOT_CONNECTED)blinc(LED4_Pin, 1, 200, 800);
-			else if (Status->StatusSocet == NOT_CONNECTED)blinc(LED4_Pin, 1, 500,500);
-			else this->value |= this->LED4_Pin << 8;
+			if(UsbBlink)blinc(LED4_Pin, 1, 200, 200);
+			else
+			{
+				if (Status->StatusIterfece == NOT_CONNECTED)blinc(LED4_Pin, 1, 200, 800);
+				else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED))blinc(LED4_Pin, 1, 500, 500);
+				else this->value |= this->LED4_Pin << 8;
+			}
 
 		}
 		else {
-			if (Status->StatusIterfece == NOT_CONNECTED) blinc(LED3_Pin, 1, 200, 800);
-			else if (Status->StatusSocet == NOT_CONNECTED) blinc(LED3_Pin, 1, 500, 500);
-			else this->value |= this->LED3_Pin << 8;
+			if (*UsbBlink)blinc(LED3_Pin, 1, 100, 100);
+			else
+			{
+				if (Status->StatusIterfece == NOT_CONNECTED) blinc(LED3_Pin, 1, 200, 800);
+				else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED)) blinc(LED3_Pin, 1, 500, 500);
+				else this->value |= this->LED3_Pin << 8;
+			}
 		}
-		if ((Status->StatusIterfece == CONNECTED) || (Status->StatusSocet == CONNECTED))
+		if ((Status->StatusIterfece == CONNECTED) && (Status->StatusSocet == CONNECTED) && (Status->StatusServer == CONNECTED))
 		{
 			if (*Led_RFID == AccesTrue)
 			{

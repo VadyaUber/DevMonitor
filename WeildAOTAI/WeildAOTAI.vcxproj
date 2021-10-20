@@ -77,6 +77,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
     <LocalRemoteCopySources>true</LocalRemoteCopySources>
+    <IncludePath>
+    </IncludePath>
+    <LibraryPath>/lib/</LibraryPath>
+    <MultiProcNumber>4</MultiProcNumber>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <RemoteCCompileToolExe>gcc</RemoteCCompileToolExe>
@@ -92,12 +96,12 @@
   <ItemGroup>
     <ClCompile Include="DigitaInput.cpp" />
     <ClCompile Include="DigitalInput8bit.cpp" />
-    <ClCompile Include="DigitalOutUbm.cpp" />
     <ClCompile Include="DigitalOutUbmLast.cpp" />
     <ClCompile Include="DigitalOutUbmSPI.cpp" />
     <ClCompile Include="ElectricMeter.cpp" />
     <ClCompile Include="HaasMach.cpp" />
     <ClCompile Include="LedGpio.cpp" />
+    <ClCompile Include="LogToUSB.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyTime.cpp" />
     <ClCompile Include="ParserPort.cpp" />
@@ -110,6 +114,7 @@
     <ClCompile Include="UBMLed.cpp" />
     <ClCompile Include="WeildLog.cpp" />
     <ClCompile Include="WeildMachineDev.cpp" />
+    <ClCompile Include="WeildMachineSpotDev.cpp" />
     <ClCompile Include="WeildParseDev.cpp" />
     <ClCompile Include="WeildServer.cpp" />
     <ClCompile Include="WeildADC.cpp" />
@@ -122,12 +127,12 @@
   <ItemGroup>
     <ClInclude Include="DigitaInput.h" />
     <ClInclude Include="DigitalInput8bit.h" />
-    <ClInclude Include="DigitalOutUbm.h" />
     <ClInclude Include="DigitalOutUbmLast.h" />
     <ClInclude Include="DigitalOutUbmSPI.h" />
     <ClInclude Include="ElectricMeter.h" />
     <ClInclude Include="HaasMach.h" />
     <ClInclude Include="LedGpio.h" />
+    <ClInclude Include="LogToUSB.h" />
     <ClInclude Include="MyTime.h" />
     <ClInclude Include="ParserPort.h" />
     <ClInclude Include="PortDevMachine.h" />
@@ -140,6 +145,7 @@
     <ClInclude Include="UBMLed.h" />
     <ClInclude Include="WeildLog.h" />
     <ClInclude Include="WeildMachineDev.h" />
+    <ClInclude Include="WeildMachineSpotDev.h" />
     <ClInclude Include="WeildParseDev.h" />
     <ClInclude Include="WeildServer.h" />
     <ClInclude Include="WeildADC.h" />
@@ -159,7 +165,14 @@
     <Link>
       <LibraryDependencies>wiringPi;mnl;pthread;</LibraryDependencies>
       <ShowProgress>true</ShowProgress>
+      <UnresolvedSymbolReferences>true</UnresolvedSymbolReferences>
     </Link>
+    <ClCompile>
+      <ThreadSafeStatics>No</ThreadSafeStatics>
+      <PreprocessorDefinitions>
+      </PreprocessorDefinitions>
+      <Verbose>true</Verbose>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <Link>
@@ -168,8 +181,11 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
     <Link>
-      <LibraryDependencies>wiringPi;pthread;mnl;serial</LibraryDependencies>
+      <LibraryDependencies>wiringPi;pthread;mnl</LibraryDependencies>
     </Link>
+    <ClCompile>
+      <DebugInformationFormat>None</DebugInformationFormat>
+    </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
     <Link>

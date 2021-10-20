@@ -4,6 +4,7 @@
 #include <string>
 #include <unistd.h>  
 #include <sys/stat.h>
+using namespace std;
 class WeildLog
 {
 public:
@@ -12,11 +13,11 @@ public:
 	void WeildLogOpen();
 	void WeildLogWrite(std::string WeildData, std::string FrameData);
 	void WeildLogClose();
+	bool FileIsOpen;
 
 private:
 	std::string PathFile;
 	int FileWeld;
-	bool FileIsOpen;
 	std::string olddata;
 	uint16_t maxsize;
 };

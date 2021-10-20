@@ -73,10 +73,13 @@
     </ClCompile>
     <ClCompile Include="HaasMach.cpp" />
     <ClCompile Include="PortDevMachine.cpp" />
-    <ClCompile Include="DigitalOutUbm.cpp">
+    <ClCompile Include="DigitalOutUbmSPI.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="DigitalOutUbmSPI.cpp">
+    <ClCompile Include="WeildMachineSpotDev.cpp">
+      <Filter>WeildDev</Filter>
+    </ClCompile>
+    <ClCompile Include="LogToUSB.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,10 +158,13 @@
     </ClInclude>
     <ClInclude Include="HaasMach.h" />
     <ClInclude Include="PortDevMachine.h" />
-    <ClInclude Include="DigitalOutUbm.h">
+    <ClInclude Include="DigitalOutUbmSPI.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="DigitalOutUbmSPI.h">
+    <ClInclude Include="WeildMachineSpotDev.h">
+      <Filter>WeildDev</Filter>
+    </ClInclude>
+    <ClInclude Include="LogToUSB.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
   </ItemGroup>
