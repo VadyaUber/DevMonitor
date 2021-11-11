@@ -1,7 +1,7 @@
 #pragma once
-#include"WeildServer.h"
+#include"DevServer.h"
 #include"wiringPi.h"
-#include"weilgand.h"
+#include"wiegand.h"
 #include <thread>
 #include "LedGpio.h"
 #include "MyTime.h"
@@ -12,11 +12,11 @@
 class WeildMachineDev
 {
 public:
-	WeildMachineDev(WeildServer * serv_inp);
+	WeildMachineDev(DevServer * serv_inp);
 	void WeildMachineDevLoop();
 private:
 	LedGpio * led;
-	WeildServer * ServerDev;
+	DevServer * ServerDev;
 	MyTime * TimerCalculate;
 	Rtc* rtc;
 	MyTime * RtcTime;

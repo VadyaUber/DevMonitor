@@ -1,16 +1,16 @@
-#include "WeildLog.h"
+#include "DevLog.h"
 
 
 struct stat stFile;
 int size;
-void WeildLog::Init(std::string path, uint16_t msizefile)
+void DevLog::Init(std::string path, uint16_t msizefile)
 {
 	PathFile = path;	
 	FileIsOpen = false;
 	maxsize = msizefile;
 	olddata = ' ';
 }
-void WeildLog::WeildLogOpen() {
+void DevLog::DevLogOpen() {
 	if (access(PathFile.c_str(), 0)) //if a file exist
 	{
 		FileWeld = open(PathFile.c_str(), O_CREAT | O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
@@ -20,13 +20,13 @@ void WeildLog::WeildLogOpen() {
 		FileWeld = open(PathFile.c_str(), O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
 	FileIsOpen = true;
 }
-void WeildLog::WeildLogWrite(std::string WeildData, std::string FrameData)
+void DevLog::DevLogWrite(std::string WeildData, std::string FrameData)
 {
 	if (olddata != FrameData)
 	{
 		olddata = FrameData;
 		if (!FileIsOpen) {
-			WeildLogOpen();
+			DevLogOpen();
 		}
 
 		stat(PathFile.c_str(), &stFile);
@@ -39,13 +39,13 @@ void WeildLog::WeildLogWrite(std::string WeildData, std::string FrameData)
 	}
 }
 
-void WeildLog::WeildLogClose()
+void DevLog::DevLogClose()
 {
 	FileIsOpen = false;
 	close(FileWeld);
 }
 
-WeildLog::~WeildLog()
+DevLog::~DevLog()
 {
 
 

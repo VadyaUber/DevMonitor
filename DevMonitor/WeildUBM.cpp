@@ -23,7 +23,7 @@
 #define LED1_PIN 0x10
 #define WG36Pin  0x20 
 //bool wg_sendet = false;
-WeildUBM::WeildUBM(WeildServer * server)
+WeildUBM::WeildUBM(DevServer * server)
 {
 	wiringPiSetup();
 	UbmServer = server;
@@ -55,14 +55,14 @@ WeildUBM::WeildUBM(WeildServer * server)
 		RtcTime->IntevralSleep = 3600000;
 	}
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
-		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml", "SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
+		I_Sensor = new DevADC(CS_SENSOR_I, true, "/weildpath/modules.xml", "SENSOR_I"/* { 1.586679 ,651.22388 ,1 }*/);
 	}
 	else {
 		pinMode(CS_SENSOR_I, OUTPUT);
 		digitalWrite(CS_SENSOR_I, HIGH);
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
-		U_Sensor = new WeildADC(CS_SENSOR_V, true, "/weildpath/modules.xml", "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
+		U_Sensor = new DevADC(CS_SENSOR_V, true, "/weildpath/modules.xml", "SENSOR_U"/*{ 1.5828 ,60.882 ,10 }*/);
 	}
 	else {
 		pinMode(CS_SENSOR_V, OUTPUT);

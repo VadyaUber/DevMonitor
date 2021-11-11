@@ -1,12 +1,12 @@
 #pragma once
-#include"WeildServer.h"
+#include"DevServer.h"
 #include "SPI_C.h"
 #include"Rtc.h"
 #include "MyTime.h"
 #include "PortDevMachine.h"
 #include "MyTime.h"
 #include <string>
-#include"weilgand.h"
+#include"wiegand.h"
 #include <thread>
 #include "LedGpio.h"
 #include"QrDev.h"
@@ -30,12 +30,12 @@ typedef struct
 class HaasMach
 {
 public:
-	HaasMach(WeildServer *server);
+	HaasMach(DevServer *server);
 	void HaasLoop();
 private:
 	string FormatString="";
 	DataComandHaas HaasData;
-	WeildServer * Server;
+	DevServer * Server;
 	PortDevMachine * HaasPort;
 	int NumberComand1 = 0, NumberComand2 = 0;
 	bool FastWrite = false;

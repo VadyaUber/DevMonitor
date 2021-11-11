@@ -3,7 +3,7 @@
 
 #define INPUTPIN 6
 
-WeildMachineSpotDev::WeildMachineSpotDev(WeildServer* serv_inp)
+WeildMachineSpotDev::WeildMachineSpotDev(DevServer* serv_inp)
 {
 	wiringPiSetup();
 	pinMode(INPUTPIN, INPUT);

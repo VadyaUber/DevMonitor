@@ -1,7 +1,7 @@
 #pragma once
-#include "WeildLog.h"
+#include "DevLog.h"
 
-class WeildLogUSB
+class DevLogUSB
 {
 public:
 	void Init(string devicemac);

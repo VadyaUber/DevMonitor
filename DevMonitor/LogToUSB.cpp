@@ -1,6 +1,6 @@
 #include "LogToUSB.h"
 
-void WeildLogUSB::Init(string devicemac)
+void DevLogUSB::Init(string devicemac)
 {
 	USBBlinkCount = 0;
 	mac = devicemac;
@@ -9,7 +9,7 @@ void WeildLogUSB::Init(string devicemac)
 	USBConfigRead = false;
 }
 
-string WeildLogUSB::PipCmd(string command)
+string DevLogUSB::PipCmd(string command)
 {
 	string buf_out = "";
 	char buffer[10];
@@ -22,7 +22,7 @@ string WeildLogUSB::PipCmd(string command)
 	return buf_out.substr(0, buf_out.length() - 1);
 }
 
-bool WeildLogUSB::USBmount(string device)
+bool DevLogUSB::USBmount(string device)
 {
 	string devcommand = "mount ";
 	devcommand.append(device);
@@ -31,17 +31,17 @@ bool WeildLogUSB::USBmount(string device)
 	buf_out = PipCmd(devcommand);
 }
 
-bool WeildLogUSB::USBumount()
+bool DevLogUSB::USBumount()
 {
 	string devcommand = "umount /usb1";
 	PipCmd(devcommand);
 	USBstate = true;
-	WeildLog log;
+	DevLog log;
 	log.FileIsOpen = false;
 
 }
 
-bool WeildLogUSB::USBconnect()
+bool DevLogUSB::USBconnect()
 {
 	string dev = "";
 	dev = PipCmd("sudo fdisk -l | grep FAT32 | awk '{print $1}'");

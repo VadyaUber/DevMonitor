@@ -5,14 +5,14 @@
 #include <unistd.h>  
 #include <sys/stat.h>
 using namespace std;
-class WeildLog
+class DevLog
 {
 public:
 	void Init(std::string path, uint16_t msizefile);
-	~WeildLog();
-	void WeildLogOpen();
-	void WeildLogWrite(std::string WeildData, std::string FrameData);
-	void WeildLogClose();
+	~DevLog();
+	void DevLogOpen();
+	void DevLogWrite(std::string WeildData, std::string FrameData);
+	void DevLogClose();
 	bool FileIsOpen;
 
 private:

@@ -14,7 +14,7 @@
 #include <sstream>
 */
 
-#include "weilgand.h"
+#include "wiegand.h"
 #include <unistd.h>
 #include <sstream>
 #include <iostream>
@@ -109,13 +109,13 @@ void RFID::wiegand_loop(int d0pin, int d1pin, bool WG26)
 				if (tmp == Oldval && (Led_RFID == AccesTrue))
 				{
 					Oldval = 0;
-					weilgand_id = "0000"; //deauthentication
+					wiegand_id = "0000"; //deauthentication
 					wg_reseted = true;
 				}
 				else
 				{
 					Oldval = tmp;
-					weilgand_id = to_string(tmp);
+					wiegand_id = to_string(tmp);
 					wg_readed = true;
 				}
 				BitVal = "";
@@ -139,7 +139,7 @@ void RFID::set_led_state()
 	}
 	if (wg_upd && !(*Serv_RFID))
 	{
-		RFID_id = weilgand_id;
+		RFID_id = wiegand_id;
 		wg_sendet = true;
 		TimerRFID = new MyTime();
 		TimerRFID->IntevralSleep = 4000;

@@ -35,7 +35,7 @@ class RFID
 		void wiegand_loop(int d0pin, int d1pin, bool WG26);
 		void set_led_state();
 	private:
-		string weilgand_id = "";
+		string wiegand_id = "";
 		MyTime* TimerRFID;
 		bool wg_sendet = false;
 		bool wg_upd = false;

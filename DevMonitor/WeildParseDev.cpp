@@ -7,7 +7,7 @@
 #define LED3 10
 #define LED4 11
 #define RTC_CS 1
-WeildParseDev::WeildParseDev(WeildServer * server)
+WeildParseDev::WeildParseDev(DevServer * server)
 {
 	wiringPiSetup();
 	rtc = new Rtc(RTC_CS);

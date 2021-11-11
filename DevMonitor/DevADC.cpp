@@ -1,5 +1,5 @@
-#include "WeildADC.h"
-WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameConfig)
+#include "DevADC.h"
+DevADC::DevADC(uint8_t cs_pin, bool filter, string FileConfig, string NameConfig)
 {
 	if (wiringPiSetup() == -1) {
 		printf("Unable to start wiringPi: \n");
@@ -23,7 +23,7 @@ WeildADC::WeildADC(uint8_t cs_pin, bool filter, string FileConfig, string NameCo
 
 
 
-void WeildADC::ReadValue()
+void DevADC::ReadValue()
 {
 	if (MeasureEnable) {
 		if (NameSPI != dev) {
@@ -57,7 +57,7 @@ void WeildADC::ReadValue()
 	}
 }
 
-void WeildADC::CalculateAdc()
+void DevADC::CalculateAdc()
 {
 	while (PriznReadAdc);
 	MeasureEnable = false;
@@ -98,7 +98,7 @@ void WeildADC::CalculateAdc()
 	MeasureEnable = true;
 }
 
-void WeildADC::GetConfig(string FileConfig, string NameConfig)
+void DevADC::GetConfig(string FileConfig, string NameConfig)
 {
 	pugi::xml_document doc;
 	pugi::xml_parse_result result = doc.load_file(FileConfig.c_str());
@@ -110,7 +110,7 @@ void WeildADC::GetConfig(string FileConfig, string NameConfig)
 	mat.divisor = doc.child("config").child(NameConfig.c_str()).child("divisor").attribute("value").as_double();
 }
 
-uint32_t WeildADC::FiltringADC(uint32_t* aray, int size) {
+uint32_t DevADC::FiltringADC(uint32_t* aray, int size) {
 	uint64_t MathWait = 0;
 	uint32_t TekValue = 0;
 	int n = 0;

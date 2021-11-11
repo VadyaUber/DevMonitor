@@ -1,4 +1,4 @@
-#include"WeildServer.h"
+#include"DevServer.h"
 #include"WeildParseDev.h"
 #include"WeildUBM.h"
 #include"WeildMachineDev.h"
@@ -9,7 +9,7 @@
 using namespace std;
 int main()
 {
-	WeildServer weild("/weildpath/config_ubm4.xml", "/weildpath/history.txt"); 
+	DevServer weild("/weildpath/config_ubm4.xml", "/weildpath/history.txt"); 
 	WeildParseDev * ParserDev= NULL;
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;

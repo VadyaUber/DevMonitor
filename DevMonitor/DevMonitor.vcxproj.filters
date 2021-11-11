@@ -20,16 +20,16 @@
     <ClCompile Include="UBMLed.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="WeildADC.cpp">
+    <ClCompile Include="DevADC.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="WeildLog.cpp">
+    <ClCompile Include="DevLog.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="WeildServer.cpp">
+    <ClCompile Include="DevServer.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
-    <ClCompile Include="weilgand.cpp">
+    <ClCompile Include="wiegand.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
     <ClCompile Include="Wifi.cpp">
@@ -108,16 +108,16 @@
     <ClInclude Include="UBMLed.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="WeildADC.h">
+    <ClInclude Include="DevADC.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="WeildLog.h">
+    <ClInclude Include="DevLog.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="WeildServer.h">
+    <ClInclude Include="DevServer.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="weilgand.h">
+    <ClInclude Include="wiegand.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
     <ClInclude Include="Wifi.h">

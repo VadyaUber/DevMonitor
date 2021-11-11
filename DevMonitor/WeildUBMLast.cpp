@@ -22,7 +22,7 @@
 #define LED1_PIN    0x20
 #define LED2_PIN    0x40
 #define WG35Pin		0x80 
-WeildUBMLast::WeildUBMLast(WeildServer * server)
+WeildUBMLast::WeildUBMLast(DevServer * server)
 {
 	UbmServer = server;
 	rtc = new Rtc(RTC_CS);
@@ -33,10 +33,10 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 	RtcTime->IntevralSleep = 3600000;
 	Dout = new DigitalOutUbmLast(DS_PIN, SH_PIN, ST_PIN, POWER_PIN, BEEEPER_PIN, RST_CLK_PIN, WG35Pin);
 	if (UbmServer->WeildConfig.SENSOR_I_ON) {
-		I_Sensor = new WeildADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I");
+		I_Sensor = new DevADC(CS_SENSOR_I, true, "/weildpath/modules.xml","SENSOR_I");
 	}
 	if (UbmServer->WeildConfig.SENSOR_U_ON) {
-		U_Sensor = new WeildADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U");
+		U_Sensor = new DevADC(CS_SENSOR_V, true,"/weildpath/modules.xml" , "SENSOR_U");
 	}
 	if (UbmServer->WeildConfig.SENSOR_W_ON) {
 		meter = new ElectricMeter(CS_METER, CICLE_METER, "/weildpath/modules.xml", "ELECTRIC_METER");

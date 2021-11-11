@@ -1,28 +1,28 @@
-#include "WeildServer.h"
+#include "DevServer.h"
 #include <errno.h>
-WeildServer::WeildServer(string path_config, string path_log) {
+DevServer::DevServer(string path_config, string path_log) {
 	ReadFileConfig(path_config);
 	if (WeildConfig.LOG_ON) {
 		Log.Init(path_log,WeildConfig.LOG_SIZE);
 	}
 	TimeEvent[0].Timer.IntevralSleep = TIMOUT_SEND;
-	TimeEvent[0].func = &WeildServer::SendServer;
+	TimeEvent[0].func = &DevServer::SendServer;
 	TimeEvent[1].Timer.IntevralSleep = TIMOUT_READ;
-	TimeEvent[1].func = &WeildServer::RecvServer;
+	TimeEvent[1].func = &DevServer::RecvServer;
 	TimeEvent[2].Timer.IntevralSleep = TIMOUT_CONN;
-	TimeEvent[2].func = &WeildServer::ConectServer;
+	TimeEvent[2].func = &DevServer::ConectServer;
 	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
-	TimeEvent[3].func = &WeildServer::FormatString;
+	TimeEvent[3].func = &DevServer::FormatString;
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 	ServTime = new MyTime();
 	ServTime->IntevralSleep = 60000;
 }
 
-WeildServer::~WeildServer()
+DevServer::~DevServer()
 {
 }
 
-void WeildServer::WeildLoop() {
+void DevServer::WeildLoop() {
 	//if (Status.StatusIterfece == NOT_CONNECTED) {
 	//	ConnectInterfece();
 	//}
@@ -36,7 +36,7 @@ void WeildServer::WeildLoop() {
 	//}
 }
 
-void WeildServer::ConnectInterfeceWIFI(string ssid, string pass)
+void DevServer::ConnectInterfeceWIFI(string ssid, string pass)
 {
 	try {
 		if (wifi.create_conect(ssid, pass)) {
@@ -55,7 +55,7 @@ void WeildServer::ConnectInterfeceWIFI(string ssid, string pass)
 	}
 }
 
-void WeildServer::ConnectInterfeceLAN()
+void DevServer::ConnectInterfeceLAN()
 {
 	try {
 		//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
@@ -79,7 +79,7 @@ void WeildServer::ConnectInterfeceLAN()
 	//}
 }
 
-void WeildServer::ConnectInterfece(string ssid, string pass) {
+void DevServer::ConnectInterfece(string ssid, string pass) {
 		
 		if (WeildConfig.interface == "wlan0") {
 			ConnectInterfeceWIFI(ssid, pass);
@@ -89,7 +89,7 @@ void WeildServer::ConnectInterfece(string ssid, string pass) {
 			ConnectInterfeceLAN();
 		}
 }
-void WeildServer::ReadFileConfig(string path)
+void DevServer::ReadFileConfig(string path)
 {
 	fstream FileMac;
 	string line;
@@ -144,7 +144,7 @@ void WeildServer::ReadFileConfig(string path)
 	WeildConfig.mac = line;
 }
 
-void WeildServer::CheckConnectInterface()
+void DevServer::CheckConnectInterface()
 {
 	try
 	{
@@ -179,7 +179,7 @@ void WeildServer::CheckConnectInterface()
 			}
 		}*/
 }
-int WeildServer::init_soket(string ip, int port) {
+int DevServer::init_soket(string ip, int port) {
 	//struct cli_addr;
 	//int clilen, rfd;
 	int sockfd = 0;
@@ -218,7 +218,7 @@ int WeildServer::init_soket(string ip, int port) {
 }
 
 
-void WeildServer::ConectServer()
+void DevServer::ConectServer()
 {
 	if (Status.StatusIterfece == NOT_CONNECTED) {
 		
@@ -248,7 +248,7 @@ void WeildServer::ConectServer()
 	else if (Status.StatusSocet == NOT_CONNECTED) 
 	{
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
-			Log.WeildLogClose();
+			Log.DevLogClose();
 			Status.StatusSocet = CONNECTED;
 			StatusServerRecv = NOT_DATA;
 			printf("socket connect successful \n");
@@ -267,7 +267,7 @@ void WeildServer::ConectServer()
 
 	}
 }
-void WeildServer::RecvServer()
+void DevServer::RecvServer()
 {
 	if (Status.StatusSocet == CONNECTED)
 	{
@@ -316,25 +316,25 @@ void WeildServer::RecvServer()
 		}
 	}
 	//else {
-	//	Log.WeildLogWrite(SendSoket);
+	//	Log.DevLogWrite(SendSoket);
 	//}
 }
 
-void WeildServer::SendServer()
+void DevServer::SendServer()
 {
 	if (Status.StatusSocet == CONNECTED && Status.StatusServer == CONNECTED)
 	{
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) 
 		{
 			Status.StatusSocet = NOT_CONNECTED;
-			if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
+			if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
 			shutdown(sockfd, SHUT_RDWR);
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 	}
 	else if (Status.StatusSocet == CONNECTED && Status.StatusServer == NOT_CONNECTED)
 	{
-		if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
+		if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0)
 		{
 			Status.StatusSocet = NOT_CONNECTED;
@@ -344,11 +344,11 @@ void WeildServer::SendServer()
 	}
 	else 
 	{
-		if (WeildConfig.LOG_ON)Log.WeildLogWrite(SendSoket, mutable_data);
+		if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
 	}
 }
 
-string WeildServer::currentDateTime() {
+string DevServer::currentDateTime() {
 	time_t     now = time(0);
 	struct tm  tstruct;
 	char       buf[80];
@@ -357,7 +357,7 @@ string WeildServer::currentDateTime() {
 	string bufstring(buf);
 	return bufstring;
 }
-void WeildServer::FormatString()
+void DevServer::FormatString()
 {
 	SendSoket = ":";
 	SendSoket.append(WeildConfig.mac);
@@ -393,7 +393,7 @@ void WeildServer::FormatString()
     //printf(tmp.c_str());
 	mutable_data = UartPackage + Perefir + rfid + QrCode;
 }
-unsigned char WeildServer::Crc8(const char *pcBlock, unsigned char len)
+unsigned char DevServer::Crc8(const char *pcBlock, unsigned char len)
 {
 	unsigned char crc = 0x00;
 	int b = 0x00;
@@ -438,7 +438,7 @@ unsigned char WeildServer::Crc8(const char *pcBlock, unsigned char len)
 	}
 	return crc;
 }
-string  WeildServer::uint8_to_hex_string(uint8_t *v, const size_t s) {
+string  DevServer::uint8_to_hex_string(uint8_t *v, const size_t s) {
 	stringstream ss;
 
 	ss << hex << setfill('0');
@@ -450,7 +450,7 @@ string  WeildServer::uint8_to_hex_string(uint8_t *v, const size_t s) {
 	transform(data.begin(), data.end(), data.begin(), ::toupper);
 	return data;
 }
-bool  WeildServer::CheckComnd(char * buff, int len ) {
+bool  DevServer::CheckComnd(char * buff, int len ) {
 	try {
 		struct tm TimeServer;
 		uint8_t tmp=0;
@@ -558,7 +558,7 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 	printf("fault check server comand:___%s\n",buff);
 	return false;
 }
-vector<string> WeildServer::split(string strToSplit, char delimeter)
+vector<string> DevServer::split(string strToSplit, char delimeter)
 {
 	vector<string> splittedStrings;
 	string w = "";
@@ -574,7 +574,7 @@ vector<string> WeildServer::split(string strToSplit, char delimeter)
 	splittedStrings.push_back(w);
 	return splittedStrings;
 }
-string WeildServer::convertToString(char* a, int size)
+string DevServer::convertToString(char* a, int size)
 {
 	int i;
 	string s = "";

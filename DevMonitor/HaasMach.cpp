@@ -9,7 +9,7 @@
 #define LED3 10
 #define LED4 11
 #define CS_PIN 4
-HaasMach::HaasMach(WeildServer * server)
+HaasMach::HaasMach(DevServer * server)
 {
 
 	////file.open("/weildpath/programm/write/5141.NC");

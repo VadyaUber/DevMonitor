@@ -1,6 +1,6 @@
 #pragma once
 #pragma once
-#include"WeildServer.h"
+#include"DevServer.h"
 #include"wiringPi.h"
 #include <thread>
 #include "LedGpio.h"
@@ -8,11 +8,11 @@
 class WeildMachineSpotDev
 {
 public:
-	WeildMachineSpotDev(WeildServer* serv_inp);
+	WeildMachineSpotDev(DevServer* serv_inp);
 	void WeildMachineSpotDevLoop();
 private:
 	LedGpio* led;
-	WeildServer* ServerDev;
+	DevServer* ServerDev;
 	MyTime* TimerCalculate;
 	uint16_t DigitData = 0;
 	uint16_t OldDigitData = 0;

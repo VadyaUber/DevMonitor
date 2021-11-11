@@ -114,15 +114,15 @@
     <ClCompile Include="ShiftRegister.cpp" />
     <ClCompile Include="SPI_C.cpp" />
     <ClCompile Include="UBMLed.cpp" />
-    <ClCompile Include="WeildLog.cpp" />
+    <ClCompile Include="DevLog.cpp" />
     <ClCompile Include="WeildMachineDev.cpp" />
     <ClCompile Include="WeildMachineSpotDev.cpp" />
     <ClCompile Include="WeildParseDev.cpp" />
-    <ClCompile Include="WeildServer.cpp" />
-    <ClCompile Include="WeildADC.cpp" />
+    <ClCompile Include="DevServer.cpp" />
+    <ClCompile Include="DevADC.cpp" />
     <ClCompile Include="WeildUBM.cpp" />
     <ClCompile Include="WeildUBMLast.cpp" />
-    <ClCompile Include="weilgand.cpp" />
+    <ClCompile Include="wiegand.cpp" />
     <ClCompile Include="Wifi.cpp" />
     <ClCompile Include="wifi_scan.c" />
   </ItemGroup>
@@ -146,15 +146,15 @@
     <ClInclude Include="ShiftRegister.h" />
     <ClInclude Include="SPI_C.h" />
     <ClInclude Include="UBMLed.h" />
-    <ClInclude Include="WeildLog.h" />
+    <ClInclude Include="DevLog.h" />
     <ClInclude Include="WeildMachineDev.h" />
     <ClInclude Include="WeildMachineSpotDev.h" />
     <ClInclude Include="WeildParseDev.h" />
-    <ClInclude Include="WeildServer.h" />
-    <ClInclude Include="WeildADC.h" />
+    <ClInclude Include="DevServer.h" />
+    <ClInclude Include="DevADC.h" />
     <ClInclude Include="WeildUBM.h" />
     <ClInclude Include="WeildUBMLast.h" />
-    <ClInclude Include="weilgand.h" />
+    <ClInclude Include="wiegand.h" />
     <ClInclude Include="Wifi.h" />
     <ClInclude Include="wifi_scan.h" />
   </ItemGroup>

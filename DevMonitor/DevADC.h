@@ -15,10 +15,10 @@ typedef struct {
 	double divisor;
 	double multiplier;
 }MatParam;
-class WeildADC
+class DevADC
 {
 public:
-	WeildADC(uint8_t cs_pin,bool filter, string FileConfig,string NameConfig);
+	DevADC(uint8_t cs_pin,bool filter, string FileConfig,string NameConfig);
 	double Value;
 	uint16_t Value16Bit;
 	void ReadValue();

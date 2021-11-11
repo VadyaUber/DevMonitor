@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "MyTime.h"
-#include "WeildServer.h"
-#include "weilgand.h"
+#include "DevServer.h"
+#include "wiegand.h"
 #include "SPI_C.h"
 #include "wiringPi.h"
 using namespace std;

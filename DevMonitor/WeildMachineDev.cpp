@@ -13,7 +13,7 @@
 #define RL0 8
 #define RL1 9
 
-WeildMachineDev::WeildMachineDev(WeildServer * serv_inp)
+WeildMachineDev::WeildMachineDev(DevServer * serv_inp)
 {
 	wiringPiSetup();
 	digitalWrite(RL0, LOW); //реле выключены

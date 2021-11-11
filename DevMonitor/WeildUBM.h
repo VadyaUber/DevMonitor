@@ -1,10 +1,10 @@
 #pragma once
-#include "WeildServer.h"
+#include "DevServer.h"
 #include "SPI_C.h"
-#include "WeildADC.h"
+#include "DevADC.h"
 #include "ElectricMeter.h"
 #include "thread"
-#include "weilgand.h"
+#include "wiegand.h"
 #include "MyTime.h"
 #include "DigitalOutUbmSPI.h"
 #include "Rtc.h"
@@ -22,14 +22,14 @@ typedef union {
 class WeildUBM
 {
 public:
-	WeildUBM(WeildServer *server);
+	WeildUBM(DevServer *server);
 	void UbmLoop();
 	errS error;
 
 private:
-	WeildServer * UbmServer;
-	WeildADC * I_Sensor =NULL;
-	WeildADC * U_Sensor = NULL;
+	DevServer * UbmServer;
+	DevADC * I_Sensor =NULL;
+	DevADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;
 	Merc* Mercury = NULL;
 	MyTime * TimerCalculate;
@@ -39,7 +39,7 @@ private:
 	MyTime * RtcTime;
 	QrDev* qr;
 	RFID* wiegand;
-	WeildLogUSB logtousb;
+	DevLogUSB logtousb;
 	uint8_t USBBlinkCount = 0;
 };
 

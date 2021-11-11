@@ -1,8 +1,8 @@
 #pragma once
-#include"WeildServer.h"
+#include"DevServer.h"
 #include"ParserPort.h"
 #include"wiringPi.h"
-#include"weilgand.h"
+#include"wiegand.h"
 #include "Rtc.h"
 #include <thread>
 #include "LedGpio.h"
@@ -10,10 +10,10 @@
 class WeildParseDev
 {
 public:
-	WeildParseDev(WeildServer * server);
+	WeildParseDev(DevServer * server);
 	void WeildParseDevLoop();
 private:
-	WeildServer * ServerDev;
+	DevServer * ServerDev;
 	ParserPort * port;
 	LedGpio * led;
 	Rtc* rtc;

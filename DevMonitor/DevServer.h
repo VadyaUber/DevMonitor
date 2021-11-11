@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include "WeildLog.h"
+#include "DevLog.h"
 #include "Wifi.h"
 #include "pugixml.hpp"
 #include <fstream>
@@ -79,17 +79,17 @@ typedef struct {
 	bool StatusBloc = false;
 }WeildStatus;
 
-class WeildServer
+class DevServer
 {		
-	typedef void (WeildServer::*MetodClass)();
+	typedef void (DevServer::*MetodClass)();
 	typedef struct
 	{
 		MyTime  Timer;
 		MetodClass func;
 	}EventTime;
 	public:
-		WeildServer(string path_config, string path_log);
-		~WeildServer();
+		DevServer(string path_config, string path_log);
+		~DevServer();
 		WeildStatus Status;
 		//string DataToServer="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		string DataOut;
@@ -118,7 +118,7 @@ class WeildServer
 		int sockfd;
 		int wdserverrecv = 0;
 
-		WeildLog  Log;
+		DevLog  Log;
 		void ConnectInterfeceWIFI( string ssid, string pass);
 		void ConnectInterfeceLAN();
 		void ConnectInterfece(string ssid, string pass);

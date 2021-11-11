@@ -2,7 +2,7 @@
 #include "wiringPi.h"
 #include <iostream>
 #include "MyTime.h"
-#include "WeildServer.h"
+#include "DevServer.h"
 using namespace std;
 class LedGpio
 {

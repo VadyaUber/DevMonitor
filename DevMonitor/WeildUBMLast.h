@@ -1,10 +1,10 @@
 #pragma once
-#include"WeildServer.h"
+#include"DevServer.h"
 
-#include "WeildADC.h"
+#include "DevADC.h"
 #include"ElectricMeter.h"
 #include "thread"
-#include "weilgand.h"
+#include "wiegand.h"
 #include "MyTime.h"
 #include"UBMLed.h"
 #include "DigitalOutUbmLast.h"
@@ -12,13 +12,13 @@
 class WeildUBMLast
 {
 public:
-	WeildUBMLast(WeildServer *server);
+	WeildUBMLast(DevServer *server);
 	void UbmLoop();
 private:
-	WeildServer * UbmServer;
+	DevServer * UbmServer;
 	
-	WeildADC * I_Sensor =NULL;
-	WeildADC * U_Sensor = NULL;
+	DevADC * I_Sensor =NULL;
+	DevADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;
 	MyTime * TimerCalculate;
 	UBMLed * Led;
