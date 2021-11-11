@@ -9,7 +9,7 @@
 using namespace std;
 int main()
 {
-	WeildServer weild("/weildpath/config.xml", "/weildpath/history.txt"); 
+	WeildServer weild("/weildpath/config_ubm4.xml", "/weildpath/history.txt"); 
 	WeildParseDev * ParserDev= NULL;
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;
