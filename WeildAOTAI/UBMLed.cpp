@@ -40,9 +40,9 @@ void UBMLed::Loop()
 		}
 		if (Status->StatusBloc)SetPin(Led2);
 		else ResetPin(Led2);
-		if (Status->StatusRfid1 == Wait)blink(Led1, 2);
-		else if (Status->StatusRfid1 == SendServer)SetPin(Led1);
-		else if (Status->StatusRfid1 == EroorRead)blink(Led1, 3);
+		//if (Status->StatusRfid1 == Wait)blink(Led1, 2);
+		//else if (Status->StatusRfid1 == SendServer)SetPin(Led1);
+		//else if (Status->StatusRfid1 == EroorRead)blink(Led1, 3);
 
 	}
 	usleep(100);

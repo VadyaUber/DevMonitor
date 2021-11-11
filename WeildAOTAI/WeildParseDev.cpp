@@ -9,6 +9,7 @@
 #define RTC_CS 1
 WeildParseDev::WeildParseDev(WeildServer * server)
 {
+	wiringPiSetup();
 	rtc = new Rtc(RTC_CS);
 	rtc->GetRtc();
 
@@ -16,9 +17,12 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 	RtcTime->IntevralSleep = 3600000;
 	//RtcTime->IntevralSleep = 60000;
 	ServerDev = server;
-	if (ServerDev->WeildConfig.RFID_ON) {
+	if (ServerDev->WeildConfig.RFID_ON) 
+	{
+		wiegand = new RFID();
+		wiegand->Serv_RFID = &ServerDev->RFID_status;
 		new thread([&]() {
-			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!ServerDev->WeildConfig.WG35);
+			wiegand->wiegand_loop(WILDGANPIN0, WILDGANPIN1,!ServerDev->WeildConfig.WG35);
 			});
 
 	}
@@ -43,18 +47,22 @@ WeildParseDev::WeildParseDev(WeildServer * server)
 }
 
 void WeildParseDev::WeildParseDevLoop()
-{
+{	
 	ServerDev->WeildLoop();
 	port->GetParseData(&(ServerDev->UartPackage));
 	if (ServerDev->NewDataInput) {
 		port->WriteData(ServerDev->DataOut);
 		ServerDev->NewDataInput = false;
 	}
-	ServerDev->rfid = weilgand_id;
+	if (ServerDev->WeildConfig.RFID_ON)
+	{
+		wiegand->set_led_state();
+		ServerDev->rfid = wiegand->RFID_id;
+	}
 
 	if (RtcTime->CheckTimeEvent() || ServerDev->StatusServerRecv == NEW_DATA) {
 		ServerDev->StatusServerRecv = IDEL_DATA;
 		rtc->SetRtc();
 	}
-	usleep(10);
+	usleep(1000);
 }

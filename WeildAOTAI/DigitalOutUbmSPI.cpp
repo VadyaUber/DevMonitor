@@ -18,71 +18,95 @@ DigitalOutUbmSPI::DigitalOutUbmSPI(uint8_t cs_dev, uint8_t LED3_Pin, uint8_t LED
 }
 
 void DigitalOutUbmSPI::Loop()
-{
-		if (*Inerfece == "eth0") {
-			if(UsbBlink)blinc(LED4_Pin, 1, 200, 200);
-			else
-			{
-				if (Status->StatusIterfece == NOT_CONNECTED)blinc(LED4_Pin, 1, 200, 800);
-				else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED))blinc(LED4_Pin, 1, 500, 500);
-				else this->value |= this->LED4_Pin << 8;
-			}
+{		
+	if (firststart)
+	{
+		firststart = false;
+		this->value |= this->LED4_Pin << 8;
+		this->value |= this->LED3_Pin << 8;
 
+		uint8_t rx[2] = { 0 };
+
+		if (NameSPI != dev) {
+			DeInitSPI();
+			init_SPI("/dev/spidev1.0", 2000000, 8, 2, dev);
 		}
-		else {
-			if (*UsbBlink)blinc(LED3_Pin, 1, 100, 100);
-			else
-			{
-				if (Status->StatusIterfece == NOT_CONNECTED) blinc(LED3_Pin, 1, 200, 800);
-				else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED)) blinc(LED3_Pin, 1, 500, 500);
-				else this->value |= this->LED3_Pin << 8;
-			}
-		}
-		if ((Status->StatusIterfece == CONNECTED) && (Status->StatusSocet == CONNECTED) && (Status->StatusServer == CONNECTED))
+
+
+		SpiWriteRead((uint8_t*)&this->value, rx, 2);
+		digitalWrite(CS, LOW);
+		digitalWrite(CS, HIGH);
+		digitalWrite(CS, LOW);
+
+		sleep(3);
+		this->value &= ~this->LED4_Pin << 8;
+		this->value &= ~this->LED3_Pin << 8;
+	}
+
+	if (*Inerfece == "eth0") {
+		if(UsbBlink)blinc(LED4_Pin, 1, 200, 200);
+		else
 		{
-			if (*Led_RFID == AccesTrue)
-			{
-				this->value |= this->LED1_Pin << 8;
-			}
-			else if (*Led_RFID == SendServer)
-			{
-				blinc(LED1_Pin, 1, 500, 500);
-			}
-			else if (*Led_RFID == Wait)
-			{
-				blinc(LED1_Pin, 1, 200, 800);
-			}
+			if (Status->StatusIterfece == NOT_CONNECTED)blinc(LED4_Pin, 1, 200, 800);
+			else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED))blinc(LED4_Pin, 1, 500, 500);
+			else this->value |= this->LED4_Pin << 8;
 		}
-		else this->value &= ~this->LED1_Pin << 8;
 
-		//if (this->Beeper)this->value |= this->Beeper_Pin << 8;
-		//else this->value &= ~this->Beeper_Pin << 8;
+	}
+	else {
+		if (*UsbBlink)blinc(LED3_Pin, 1, 100, 100);
+		else
+		{
+			if (Status->StatusIterfece == NOT_CONNECTED) blinc(LED3_Pin, 1, 200, 800);
+			else if ((Status->StatusSocet == NOT_CONNECTED) || (Status->StatusServer == NOT_CONNECTED)) blinc(LED3_Pin, 1, 500, 500);
+			else this->value |= this->LED3_Pin << 8;
+		}
+	}
+	if ((Status->StatusIterfece == CONNECTED) && (Status->StatusSocet == CONNECTED) && (Status->StatusServer == CONNECTED))
+	{
+		if (*Led_RFID == AccesTrue)
+		{
+			this->value |= this->LED1_Pin << 8;
+		}
+		else if (*Led_RFID == SendServer)
+		{
+			blinc(LED1_Pin, 1, 500, 500);
+		}
+		else if (*Led_RFID == Wait)
+		{
+			blinc(LED1_Pin, 1, 200, 800);
+		}
+	}
+	else this->value &= ~this->LED1_Pin << 8;
 
-		//if (this->LED2)this->value |= this->LED2_Pin << 8;
-		//else this->value &= ~this->LED2_Pin << 8;
+	//if (this->Beeper)this->value |= this->Beeper_Pin << 8;
+	//else this->value &= ~this->Beeper_Pin << 8;
 
-		//if (this->LED1)this->value |= this->LED1_Pin << 8;
-		//else this->value &= ~this->LED1_Pin << 8;
+	//if (this->LED2)this->value |= this->LED2_Pin << 8;
+	//else this->value &= ~this->LED2_Pin << 8;
 
-		//if (this->WG_36)this->value |= this->WG_36_Pin << 8;
-		//else this->value &= ~this->WG_36_Pin << 8;
+	//if (this->LED1)this->value |= this->LED1_Pin << 8;
+	//else this->value &= ~this->LED1_Pin << 8;
 
-		if (this->LastVal != this->value) {
-			this->LastVal = this->value;
-			uint8_t rx[2] = { 0 };
+	//if (this->WG_36)this->value |= this->WG_36_Pin << 8;
+	//else this->value &= ~this->WG_36_Pin << 8;
 
-			if (NameSPI != dev) {
-				DeInitSPI();
-				init_SPI("/dev/spidev1.0", 2000000, 8, 2, dev);
-			}
+	if (this->LastVal != this->value) {
+		this->LastVal = this->value;
+		uint8_t rx[2] = { 0 };
+
+		if (NameSPI != dev) {
+			DeInitSPI();
+			init_SPI("/dev/spidev1.0", 2000000, 8, 2, dev);
+		}
 
 			
-			SpiWriteRead((uint8_t*)&this->value, rx, 2);
-			digitalWrite(CS, LOW);
-			digitalWrite(CS, HIGH);
-			digitalWrite(CS, LOW);
-		}
-		usleep(100);
+		SpiWriteRead((uint8_t*)&this->value, rx, 2);
+		digitalWrite(CS, LOW);
+		digitalWrite(CS, HIGH);
+		digitalWrite(CS, LOW);
+	}
+	usleep(100);
 	
 }
 

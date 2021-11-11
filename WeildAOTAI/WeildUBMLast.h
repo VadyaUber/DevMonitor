@@ -25,5 +25,6 @@ private:
 	DigitalOutUbmLast * Dout;
 	Rtc * rtc;
 	MyTime * RtcTime;
+	RFID* wiegand;
 };
 

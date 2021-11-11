@@ -23,7 +23,7 @@ public:
 	uint16_t Value16Bit;
 	void ReadValue();
 	void CalculateAdc();
-
+	uint32_t CntError;
 private:
 	
 	uint8_t CS_PIN;

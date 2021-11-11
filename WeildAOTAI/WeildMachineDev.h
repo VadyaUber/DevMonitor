@@ -1,7 +1,6 @@
 #pragma once
 #include"WeildServer.h"
 #include"wiringPi.h"
-#include"wiringPi.h"
 #include"weilgand.h"
 #include <thread>
 #include "LedGpio.h"
@@ -22,7 +21,13 @@ private:
 	Rtc* rtc;
 	MyTime * RtcTime;
 	DigitalInput8bit * Digital;
-	uint16_t DigitaData = 0;
+	uint16_t DigitData = 0;
+	uint16_t OldDigitData = 0;
+	uint16_t OutDigitData = 0;
 	QrDev * qr;
+	RFID* wiegand;
+	void CheckDataChanged();
+	bool Datachanged[8] = { 0 };
+	uint16_t delaycount[8] = { 0 };
 };
 

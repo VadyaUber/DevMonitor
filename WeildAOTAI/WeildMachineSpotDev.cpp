@@ -18,7 +18,13 @@ WeildMachineSpotDev::WeildMachineSpotDev(WeildServer* serv_inp)
 		}
 
 		});
+	new thread([&]() {
+		while (true) {
+			ServerDev->WeildLoop();
+			usleep(50000);
+		}
 
+		});
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
 }
@@ -26,14 +32,20 @@ WeildMachineSpotDev::WeildMachineSpotDev(WeildServer* serv_inp)
 void WeildMachineSpotDev::WeildMachineSpotDevLoop()
 {
 
-	if (TimerCalculate->CheckTimeEvent()) {
-			ServerDev->Perefir = "";
-			ServerDev->Perefir.append("03");
-			DigitaData = digitalRead(INPUTPIN);
-			ServerDev->Perefir.append(ServerDev->uint8_to_hex_string((uint8_t*)&DigitaData, 2));
+	//if (TimerCalculate->CheckTimeEvent()) {
+	
+	
+	if (DigitData != OldDigitData)
+	{
+		ServerDev->Perefir = "";
+		ServerDev->Perefir.append("03");
+		ServerDev->Perefir.append(ServerDev->uint8_to_hex_string((uint8_t*)&DigitData, 2));
+		OldDigitData = DigitData;
+		usleep(1500000);
 	}
-
-
-	ServerDev->WeildLoop();
+	else
+	{
+		DigitData = digitalRead(INPUTPIN);
+	}
 	usleep(10000);
 }

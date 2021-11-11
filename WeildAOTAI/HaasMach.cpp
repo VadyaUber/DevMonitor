@@ -12,24 +12,38 @@
 HaasMach::HaasMach(WeildServer * server)
 {
 
-	//file.open("/weildpath/programm/write/5141.NC");
-	FILE* fs;
-	char buffer[30];
+	////file.open("/weildpath/programm/write/5141.NC");
+	//FILE* fs;
+	//char buffer[30];
 
-	fs = fopen("/weildpath/programm/write/5141.NC", "r");
+	//fs = fopen("/weildpath/programm/write/5141.NC", "r");
 
-	if (NULL == fs)
-	{
-		perror("opening fs");
-		usleep(1);
-	}
+	//if (NULL == fs)
+	//{
+	//	perror("opening fs");
+	//	usleep(1);
+	//}
 
+	////while (EOF != fscanf(fs, "%[^\n]\n", buffer))
 	//while (EOF != fscanf(fs, "%[^\n]\n", buffer))
-	while (EOF != fscanf(fs, "%[^\n]\n", buffer))
-	{
-		printf("%s\n", buffer);
-	}
-	fclose(fs);
+	//{
+	//	printf("%s\n", buffer);
+	//}
+	//fclose(fs);
+
+	HaasData.Q100 = "S/N, 0000000";
+	HaasData.Q101 = "SOFTWARE, VER 000.00";
+	HaasData.Q102 = "MODEL, 0000";
+	HaasData.Q104 = "MODE, 000";
+	HaasData.Q200 = "TOOL CHANGES, 00";
+	HaasData.Q201 = "USING TOOL, 0";
+	HaasData.Q300 = "P.O. TIME, 00000:00:00";
+	HaasData.Q301 = "C.S. TIME, 00000:00:00";
+	HaasData.Q303 = "LAST CYCLE, 000:00:00";
+	HaasData.Q304 = "PREV CYCLE, 000:00:00";
+	HaasData.Q500 = "PROGRAM,O00000,000000000,PARTS,00";
+
+
 
 	this->Server = server;
 	this->HaasPort = new PortDevMachine("/dev/ttyUSB0");
@@ -42,7 +56,7 @@ HaasMach::HaasMach(WeildServer * server)
 	pinMode(WG35Pin, OUTPUT);
 	if (Server->WeildConfig.RFID_ON) {
 		new thread([&]() {
-			wiegand_loop(WILDGANPIN0, WILDGANPIN1, !Server->WeildConfig.WG35);
+			//wiegand_loop(WILDGANPIN0, WILDGANPIN1, !Server->WeildConfig.WG35);
 			});
 	}
 	led = new LedGpio(LED1, LED2, LED3, LED4);
@@ -67,6 +81,8 @@ HaasMach::HaasMach(WeildServer * server)
 	else {
 		digitalWrite(WG35Pin, LOW);
 	}
+	FormatServer();
+	Server->Perefir = FormatString;
 }
 
 void HaasMach::HaasLoop()

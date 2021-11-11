@@ -14,5 +14,6 @@ private:
 	LedGpio* led;
 	WeildServer* ServerDev;
 	MyTime* TimerCalculate;
-	uint16_t DigitaData = 0;
+	uint16_t DigitData = 0;
+	uint16_t OldDigitData = 0;
 };

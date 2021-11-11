@@ -41,6 +41,7 @@ private:
 	uint8_t LED2_Pin = 0;
 	uint8_t LED1_Pin = 0;
 	uint8_t WG_36_Pin = 0;
+	bool firststart = true;
 	void blinc(uint16_t pin, uint16_t count, uint16_t delay1, uint16_t delay2);
 };
 

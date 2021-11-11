@@ -45,7 +45,7 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 
 	if (UbmServer->WeildConfig.RFID_ON) {
 		new thread([&]() {
-			wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
+			wiegand->wiegand_loop(WILDGANPIN0, WILDGANPIN1,!UbmServer->WeildConfig.WG35);
 			});
 	}
 	new thread([&]() {
@@ -84,7 +84,7 @@ WeildUBMLast::WeildUBMLast(WeildServer * server)
 
 void WeildUBMLast::UbmLoop()
 {
-	UbmServer->WeildLoop();
+	//UbmServer->WeildLoop();
 	if (TimerCalculate->CheckTimeEvent()) {
 		UbmServer->Perefir = "";
 		UbmServer->Perefir.append("01");
@@ -107,7 +107,12 @@ void WeildUBMLast::UbmLoop()
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumPowerVa, 4));
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyWat, 4));
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyVar, 4));
-
+			printf(" SumEnergyWat %d", meter->SumEnergyWat);
+			printf(" SumEnergyVar %d", meter->SumEnergyVar);
+			printf(" SumEnergyVa  %d\n\r", meter->SumEnergyVa);
+			printf(" SumPowerWat  %d", meter->SumPowerWat);
+			printf(" SumPowerVar  %d", meter->SumPowerVar);
+ 			printf(" SumPowerVa   %d\n\r", meter->SumPowerVa);
 		}
 		else {
 			UbmServer->Perefir.append("000000");
@@ -118,13 +123,13 @@ void WeildUBMLast::UbmLoop()
 	}
 	//Dout->Loop();
 	//printf("PowerOn %d\n\r", Dout->PowerOn);
-	if (UbmServer->WeildConfig.BlockMode == "ON")Dout->PowerOn = true;
+	/*if (UbmServer->WeildConfig.BlockMode == "ON")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "OFF")Dout->PowerOn = true;
 	if (UbmServer->WeildConfig.BlockMode == "REMOTE") {
 		if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
 			Dout->PowerOn = UbmServer->PowerOn;
 		}
-	}
+	}*/
 
 	
 	usleep(100);

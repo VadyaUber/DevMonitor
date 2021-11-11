@@ -18,5 +18,6 @@ private:
 	LedGpio * led;
 	Rtc* rtc;
 	MyTime* RtcTime;
+	RFID* wiegand;
 };
 
