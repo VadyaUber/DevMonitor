@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config>
+<SENSOR_I>
+    <offset value="1.653600" />
+    <divisor value="418.854166" />
+    <multiplier value="1"/>
+</SENSOR_I>
+<SENSOR_U>
+    <offset value="0" />
+    <divisor value="33.120283" />
+    <multiplier value="10"   />
+</SENSOR_U>
+<ELECTRIC_METER>
+    <AWhLSB value="-0.000011525" />
+    <BWhLSB value="-0.000011554" />
+    <CWhLSB value="-0.000011575"   />
+
+    <AVARhLSB value="0.000000011" />
+    <BVARhLSB value="0.000000013" />
+    <CVARhLSB value="0.000000008"   />
+
+    <AVAhLSB value="0.000011422" />
+    <BVAhLSB value="0.000011475" />
+    <CVAhLSB value="0.000011464"   />
+</ELECTRIC_METER>
+</config>

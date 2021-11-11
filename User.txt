@@ -1,3 +1,0 @@
-FTP  login:weilduser   pass:weilduser
-
-SFTP login:root  pass:12345678  

@@ -1,0 +1,3 @@
+FTP  login:admin   pass:nimda
+
+SFTP login:root  pass: onlyviptech
