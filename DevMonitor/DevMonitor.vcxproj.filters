@@ -82,6 +82,9 @@
     <ClCompile Include="LogToUSB.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
+    <ClCompile Include="Mercury.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -167,9 +170,12 @@
     <ClInclude Include="LogToUSB.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
+    <ClInclude Include="Mercury.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="WeildAOTAI.vcxproj.user" />
+    <None Include="DevMonitor.vcxproj.user" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
