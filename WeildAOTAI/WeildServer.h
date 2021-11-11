@@ -63,10 +63,13 @@ typedef struct{
 	bool RTC_ON = false;
 	bool WG35 = false;
 	bool QR_ON = false;
+	bool USB_OUT = false;
+	bool MercuryMeter = false;
 	string Type_Dev = "";
 	string router_ip;
 	string BlockMode = "";
 	int Compare_I = 0;
+
 }config; 
 typedef struct {
 	int StatusIterfece = NOT_CONNECTED;

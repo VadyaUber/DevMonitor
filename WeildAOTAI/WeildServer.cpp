@@ -33,7 +33,6 @@ void WeildServer::WeildLoop() {
 				(*this.*TimeEvent[i].func)();
 			}
 		}
-	}
 	//}
 }
 
@@ -131,8 +130,10 @@ void WeildServer::ReadFileConfig(string path)
 	WeildConfig.Compare_I= doc.child("config").child("COMPARE_I").attribute("value").as_int();
 	WeildConfig.WG35 = doc.child("config").child("WG35").attribute("value").as_bool(); 
 	WeildConfig.QR_ON= doc.child("config").child("QR_ON").attribute("value").as_bool();
+	WeildConfig.USB_OUT = doc.child("config").child("USB_OUT").attribute("value").as_bool();
 	WeildConfig.ver = doc.child("config").child("version").attribute("value").as_string();
 	WeildConfig.Type_Dev=doc.child("config").child("type_dev").attribute("value").as_string();
+	WeildConfig.MercuryMeter = doc.child("config").child("MERCURY").attribute("value").as_bool();
 	FileMac.open("/sys/class/net/" + WeildConfig.interface + "/address", ios::in);
 	getline(FileMac, line);
 	transform(line.begin(), line.end(), line.begin(), ::toupper);
@@ -455,15 +456,28 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 		uint8_t tmp=0;
 		time_t unix_time;
 		uint32_t lenMsg;
+		struct pak
+		{
+
+		string mac = "";
+		string pack = "";
+		string comd = "";
+		string dtim = "";
+		string cr = "";
+
+		};
 		if(len!=0)
 			buff_str += convertToString(buff, len);
 		uint16_t last_delimiter_index = buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 2; //конец пакета 
 		if (last_delimiter_index >= 0) //еcли что-то пришло
 		{
 			string s = buff_str.substr(buff_str.find(":") + 1, buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 3);
-			if ((count(s.begin(), s.end(), ';')) < 4)
+			if ((count(s.begin(), s.end(), ';')) < 4) //если меньше 4х разделителей
 				return false;
 			ArrayVector = split(s, ';');
+			
+			
+
 			lenMsg = last_delimiter_index + 4;
 			if (buff_str.length() > lenMsg) //Еcли разделитель не поcледний cимвол
 			{
@@ -482,7 +496,6 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 		//	s = s.substr(s.find(":")+1, s.find("\r")-1);
 		//	ArrayVector = split(s, ';');
 		//	
-
 
 				if (WeildConfig.mac == ArrayVector[0]) {
 
@@ -547,13 +560,18 @@ bool  WeildServer::CheckComnd(char * buff, int len ) {
 }
 vector<string> WeildServer::split(string strToSplit, char delimeter)
 {
-	std::stringstream ss(strToSplit);
-	std::string item;
-	std::vector<std::string> splittedStrings;
-	while (std::getline(ss, item, delimeter))
-	{
-		splittedStrings.push_back(item);
+	vector<string> splittedStrings;
+	string w = "";
+	for (auto i : strToSplit) {
+		if (i == ';') {
+			splittedStrings.push_back(w);
+			w = "";
+		}
+		else {
+			w += i;
+		}
 	}
+	splittedStrings.push_back(w);
 	return splittedStrings;
 }
 string WeildServer::convertToString(char* a, int size)

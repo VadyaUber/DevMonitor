@@ -10,6 +10,7 @@
 #include "Rtc.h"
 #include "QrDev.h"
 #include "LogToUSB.h"
+#include "Mercury.h"
 
 typedef union {
 	struct {
@@ -30,6 +31,7 @@ private:
 	WeildADC * I_Sensor =NULL;
 	WeildADC * U_Sensor = NULL;
 	ElectricMeter * meter = NULL;
+	Merc* Mercury = NULL;
 	MyTime * TimerCalculate;
 	MyTime* TimerRFID;
 	DigitalOutUbmSPI* Dout;

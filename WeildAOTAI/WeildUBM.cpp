@@ -88,6 +88,16 @@ WeildUBM::WeildUBM(WeildServer * server)
 	if (UbmServer->WeildConfig.USB_OUT)
 		logtousb.Init(UbmServer->WeildConfig.mac);
 
+	if (UbmServer->WeildConfig.MercuryMeter)
+	{
+		pinMode(4, OUTPUT);
+		digitalWrite(4, LOW);
+		Mercury = new Merc("/dev/ttyS2", 9600);
+
+		new thread([&]() {Mercury->get_data_merc(); });
+	}
+
+
 	//if (I_Sensor != NULL || U_Sensor != NULL || meter != NULL) {
 		new thread([&]() {
 
@@ -125,10 +135,12 @@ WeildUBM::WeildUBM(WeildServer * server)
 		
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
-	if (UbmServer->WeildConfig.BlockMode == "ON")
-		digitalWrite(SW_POWER,HIGH);
-	if (UbmServer->WeildConfig.BlockMode == "OFF")
+
+	if (UbmServer->WeildConfig.BlockMode == "OFF")			/////////////////////	ÏÐÎÂÅÐÈÒÜ
 		digitalWrite(SW_POWER, LOW);
+	else 
+		digitalWrite(SW_POWER,HIGH);
+	
 }
 
 void WeildUBM::UbmLoop()
@@ -154,7 +166,14 @@ void WeildUBM::UbmLoop()
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumPowerVa, 4));
 			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t *)&meter->SumEnergyVa, 4));
 		}
-		else {
+		else if(Mercury != NULL)
+		{
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t*)&Mercury->power_quality, 1));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t*)&Mercury->sumpower, 4));
+			UbmServer->Perefir.append(UbmServer->uint8_to_hex_string((uint8_t*)&Mercury->enegj, 4));
+		}
+		else 
+		{
 			UbmServer->Perefir.append("0000");
 			UbmServer->Perefir.append("00000000");
 			UbmServer->Perefir.append("00000000");
@@ -173,15 +192,17 @@ void WeildUBM::UbmLoop()
 		if (UbmServer->WeildConfig.USB_OUT)
 		{
 			logtousb.USBconnect();
-			if (logtousb.USBblink)
-			{
-				USBBlinkCount++;
-				if (USBBlinkCount > 40)
-				{
-					logtousb.USBblink = false;
-					USBBlinkCount = 0;
-				}
-			}
+			//if (logtousb.USBblink)
+			//{
+			//	USBBlinkCount++;
+			//	if (USBBlinkCount > 40)
+			//	{
+			//		logtousb.USBblink = false;
+			//		USBBlinkCount = 0;
+			//		if (logtousb.USBConfigRead)
+			//			exit(0);
+			//	}
+			//}
 		}
 	}
 	
