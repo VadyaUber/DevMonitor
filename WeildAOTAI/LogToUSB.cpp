@@ -2,9 +2,11 @@
 
 void WeildLogUSB::Init(string devicemac)
 {
+	USBBlinkCount = 0;
 	mac = devicemac;
 	USBstate = false;
 	USBblink = false;
+	USBConfigRead = false;
 }
 
 string WeildLogUSB::PipCmd(string command)
@@ -49,11 +51,20 @@ bool WeildLogUSB::USBconnect()
 		{
 			USBmount(dev);
 
-			if (PipCmd("ls /usb1/| grep 54de6c399dc4460bf328fefed853e88e") == "54de6c399dc4460bf328fefed853e88e")	//check md5
+			if (PipCmd("ls /usb1/| grep copy_log_to_usb.txt") == "copy_log_to_usb.txt")	//check md5
 			{
 				USBblink = true;
 				PipCmd("mv /weildpath/history.txt /weildpath/history_" + mac + ".txt"); //rename
 				PipCmd("rsync  -a --no-owner --no-group --remove-source-files /weildpath/history_" + mac + ".txt /usb1/");
+			}
+			if (PipCmd("ls /usb1/| grep config.xml") == "config.xml")	//check md5
+			{
+				if (PipCmd("rsync  -a --no-owner --no-group  /usb1/config.xml /weildpath/") == "")
+				{
+					USBblink = true;
+					USBConfigRead = true;
+				}
+				
 			}
 			USBumount();
 		}
@@ -61,5 +72,16 @@ bool WeildLogUSB::USBconnect()
 	else
 	{
 		USBstate = false;
+	}
+	if (USBblink)
+	{
+		USBBlinkCount++;
+		if (USBBlinkCount > 40)
+		{
+			USBblink = false;
+			USBBlinkCount = 0;
+			if (USBConfigRead)
+				PipCmd("systemctl restart Weld.service");
+		}
 	}
 }
