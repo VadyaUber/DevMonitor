@@ -57,9 +57,9 @@ bool DevLogUSB::USBconnect()
 				PipCmd("mv /weildpath/history.txt /weildpath/history_" + mac + ".txt"); //rename
 				PipCmd("rsync  -a --no-owner --no-group --remove-source-files /weildpath/history_" + mac + ".txt /usb1/");
 			}
-			if (PipCmd("ls /usb1/| grep config.xml") == "config.xml")	//check md5
+			if (PipCmd("ls /usb1/| grep config_ubm4.xml") == "config_ubm4.xml")	//check md5
 			{
-				if (PipCmd("rsync  -a --no-owner --no-group  /usb1/config.xml /weildpath/") == "")
+				if (PipCmd("rsync  -a --no-owner --no-group  /usb1/config_ubm4.xml /weildpath/") == "")
 				{
 					USBblink = true;
 					USBConfigRead = true;
