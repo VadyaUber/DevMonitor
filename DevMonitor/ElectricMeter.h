@@ -4,7 +4,7 @@
 #include <iostream>
 #include<cmath>
 #include "pugixml.hpp"
-#define FREQ_CLK 3000000
+#define CLK_Meter 3000000
 
 #define CONVERT_FREQ  (x) (x*0.0625)
 #define CONVERT_PERuMS  (x) (x*9.6)
