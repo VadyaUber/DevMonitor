@@ -93,7 +93,6 @@ void Rtc::write_reg_rtc(uint8_t reg, uint8_t data)
 
 bool Rtc::ValidDataRtc()
 {
-	struct timeval  stimeRtc, stimeOrange;
 	
 	uint8_t rx[8] = { 0 };
 	uint8_t tx[8] = { 0 };
