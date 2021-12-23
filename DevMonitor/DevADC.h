@@ -7,7 +7,7 @@
 #define FREQ_CLK 2000000
 using namespace std;
 typedef struct {
-	uint32_t Array[FILTER_SIZE];
+	uint32_t Array[FILTER_SIZE] = {0};
 	uint32_t Cnt = 0;
 }Filter;
 typedef struct {

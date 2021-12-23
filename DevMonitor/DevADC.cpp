@@ -42,15 +42,14 @@ void DevADC::ReadValue()
 		adc_out = (((uint32_t)((rx[0] & 0x07) << 16) | (rx[1] << 8) | (rx[2])) >> 2);
 		//if (rx[0] != 0) {
 		//if (adc_out != 0) {
-		
-			if (FilterADC.Cnt >= FILTER_SIZE) {
-				FilterADC.Cnt = 0;
-			}
-			//printf("adc val*ref %f\n\r", (float)(adc_out*REF));
-			//printf("adc val %d\n\r", (adc_out));
-			//FilterADC.Array[FilterADC.Cnt] = pow(abs((adc_out*REF) - mat.offset) * mat.divisor, 2);
-			FilterADC.Array[FilterADC.Cnt] = adc_out;
-			FilterADC.Cnt++;
+		if (FilterADC.Cnt >= FILTER_SIZE) {
+			FilterADC.Cnt = 0;
+		}
+		//printf("adc val*ref %f\n\r", (float)(adc_out*REF));
+		//printf("adc val %d\n\r", (adc_out));
+		//FilterADC.Array[FilterADC.Cnt] = pow(abs((adc_out*REF) - mat.offset) * mat.divisor, 2);
+		FilterADC.Array[FilterADC.Cnt] = adc_out;
+		FilterADC.Cnt++;
 
 		//}
 		PriznReadAdc = false;
@@ -75,26 +74,23 @@ void DevADC::CalculateAdc()
 		//tm = (FiltringADC(FilterADC.Array, FilterADC.Cnt));
 		//printf("val %d\n\r", tm);
 		//printf("val %f\n\r", tmp);
-		Value16Bit = (uint16_t) tmp;
+		Value16Bit = (uint16_t)(tmp + 0.5);
 		//printf(" Val %d\n\r", Value16Bit);
-		FilterADC.Cnt = 0;
 	}
 	else {
 		for (int i = 0; i < FilterADC.Cnt; i++) {
 			SummArray += FilterADC.Array[i];
 		}
 		
-		tmp = abs((SummArray / FilterADC.Cnt) * REF);
-		tmp = tmp -mat.offset;
-		tmp = tmp * mat.divisor * mat.multiplier;
-		//tmp = (abs(((SummArray / FilterADC.Cnt) * REF) - mat.offset)) * mat.divisor * mat.multiplier;
-		Value16Bit = (uint16_t)tmp;
+		//tmp = abs((SummArray / FilterADC.Cnt) * REF);
+		//tmp = tmp - mat.offset;
+		//tmp = tmp * mat.divisor * mat.multiplier;
+		tmp = (abs(((SummArray / FilterADC.Cnt) * REF) - mat.offset)) * mat.divisor * mat.multiplier;
+		Value16Bit = (uint16_t)(tmp + 0.5);
 		//printf(" Val %d\n\r", Value16Bit);
-		FilterADC.Cnt = 0;
 		SummArray = 0;
 	}
-	
-
+	FilterADC.Cnt = 0;
 	MeasureEnable = true;
 }
 
