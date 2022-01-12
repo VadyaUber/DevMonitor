@@ -27,6 +27,7 @@ WeildMachineSpotDev::WeildMachineSpotDev(DevServer* serv_inp)
 		});
 	TimerCalculate = new MyTime();
 	TimerCalculate->IntevralSleep = 500;
+	ServerDev->Perefir = "030000";
 }
 
 void WeildMachineSpotDev::WeildMachineSpotDevLoop()
@@ -37,11 +38,18 @@ void WeildMachineSpotDev::WeildMachineSpotDevLoop()
 	
 	if (DigitData != OldDigitData)
 	{
-		ServerDev->Perefir = "";
-		ServerDev->Perefir.append("03");
-		ServerDev->Perefir.append(ServerDev->uint8_to_hex_string((uint8_t*)&DigitData, 2));
-		OldDigitData = DigitData;
-		usleep(1500000);
+		if (delaycount > 150)
+		{
+			delaycount = 0;
+			ServerDev->Perefir = "";
+			ServerDev->Perefir.append("03");
+			ServerDev->Perefir.append(ServerDev->uint8_to_hex_string((uint8_t*)&DigitData, 2));
+			OldDigitData = DigitData;
+		}
+		else
+		{
+			delaycount++;
+		}
 	}
 	else
 	{
