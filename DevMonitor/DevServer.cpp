@@ -100,13 +100,9 @@ void DevServer::ReadFileConfig(string path)
 		printf("ReadFileConfig error \n");
 		return;
 	}
-	string tmp1, tmp2;
-	string ip_tmp;
-	int n1;
-	int n2;
 	WeildConfig.port = doc.child("config").child("server_port").attribute("value").as_uint();
-	ip_tmp = doc.child("config").child("server_host").attribute("value").as_string();
-	WeildConfig.server_ip = ip_tmp;
+	WeildConfig.server_dns = doc.child("config").child("server_host_dns").attribute("value").as_string();
+	WeildConfig.server_ip = doc.child("config").child("server_host_ip").attribute("value").as_string();
 	string conn_type = doc.child("config").child("connection_type").attribute("value").as_string();
 	if (conn_type == "wifi")
 	{
@@ -152,10 +148,18 @@ void DevServer::CheckConnectInterface()
 		{
 			FILE* output;
 			string out_commad = "nmcli connection | grep -c " + WeildConfig.interface;
+			//string out_commad = "iwgetid -r";
 			if (!(output = popen(out_commad.c_str(), "r")))
 			{
 				printf("error check interface connection \n");
 			}
+			//char buffer[20];
+			//string buf_out = "";
+			//while (fgets(buffer, 10, output) != nullptr)
+			//{
+			//	buf_out += buffer;
+			//}
+			//if(buf_out.substr(0, buf_out.length() - 1) == WeildConfig.wifi_pass)
 			unsigned int i;
 			fscanf(output, "%u", &i);
 			if (i <= 0)
@@ -167,7 +171,8 @@ void DevServer::CheckConnectInterface()
 	}
 	catch (const std::exception&ex)
 	{
-		printf("Error:___%s\n", ex);
+		printf("Error:_CheckConnectInterface__%s\n", ex);
+		Status.StatusIterfece = NOT_CONNECTED;
 	}
 
 		/*if (!wifi.get_connect(sockfd, WeildConfig.interface)) {
@@ -260,6 +265,39 @@ void DevServer::ConectServer()
 			printf("%d error \n\r", errno);
 			Status.StatusSocet = NOT_CONNECTED;
 			usleep(150000);
+			if (WeildConfig.server_dns != "")
+			{
+				struct addrinfo* result;
+				int error = getaddrinfo(WeildConfig.server_dns.c_str(), NULL, NULL, &result);
+				if (error >= 0)
+				{
+					string ips = to_string(result->ai_addr->sa_data[2]) + '.' + to_string(result->ai_addr->sa_data[3]) + '.' + to_string(result->ai_addr->sa_data[4]) + '.' + to_string(result->ai_addr->sa_data[5]);
+					if (WeildConfig.server_ip != ips)
+					{
+						WeildConfig.server_ip = ips;
+						shutdown(sockfd, SHUT_RDWR);
+						close(sockfd);
+						sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+						//string path = "/weildpath/config_ubm4.xml";
+						//pugi::xml_document doc;
+						//pugi::xml_parse_result result = doc.load_file(path.c_str());
+						////WeildConfig.server_ip = doc.child("config").child("server_host_ip").attribute("value").as_string();
+						//doc.child("config").child("server_host_ip").attribute("value").set_value(ips.c_str());
+						//doc.save_file(path.c_str());
+					}
+				}
+				else
+				{
+					if (error == EAI_SYSTEM)
+					{
+						perror("getaddrinfo");
+					}
+					else
+					{
+						fprintf(stderr, "error in getaddrinfo: %s\n", gai_strerror(error));
+					}
+				}
+			}
 		}
 	}
 	else if((Status.StatusIterfece == CONNECTED)&&(Status.StatusSocet == CONNECTED)&&(Status.StatusServer == NOT_CONNECTED))

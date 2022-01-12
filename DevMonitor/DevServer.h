@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include "MyTime.h"
 #include <functional>
 #include <vector>
@@ -46,6 +47,7 @@ using namespace std;
 typedef struct{
     string ip_out;
     int port;
+	string server_dns;
     string server_ip;
     string wifi_sid;
     string wifi_pass;
@@ -114,9 +116,11 @@ class DevServer
 		string mutable_data; //UartPackage+Perefir+rfid+QrCode
 
 		char  dataInput[100];
+		struct hostent* h;
 		struct sockaddr_in servaddr;
-		int sockfd;
-		int wdserverrecv = 0;
+		int sockfd = 0;
+		int wdserverrecv = 1;
+		int wdconnect = 0;
 
 		DevLog  Log;
 		void ConnectInterfeceWIFI( string ssid, string pass);
