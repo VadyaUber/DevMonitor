@@ -1,5 +1,6 @@
 #pragma once
 #include "DevLog.h"
+#include "md5.h"
 
 class DevLogUSB
 {
