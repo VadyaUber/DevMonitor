@@ -92,7 +92,7 @@ int Merc::mercInit()
     int num_bytes = 0;
     char read_buf[256] = { 0 };
     uint8_t data_raed[256] = { 0 };
-    //digitalWrite(4, HIGH);
+    digitalWrite(4, HIGH);
     for (int i = 0; i < 11; i++) {
         //zapstr.append((char*)&zapros[i]);
         //writeserial(zapstr.c_str(), 1);
@@ -100,9 +100,9 @@ int Merc::mercInit()
         //write(serial_port, zapstr.c_str(), 1);
         zapstr = "";
     }
-    //delayMicroseconds(50000);
-    //digitalWrite(4, LOW);
-    //delayMicroseconds(80000);
+    delayMicroseconds(50000);
+    digitalWrite(4, LOW);
+    delayMicroseconds(80000);
     try
     {
     uint8_t ln = 10;
@@ -138,16 +138,16 @@ uint32_t Merc::getEnergy()
     datel_format[4] = crc_tmp;
     datel_format[5] = crc_tmp >> 8;
 
-    //digitalWrite(4, HIGH);
+    digitalWrite(4, HIGH);
     usleep(1000);
     for (int i = 0; i < 6; i++) {
         writeserial((char*)&datel_format[i], 1);
     }
         
-    //usleep(8000);
-    tcdrain(serial_port);
-    //digitalWrite(4, LOW);
-    //usleep(400000);
+    usleep(8000);
+    //tcdrain(serial_port);
+    digitalWrite(4, LOW);
+    usleep(400000);
     uint8_t ln = 10;
     while (ln--) {
         int bytes_available;
@@ -274,7 +274,7 @@ void Merc::getLivePower()
         data_format[4] = crc_tmp;
         data_format[5] = crc_tmp >> 8;
 
-        //digitalWrite(4, HIGH);
+        digitalWrite(4, HIGH);
         usleep(1000);
         for (int i = 0; i < 6; i++) {
             //appha.append((char*)&data_format[i]);
@@ -283,9 +283,9 @@ void Merc::getLivePower()
             //write(serial_port, appha.c_str(), 1);
         }
         usleep(8000);
-        //tcdrain(serial_port);
-        //digitalWrite(4, LOW);
-        //usleep(400000);
+        tcdrain(serial_port);
+        digitalWrite(4, LOW);
+        usleep(400000);
         uint8_t ln = 10;
         while (ln--) {
             int bytes_available;
@@ -329,10 +329,10 @@ void Merc::get_data_merc()
     }
     else
     {
-        while (senegj == 0)
-        {
-            senegj = getEnergy();
-        }
+        //while (senegj == 0)
+        //{
+        //    senegj = getEnergy();
+        //}
         while (true) {
 
             getEnergy();
@@ -386,7 +386,7 @@ double Merc::getFreq()
     data_format[4] = crc_tmp;
     data_format[5] = crc_tmp >> 8;
 
-    //digitalWrite(4, HIGH);
+    digitalWrite(4, HIGH);
     usleep(1000);
     for (int i = 0; i < 6; i++) {
         //appha.append((char*)&data_format[i]);
@@ -395,7 +395,7 @@ double Merc::getFreq()
         //write(serial_port, appha.c_str(), 1);
     }
     tcdrain(serial_port);
-    //digitalWrite(4, LOW);
+    digitalWrite(4, LOW);
     usleep(400000);
 
     //num_bytes = readserial(*data_red, 12);
@@ -433,7 +433,7 @@ uint32_t Merc::getVoltage(uint8_t phase)
     data_format[4] = crc_tmp;
     data_format[5] = crc_tmp >> 8;
 
-    //digitalWrite(4, HIGH);
+    digitalWrite(4, HIGH);
     usleep(1000);
     for (int i = 0; i < 6; i++) {
         //appha.append((char*)&data_format[i]);
@@ -443,8 +443,8 @@ uint32_t Merc::getVoltage(uint8_t phase)
     }
     //tcdrain(serial_port);
     usleep(8000);
-    //digitalWrite(4, LOW);
-    //usleep(400000);
+    digitalWrite(4, LOW);
+    usleep(400000);
 
     //num_bytes = readserial(*data_red, 12);
     //num_bytes = readserial(*read_buf, sizeof(read_buf));
@@ -504,7 +504,7 @@ void Merc::power_quality_analyze()
 
     if (u_max == 0)
         return;
-    double asymmetry = 100 * (double)(1 - (double)(u_min / u_max));
+    double asymmetry = 100 * (double)(1 - (double)((double)u_min / (double)u_max));
     if (asymmetry > VOLTAGE_ASYMMETRY_MAX)
         power_quality |= 1;
     else
