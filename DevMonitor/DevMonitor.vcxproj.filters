@@ -85,6 +85,9 @@
     <ClCompile Include="Mercury.cpp">
       <Filter>WeildLib</Filter>
     </ClCompile>
+    <ClCompile Include="md5.cpp">
+      <Filter>WeildLib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ElectricMeter.h">
@@ -150,9 +153,6 @@
     <ClInclude Include="DigitalOutUbmLast.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
-    <ClInclude Include="WeildUBMLast.h">
-      <Filter>WeildDev</Filter>
-    </ClInclude>
     <ClInclude Include="SPI_C.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
@@ -171,6 +171,12 @@
       <Filter>WeildLib</Filter>
     </ClInclude>
     <ClInclude Include="Mercury.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="md5.h">
+      <Filter>WeildLib</Filter>
+    </ClInclude>
+    <ClInclude Include="WeildUBMLast.h">
       <Filter>WeildLib</Filter>
     </ClInclude>
   </ItemGroup>

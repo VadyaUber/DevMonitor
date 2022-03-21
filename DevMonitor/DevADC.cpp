@@ -82,9 +82,10 @@ void DevADC::CalculateAdc()
 			SummArray += FilterADC.Array[i];
 		}
 		
-		//tmp = abs((SummArray / FilterADC.Cnt) * REF);
-		//tmp = tmp - mat.offset;
-		//tmp = tmp * mat.divisor * mat.multiplier;
+		tmp = abs((SummArray / FilterADC.Cnt) * REF);
+		//printf("val %f\n\r", tmp);
+		tmp = tmp - mat.offset;
+		tmp = tmp * mat.divisor * mat.multiplier;
 		tmp = (abs(((SummArray / FilterADC.Cnt) * REF) - mat.offset)) * mat.divisor * mat.multiplier;
 		Value16Bit = (uint16_t)(tmp + 0.5);
 		//printf(" Val %d\n\r", Value16Bit);
