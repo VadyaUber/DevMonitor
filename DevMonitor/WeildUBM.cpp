@@ -27,9 +27,9 @@ WeildUBM::WeildUBM(DevServer * server)
 {
 	wiringPiSetup();
 	UbmServer = server;
-	pullUpDnControl(13, PUD_DOWN);
-	pullUpDnControl(12, PUD_DOWN);
-	pullUpDnControl(14, PUD_UP);
+	//pullUpDnControl(13, PUD_DOWN);
+	//pullUpDnControl(12, PUD_DOWN);
+	//pullUpDnControl(14, PUD_UP);
 	pinMode(SW_POWER, OUTPUT);
 	digitalWrite(SW_POWER, HIGH);
 	pinMode(CS_METER, OUTPUT);
@@ -127,16 +127,16 @@ WeildUBM::WeildUBM(DevServer * server)
 					}
 				}
 				Dout->Loop();
-				usleep(10000);
+				usleep(4000);
 
 			}
 			});
 	//}
 		
 	TimerCalculate = new MyTime();
-	TimerCalculate->IntevralSleep = 500;
+	TimerCalculate->IntevralSleep = 800;
 
-	if (UbmServer->WeildConfig.BlockMode == "OFF")			/////////////////////	ÏÐÎÂÅÐÈÒÜ
+	if (UbmServer->WeildConfig.BlockMode == "OFF" || UbmServer->WeildConfig.BlockMode == "RFID")			/////////////////////	ÏÐÎÂÅÐÈÒÜ
 		digitalWrite(SW_POWER, LOW);
 	else 
 		digitalWrite(SW_POWER,HIGH);
@@ -192,30 +192,51 @@ void WeildUBM::UbmLoop()
 		if (UbmServer->WeildConfig.USB_OUT)
 		{
 			logtousb.USBconnect();
-			//if (logtousb.USBblink)
-			//{
-			//	USBBlinkCount++;
-			//	if (USBBlinkCount > 40)
-			//	{
-			//		logtousb.USBblink = false;
-			//		USBBlinkCount = 0;
-			//		if (logtousb.USBConfigRead)
-			//			exit(0);
-			//	}
-			//}
 		}
-	}
-	
-	if (UbmServer->WeildConfig.BlockMode == "REMOTE") { //clarify and change
-		if (I_Sensor != NULL) {
-			if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
+		if (UbmServer->WeildConfig.BlockMode == "REMOTE") { //clarify and change
+			if (I_Sensor != NULL) {
+				if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
 
-				digitalWrite(SW_POWER, UbmServer->PowerOn);
-				digitalWrite(CS_METER, !UbmServer->PowerOn);
+					digitalWrite(SW_POWER, UbmServer->PowerOn);
+					digitalWrite(CS_METER, !UbmServer->PowerOn);
+				}
+			}
+
+		}
+		if (UbmServer->WeildConfig.BlockMode == "RFID") { //clarify and change
+			if (UbmServer->Status.StatusServer==1) //åñëè åñòü ñâÿçü ñ ñåðâåðîì
+			{
+				if (UbmServer->RFID_status)
+				{
+					if (I_Sensor != NULL) {
+						if (I_Sensor->Value16Bit < UbmServer->WeildConfig.Compare_I) {
+
+							digitalWrite(SW_POWER, UbmServer->PowerOn);
+							digitalWrite(CS_METER, !UbmServer->PowerOn);
+						}
+					}
+				}
+				else
+				{
+					digitalWrite(SW_POWER, LOW);
+					digitalWrite(CS_METER, HIGH);
+				}
+			}
+			else
+			{
+				if (wiegand->RFID_id == "")
+				{
+					digitalWrite(SW_POWER, LOW);
+					digitalWrite(CS_METER, HIGH);
+				}
+				else
+				{
+					digitalWrite(SW_POWER, HIGH);
+					digitalWrite(CS_METER, LOW);
+				}
 			}
 		}
-	
 	}
 	
-	
+	usleep(10000);
 }
