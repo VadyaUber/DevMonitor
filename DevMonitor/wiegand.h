@@ -30,7 +30,7 @@ class RFID
 		RFID();
 		bool RFID_Err = false;
 		bool* Serv_RFID;
-		string RFID_id = "";
+		string RFID_id = "0000";
 		volatile Rfid_Led_Status Led_RFID;
 		void wiegand_loop(int d0pin, int d1pin, bool WG26);
 		void set_led_state();
