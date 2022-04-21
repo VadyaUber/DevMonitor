@@ -3,7 +3,6 @@
 #include"WeildUBM.h"
 #include"WeildMachineDev.h"
 #include"WeildMachineSpotDev.h"
-#include "HaasMach.h"
 #include "Rtc.h"
 #include "WeildUBMLast.h"
 using namespace std;
@@ -15,7 +14,6 @@ int main()
 	WeildMachineDev * Machine = NULL;
 	WeildMachineSpotDev* MachineSpot = NULL;
 	WeildUBMLast * UbmLast = NULL;
-	HaasMach * Haas = NULL;
 	MyTime  RtsEvent;
     RtsEvent.IntevralSleep = 3600000;
 
@@ -33,9 +31,6 @@ int main()
 	}
 	else if (weild.WeildConfig.Type_Dev == "UBM4_LAST") {
 		UbmLast = new WeildUBMLast(&weild);
-	}
-	else if (weild.WeildConfig.Type_Dev == "HAAS_MACH") {
-		Haas = new HaasMach(&weild);
 	}
 	
 
@@ -57,10 +52,5 @@ int main()
 		else if (UbmLast!=NULL) {
 			UbmLast->UbmLoop();
 		}
-		else if(Haas!=NULL)
-		{
-			Haas->HaasLoop();
-		}
-
 	}
 }
