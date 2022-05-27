@@ -20,7 +20,7 @@ void DevLog::DevLogOpen() {
 		FileWeld = open(PathFile.c_str(), O_WRONLY | O_APPEND, S_IRUSR | S_IWUSR);
 	FileIsOpen = true;
 }
-void DevLog::DevLogWrite(std::string WeildData, std::string FrameData)
+bool DevLog::DevLogWrite(std::string WeildData, std::string FrameData)
 {
 	if (olddata != FrameData)
 	{
@@ -36,7 +36,9 @@ void DevLog::DevLogWrite(std::string WeildData, std::string FrameData)
 		{
 			write(FileWeld, WeildData.c_str(), WeildData.size());
 		}
+		return true;
 	}
+	return false;
 }
 
 void DevLog::DevLogClose()
