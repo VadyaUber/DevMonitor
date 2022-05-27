@@ -10,9 +10,9 @@ public:
 	uint32_t GetMilis();
 	uint32_t IntevralSleep;
 	bool CheckTimeEvent();
+	uint32_t LastTime;
 private:
 	uint32_t TimeStart;
-	uint32_t LastTime;
 	uint64_t now;
 
 };

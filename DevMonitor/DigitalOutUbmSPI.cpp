@@ -110,6 +110,52 @@ void DigitalOutUbmSPI::Loop()
 	
 }
 
+void DigitalOutUbmSPI::RFIDLoop()
+{
+	this->value &= ~this->LED4_Pin << 8;
+	if (*Led_RFID == AccesTrue)
+	{
+		this->value |= this->LED3_Pin << 8;
+	}
+	else if (*Led_RFID == SendServer)
+	{
+		blinc(LED3_Pin, 1, 500, 500);
+	}
+	else if (*Led_RFID == Wait)
+	{
+		blinc(LED3_Pin, 1, 200, 800);
+	}
+	else if (*Led_RFID == EroorRead)
+	{
+		this->value |= this->LED4_Pin << 8;
+		this->value &= ~this->LED3_Pin << 8;
+	}
+
+	if (this->LED2)this->value |= this->LED2_Pin << 8;
+	else this->value &= ~this->LED2_Pin << 8;
+
+	if (this->LED1)this->value |= this->LED1_Pin << 8;
+	else this->value &= ~this->LED1_Pin << 8;
+
+
+	if (this->LastVal != this->value) {
+		this->LastVal = this->value;
+		uint8_t rx[2] = { 0 };
+
+		if (NameSPI != dev) {
+			DeInitSPI();
+			init_SPI("/dev/spidev1.0", 2000000, 8, 2, dev);
+		}
+
+
+		SpiWriteRead((uint8_t*)&this->value, rx, 2);
+		digitalWrite(CS, LOW);
+		digitalWrite(CS, HIGH);
+		digitalWrite(CS, LOW);
+	}
+	usleep(100);
+}
+
 void DigitalOutUbmSPI::blinc(uint16_t pin, uint16_t count, uint16_t delay1, uint16_t delay2)
 {
 	uint8_t rx[2] = { 0 };
