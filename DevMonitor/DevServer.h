@@ -79,6 +79,7 @@ typedef struct {
 	int StatusServer = NOT_CONNECTED;
 	//int StatusRfid1 = Wait;
 	bool StatusBloc = false;
+	bool StatusIdle = false; //Status true if packet not changed about hour
 }WeildStatus;
 
 class DevServer
@@ -111,7 +112,7 @@ class DevServer
 		uint8_t StatusServerRecv = NOT_DATA;
 	private:
 		string buff_str = "";
-		string ORANGE_PROGRAM = "01";
+		string ORANGE_PROGRAM = "02";
 		string SendSoket;
 		string mutable_data; //UartPackage+Perefir+rfid+QrCode
 
@@ -147,6 +148,7 @@ class DevServer
 		bool CheckComnd(char * buff, int len);
 		vector<string> ArrayVector;
 		vector<string>split(string strToSplit, char delimeter);
+		MyTime* Everyhourcheck;
 		
 };
 

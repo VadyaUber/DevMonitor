@@ -16,6 +16,8 @@ DevServer::DevServer(string path_config, string path_log) {
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 	ServTime = new MyTime();
 	ServTime->IntevralSleep = 60000;
+	Everyhourcheck = new MyTime();
+	Everyhourcheck->IntevralSleep = 3600000;
 }
 
 DevServer::~DevServer()
@@ -32,6 +34,12 @@ void DevServer::WeildLoop() {
 			if (TimeEvent[i].Timer.CheckTimeEvent()) {
 				(*this.*TimeEvent[i].func)();
 			}
+		}
+		if (Everyhourcheck->CheckTimeEvent())
+		{
+			Log.olddata = ' ';
+			usleep(10);
+			Status.StatusIdle = true;
 		}
 	//}
 }
@@ -365,14 +373,14 @@ void DevServer::SendServer()
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) 
 		{
 			Status.StatusSocet = NOT_CONNECTED;
-			if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
+			if (WeildConfig.LOG_ON)if(Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime=Everyhourcheck->GetMilis();
 			shutdown(sockfd, SHUT_RDWR);
 			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 		}
 	}
 	else if (Status.StatusSocet == CONNECTED && Status.StatusServer == NOT_CONNECTED)
 	{
-		if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
+		if (WeildConfig.LOG_ON)if (Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0)
 		{
 			Status.StatusSocet = NOT_CONNECTED;
@@ -382,7 +390,7 @@ void DevServer::SendServer()
 	}
 	else 
 	{
-		if (WeildConfig.LOG_ON)Log.DevLogWrite(SendSoket, mutable_data);
+		if (WeildConfig.LOG_ON)if(Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
 	}
 }
 
@@ -513,8 +521,11 @@ bool  DevServer::CheckComnd(char * buff, int len ) {
 			if ((count(s.begin(), s.end(), ';')) < 4) //если меньше 4х разделителей
 				return false;
 			ArrayVector = split(s, ';');
-			
-			
+
+			//printf("\r\n");
+			//printf("recieve : ");
+			//printf(s.c_str());
+			//printf("\r\n");
 
 			lenMsg = last_delimiter_index + 4;
 			if (buff_str.length() > lenMsg) //Еcли разделитель не поcледний cимвол
