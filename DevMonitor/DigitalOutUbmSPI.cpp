@@ -15,6 +15,13 @@ DigitalOutUbmSPI::DigitalOutUbmSPI(uint8_t cs_dev, uint8_t LED3_Pin, uint8_t LED
 	pinMode(CS, OUTPUT);
 	digitalWrite(CS, LOW);
 	init_SPI("/dev/spidev1.0", 2000000, 8, 2, dev);
+
+	uint8_t rx[2] = { 0 };
+	this->value = 0;
+	SpiWriteRead((uint8_t*)&this->value, rx, 2);
+	digitalWrite(CS, LOW);
+	digitalWrite(CS, HIGH);
+	digitalWrite(CS, LOW);
 }
 
 void DigitalOutUbmSPI::Loop()
