@@ -120,6 +120,14 @@ bool Rtc::ValidDataRtc()
 		unsigned char buff[32] = { 0 };
 		sprintf((char*)buff, (const char *)"date -s \"%02d/%02d/%04d %02d:%02d:%02d\"", tim_RTC.tm_mon+1, tim_RTC.tm_mday, tim_RTC.tm_year + 1900, tim_RTC.tm_hour, tim_RTC.tm_min, tim_RTC.tm_sec);
 		system((const char *)buff);
+
+		unsigned char buffs[32] = { 0 };
+		sprintf((char*)buffs, (const char*)"\"%02d/%02d/%04d \"", tim_RTC.tm_year + 1900, tim_RTC.tm_mon + 1, tim_RTC.tm_mday);
+		CurrDate = (tim_RTC.tm_year + 1900) * 10000 + (tim_RTC.tm_mon + 1) * 100 + tim_RTC.tm_mday;
+		//string dtame = rtc->tim_RTC.tm_mon + 1 + rtc->tim_RTC.tm_mday + rtc->tim_RTC.tm_year + 1900;
+		printf("datescurr: %d\n", CurrDate);
+		printf("datescurr: %s\n", buffs);
+
 		return true;
 	}
 	else {

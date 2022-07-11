@@ -17,6 +17,7 @@ public:
 	void GetRtc();
 	bool ReadOk;
 	int CntError;
+	uint64_t CurrDate;
 private:
 
 	uint8_t CS;
