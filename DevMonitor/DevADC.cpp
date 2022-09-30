@@ -32,9 +32,8 @@ void DevADC::ReadValue()
 		}
 		PriznReadAdc = true;
 		uint8_t tx[3] = { 0 };
-		uint16_t adc_out = 0;
+		uint32_t adc_out = 0;
 		uint8_t rx[3] = { 0 };
-		int tmp = 0;
 		digitalWrite(CS_PIN, LOW);
 		SpiWriteRead(tx, rx, 3);
 		digitalWrite(CS_PIN, HIGH);
@@ -61,8 +60,9 @@ void DevADC::CalculateAdc()
 	while (PriznReadAdc);
 	MeasureEnable = false;
 	double tmp;
-	uint32_t tm;
+	double tmpval;
 	if (filter_on) {
+		//uint32_t tm;
 		//tm = (FiltringADC(FilterADC.Array, FilterADC.Cnt));
 		//tmp = (tm * REF);
 		//tmp = (abs(tmp - mat.offset));
@@ -72,23 +72,19 @@ void DevADC::CalculateAdc()
 		//tmp = tmp * mat.multiplier;
 		tmp = (abs(((FiltringADC(FilterADC.Array, FilterADC.Cnt)) * REF) - mat.offset)) *mat.divisor * mat.multiplier;
 		//tm = (FiltringADC(FilterADC.Array, FilterADC.Cnt));
-		//printf("val %d\n\r", tm);
-		//printf("val %f\n\r", tmp);
 		Value16Bit = (uint16_t)(tmp + 0.5);
-		//printf(" Val %d\n\r", Value16Bit);
 	}
 	else {
 		for (int i = 0; i < FilterADC.Cnt; i++) {
 			SummArray += FilterADC.Array[i];
 		}
-		
 		tmp = abs((SummArray / FilterADC.Cnt) * REF);
-		//printf("val %f\n\r", tmp);
+		tmpval = tmp;
 		tmp = tmp - mat.offset;
 		tmp = tmp * mat.divisor * mat.multiplier;
 		tmp = (abs(((SummArray / FilterADC.Cnt) * REF) - mat.offset)) * mat.divisor * mat.multiplier;
 		Value16Bit = (uint16_t)(tmp + 0.5);
-		//printf(" Val %d\n\r", Value16Bit);
+		//printf("%s%s", CS_PIN == 11 ? "I= " : "", CS_PIN == 10 ? "V= " : ""); printf("Val_adc %f", tmpval); printf(" Val %d \n", Value16Bit);
 		SummArray = 0;
 	}
 	FilterADC.Cnt = 0;
