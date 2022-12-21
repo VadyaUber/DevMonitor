@@ -1,15 +1,17 @@
 #include "Wifi.h"
-
-bool Wifi::create_conect(string sid, string pass)
+#include "unistd.h"
+bool Wifi::create_conect(string sid, string pass,bool hidden)
 {
 	string result = "";
-	set_comand_cmd("nmcli device wifi rescan");
+	//set_comand_cmd("nmcli device wifi rescan");
+	//set_comand_cmd("sudo nmcli device wifi list");
 	std::string::size_type n;
 	if (!check_connect(sid)) {
 		if (check_add(sid)) {
 			result = set_comand_cmd("nmcli connection  delete " + sid);
 		}
-		result = set_comand_cmd("nmcli device wifi connect " + sid + " password " + pass);
+		if(hidden) result = set_comand_cmd("nmcli device wifi connect " + sid + " password " + pass + " hidden yes"); //nmcli dev wifi connect wpmconfig password wpm1config2 hidden yes
+		else result = set_comand_cmd("nmcli device wifi connect " + sid + " password " + pass);
 		n = result.find("Device 'wlan0' successfully activated");
 		if (n == std::string::npos)return false;
 		return true;
