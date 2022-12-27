@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <iostream>
 #include "DevLog.h"
 #include "Wifi.h"
@@ -17,6 +17,7 @@
 #include <functional>
 #include <vector>
 #include <string>
+#include "Version.h"
 using namespace std;
 
 #define SA struct sockaddr 
@@ -36,6 +37,10 @@ using namespace std;
 #define NOT_DATA   1 
 #define NEW_DATA   2
 #define IDEL_DATA  3
+
+#define BUILD_DATE __DATE__
+#define BUID_TINE __TIME__
+
 //enum Rfid_Status
 //{
 //	Wait,
@@ -53,15 +58,19 @@ typedef struct{
     string wifi_pass;
 	string reserve_wifi_sid;
 	string reserve_wifi_pass;
+	bool wifi_hidden = false;
     string interface;
     string mac;
     string ver;
-	bool RFID_ON = false;
+	uint16_t postid;
+	uint8_t RFID_ON = 0;
 	bool LOG_ON= false;
 	uint16_t LOG_SIZE = 10;
 	bool SENSOR_I_ON=false;
 	bool SENSOR_U_ON = false;
 	bool SENSOR_W_ON = false;
+	bool SENSOR_GAS_ON = false;
+	bool SENSOR_WIRE_ON = false;
 	bool RTC_ON = false;
 	bool WG35 = false;
 	bool QR_ON = false;
@@ -70,6 +79,8 @@ typedef struct{
 	string Type_Dev = "";
 	string router_ip;
 	string BlockMode = "";
+	uint16_t Power_min_wait = 0;
+	uint16_t Power_max_run = 0;
 	int Compare_I = 0;
 
 }config; 
@@ -81,6 +92,12 @@ typedef struct {
 	bool StatusBloc = false;
 	bool StatusIdle = false; //Status true if packet not changed about hour
 }WeildStatus;
+
+typedef struct {
+	uint8_t wdserverrecv = 1;
+	uint8_t wdconnect = 0;
+	uint8_t wdsend = 0;
+}Errors;
 
 class DevServer
 {		
@@ -97,7 +114,7 @@ class DevServer
 		//string DataToServer="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
 		string DataOut;
 		config WeildConfig;
-		void WeildLoop();
+		void WeildLoop(uint8_t p=0);
 		string rfid = "";
 		string QrCode = "";
 		string UartPackage = "";
@@ -105,14 +122,18 @@ class DevServer
 		bool NewDataInput=false;
 
 		uint8_t LedByte = 0;
-		bool PowerOn = true; // 0 бит – команда сервера по управлению блокировкой
-		bool RFID_status = false; //1 бит – «1» - сервер принял код от RFID. «0» сервер не принял код от RFID.
-		bool QR_status = false; //2 бит – «1» - сервер принял код от сканера.«0» сервер не принял код от сканера.
+		bool PowerOn = true; // 0 Р±РёС‚ вЂ“ РєРѕРјР°РЅРґР° СЃРµСЂРІРµСЂР° РїРѕ СѓРїСЂР°РІР»РµРЅРёСЋ Р±Р»РѕРєРёСЂРѕРІРєРѕР№
+		bool RFID_status = false; //1 Р±РёС‚ вЂ“ В«1В» - СЃРµСЂРІРµСЂ РїСЂРёРЅСЏР» РєРѕРґ РѕС‚ RFID. В«0В» СЃРµСЂРІРµСЂ РЅРµ РїСЂРёРЅСЏР» РєРѕРґ РѕС‚ RFID.
+		bool QR_status = false; //2 Р±РёС‚ вЂ“ В«1В» - СЃРµСЂРІРµСЂ РїСЂРёРЅСЏР» РєРѕРґ РѕС‚ СЃРєР°РЅРµСЂР°.В«0В» СЃРµСЂРІРµСЂ РЅРµ РїСЂРёРЅСЏР» РєРѕРґ РѕС‚ СЃРєР°РЅРµСЂР°.
 		string uint8_to_hex_string(uint8_t *v, const size_t s);
 		uint8_t StatusServerRecv = NOT_DATA;
+		string ExternalSendSoket; //Р’РЅРµС€РЅРёРµ РґР°РЅРЅС‹Рµ РґР»СЏ РїРµСЂРµРґР°С‡Рё РЅР° СЃРµСЂРІРµСЂ РїРѕР»СѓС‡РµРЅС‹Рµ РїРѕ СЂР°РґРёРѕ
+		string ExternalDataSocket; //РџРѕР»СѓС‡РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ РѕС‚ СЃРµСЂРІРµСЂР° РґР»СЏ РїРµСЂРµСЃС‹Р»РєРё РїРѕ СЂР°РґРёРѕ
+
+		unsigned char Crc8(const char* pcBlock, unsigned char len); //calculate CRC8
 	private:
 		string buff_str = "";
-		string ORANGE_PROGRAM = "02";
+		string ORANGE_PROGRAM = "BG"; //Р’РµСЂСЃРёСЏ РџРћ 2 СЃРёРјРІРѕР»Р°, 1Р№ СЃРёРјРІРѕР» РЅРѕРјРµСЂ РЅРµРґРµР»Рё a-Z, 2Р№ СЃРёРјРІРѕР» РЅРѕРјРµСЂ РіРѕРґР° 0-9
 		string SendSoket;
 		string mutable_data; //UartPackage+Perefir+rfid+QrCode
 
@@ -120,12 +141,11 @@ class DevServer
 		struct hostent* h;
 		struct sockaddr_in servaddr;
 		int sockfd = 0;
-		int wdserverrecv = 1;
-		int wdconnect = 0;
 
+		Errors Error;
 		DevLog  Log;
-		void ConnectInterfeceWIFI( string ssid, string pass);
-		void ConnectInterfeceLAN();
+		void ConnectInterfeceWIFI( string ssid, string pass, bool hidden_wifi = false);
+		void ConnectInterfeceLAN(string typeinterface);
 		void ConnectInterfece(string ssid, string pass);
 		void ReadFileConfig(string path);
 		void CheckConnectInterface();
@@ -133,8 +153,8 @@ class DevServer
 		MyTime* ServTime;
 		string currentDateTime();
 		
-		unsigned char Crc8(const char *pcBlock, unsigned char len);
 		int init_soket(string ip, int port);
+		void  Socket_restart(string reason);
 		void  ConectServer();
 		void  SendServer();
 		void  RecvServer();

@@ -3,9 +3,13 @@
 #include"WeildUBM.h"
 #include"WeildMachineDev.h"
 #include"WeildMachineSpotDev.h"
+#include "MachinePillar.h"
 #include "Rtc.h"
-#include "WeildUBMLast.h"
+#include "RadioHub.h"
+
+
 using namespace std;
+
 int main()
 {
 	DevServer weild("/weildpath/config_ubm4.xml", "/weildpath/history.txt"); 
@@ -13,7 +17,8 @@ int main()
 	WeildUBM * UbmDev = NULL;
 	WeildMachineDev * Machine = NULL;
 	WeildMachineSpotDev* MachineSpot = NULL;
-	WeildUBMLast * UbmLast = NULL;
+	MachinePillar* PillarMach = NULL;
+	HUB* Radio = NULL;
 	MyTime  RtsEvent;
     RtsEvent.IntevralSleep = 3600000;
 
@@ -29,8 +34,11 @@ int main()
 	else if (weild.WeildConfig.Type_Dev == "SPOT_WELD_MACHIN") {
 		MachineSpot = new WeildMachineSpotDev(&weild);
 	}
-	else if (weild.WeildConfig.Type_Dev == "UBM4_LAST") {
-		UbmLast = new WeildUBMLast(&weild);
+	else if (weild.WeildConfig.Type_Dev == "MACHIN_PILLAR") {
+		PillarMach = new MachinePillar(&weild);
+	}
+	else if (weild.WeildConfig.Type_Dev == "RadioHUB") {
+		Radio = new HUB(&weild);
 	}
 	
 
@@ -49,8 +57,11 @@ int main()
 		else if (MachineSpot != NULL) {
 			MachineSpot->WeildMachineSpotDevLoop();
 		}
-		else if (UbmLast!=NULL) {
-			UbmLast->UbmLoop();
+		else if (PillarMach != NULL) {
+			PillarMach->MachinePillarLoop();
+		}
+		else if (Radio != NULL) {
+			Radio->HUBloop();
 		}
 	}
 }

@@ -1,17 +1,32 @@
-#include "DevServer.h"
+﻿#include "DevServer.h"
 #include <errno.h>
+#include "Radio.h"
+#include "RadioHub.h"
+#include "thread"
+#include <sys/time.h>
+
+Radio* rad;
+HUB* RadioHUB;
+#define msleep(x) (usleep(x*1000))
+
 DevServer::DevServer(string path_config, string path_log) {
 	ReadFileConfig(path_config);
+	cout << "Firmware build " __DATE__ __TIME__ " Version: "  VERSION_BUILD<< endl;
 	if (WeildConfig.LOG_ON) {
 		Log.Init(path_log,WeildConfig.LOG_SIZE);
 	}
-	TimeEvent[0].Timer.IntevralSleep = TIMOUT_SEND;
+	int k = 1; //Делитель времени
+	if (WeildConfig.Type_Dev == "RadioHUB")
+	{
+		k = 2;
+	}
+	TimeEvent[0].Timer.IntevralSleep = TIMOUT_SEND / k;
 	TimeEvent[0].func = &DevServer::SendServer;
-	TimeEvent[1].Timer.IntevralSleep = TIMOUT_READ;
+	TimeEvent[1].Timer.IntevralSleep = TIMOUT_READ / k;
 	TimeEvent[1].func = &DevServer::RecvServer;
-	TimeEvent[2].Timer.IntevralSleep = TIMOUT_CONN;
+	TimeEvent[2].Timer.IntevralSleep = TIMOUT_CONN / k;
 	TimeEvent[2].func = &DevServer::ConectServer;
-	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA;
+	TimeEvent[3].Timer.IntevralSleep = TIMOUT_DATA / k;
 	TimeEvent[3].func = &DevServer::FormatString;
 	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 	ServTime = new MyTime();
@@ -24,33 +39,95 @@ DevServer::~DevServer()
 {
 }
 
-void DevServer::WeildLoop() {
+void DevServer::WeildLoop(uint8_t p) {
 	//if (Status.StatusIterfece == NOT_CONNECTED) {
 	//	ConnectInterfece();
 	//}
 	//else {
 		//CheckComnd(":120101BDE9E4;01CD34567812AF;03;YYYYMMDDHHMMSS;11\r", 50);
-		for (int i = 0; i < MAX_EVET; i++) {
-			if (TimeEvent[i].Timer.CheckTimeEvent()) {
-				(*this.*TimeEvent[i].func)();
+	try
+	{
+		if (WeildConfig.Type_Dev == "RadioHUB")
+		{
+			///*сделать отдельный поток
+
+			//в цикле отправлять и получать данные по каждому убму,
+			//в случае потери связи с сервером, слать предидущие данные с сервера
+			//в случае потери связи с убмами через 5-10 сек перестать слать данные на сервак
+
+
+			//*/
+			//if (TimeEvent[2].Timer.CheckTimeEvent()) {
+			//	(*this.*TimeEvent[2].func)();
+			//}
+			//SendSoket = ":1281DD05BFAD;;0400010000000000001000000010000000000000000000;0000;;98;;;02;20220728081136;66";
+			////0
+			////SendSoket = RadioHUB->TXdata[0];
+			//SendServer();
+			//RecvServer();
+			////check and update  
+			////ExternalDataSocket = dataInput;
+
+			////1
+
+
+			////2
+
+
+
+			if (TimeEvent[2].Timer.CheckTimeEvent()) {
+				(*this.*TimeEvent[2].func)();
+			}
+			if (TimeEvent[1].Timer.CheckTimeEvent() || p == 2) {
+				(*this.*TimeEvent[1].func)();
+			}
+			if (p == 3) {
+				
+				SendSoket = ExternalSendSoket;
+				(*this.*TimeEvent[0].func)();
+				//printf("sendsrf: %s\n\r", SendSoket.c_str());
 			}
 		}
-		if (Everyhourcheck->CheckTimeEvent())
+		else
 		{
-			Log.olddata = ' ';
-			usleep(10);
-			Status.StatusIdle = true;
+			if (WeildConfig.interface == "radio")
+			{
+				//if (TimeEvent[3].Timer.CheckTimeEvent()) { //format string
+				//	(*this.*TimeEvent[3].func)();
+				//}
+
+			}
+			else
+			{
+				for (int i = 0; i < MAX_EVET; i++) {
+					if (TimeEvent[i].Timer.CheckTimeEvent()) {
+						(*this.*TimeEvent[i].func)();
+					}
+				}
+			}
+			if (Everyhourcheck->CheckTimeEvent())
+			{
+				Log.olddata = ' ';
+				usleep(10);
+				Status.StatusIdle = true;
+			}
 		}
+	}
+	catch (exception& e)
+	{
+		cerr << "Caught " << e.what() << endl;
+		cerr << "Type " << typeid(e).name() << endl;
+	}
+
 	//}
 }
 
-void DevServer::ConnectInterfeceWIFI(string ssid, string pass)
+void DevServer::ConnectInterfeceWIFI(string ssid, string pass,bool hidden_wifi)
 {
 	try {
-		if (wifi.create_conect(ssid, pass)) {
+		if (wifi.create_conect(ssid, pass, hidden_wifi)) {
 			Status.StatusIterfece = CONNECTED;
 			printf("Wifi interface connect successful \n");
-			lastconected = true;
 			WeildConfig.ip_out = wifi.GetMyIpInterfece(WeildConfig.interface);
 			WeildConfig.router_ip = wifi.GetIpInterf(WeildConfig.interface);
 		}
@@ -63,19 +140,27 @@ void DevServer::ConnectInterfeceWIFI(string ssid, string pass)
 	}
 }
 
-void DevServer::ConnectInterfeceLAN()
+void DevServer::ConnectInterfeceLAN(string typeinterface)
 {
 	try {
 		//if (wifi.get_connect(sockfd, WeildConfig.interface)) {
-		WeildConfig.ip_out = wifi.GetMyIpInterfece("eth0");
-		WeildConfig.router_ip = wifi.GetIpInterf("eth0");
+		WeildConfig.ip_out = wifi.GetMyIpInterfece(typeinterface);
+		WeildConfig.router_ip = wifi.GetIpInterf(typeinterface);
+		/*WeildConfig.ip_out = wifi.GetMyIpInterfece("eth0");
+		WeildConfig.router_ip = wifi.GetIpInterf("eth0");*/
+
+		if (WeildConfig.Type_Dev == "RadioHUB" && WeildConfig.ip_out.length() != 0)
+		{
+			Status.StatusIterfece = CONNECTED;
+			printf("Lan interface connect successful \n");
+			WeildConfig.interface = typeinterface;
+		}
 
 		if (WeildConfig.ip_out.length() != 0 && WeildConfig.router_ip.length() != 0)
 		{
 			Status.StatusIterfece = CONNECTED;
 			printf("Lan interface connect successful \n");
-			lastconected = true;
-			WeildConfig.interface = "eth0";
+			WeildConfig.interface = typeinterface;
 		}
 	}
 	catch (exception& e)
@@ -90,11 +175,11 @@ void DevServer::ConnectInterfeceLAN()
 void DevServer::ConnectInterfece(string ssid, string pass) {
 		
 		if (WeildConfig.interface == "wlan0") {
-			ConnectInterfeceWIFI(ssid, pass);
+			ConnectInterfeceWIFI(ssid, pass,WeildConfig.wifi_hidden);
 		}
-		else if (WeildConfig.interface == "eth0") 
+		else //if (WeildConfig.interface == "eth0") 
 		{
-			ConnectInterfeceLAN();
+			ConnectInterfeceLAN(WeildConfig.interface);
 		}
 }
 void DevServer::ReadFileConfig(string path)
@@ -111,24 +196,103 @@ void DevServer::ReadFileConfig(string path)
 	WeildConfig.port = doc.child("config").child("server_port").attribute("value").as_uint();
 	WeildConfig.server_dns = doc.child("config").child("server_host_dns").attribute("value").as_string();
 	WeildConfig.server_ip = doc.child("config").child("server_host_ip").attribute("value").as_string();
+	WeildConfig.postid = doc.child("config").child("post_id").attribute("value").as_uint();
 	string conn_type = doc.child("config").child("connection_type").attribute("value").as_string();
-	if (conn_type == "wifi")
+	if (conn_type == "radio")
+	{
+		try {
+		rad = new Radio();
+		WeildConfig.interface = "radio";
+		rad->init(&WeildConfig.mac, &SendSoket);
+		//WeildConfig.mac = " ";
+		//rad->MAC = &WeildConfig.mac;
+		//rad->send = &SendSoket;
+		}
+		catch (exception& e)
+		{
+			cerr << "Caught " << e.what() << endl;
+			cerr << "Type " << typeid(e).name() << endl;
+		}
+		new thread([&]() {
+			uint8_t wdcon = 0;
+			while (true)
+			{
+				rad->WaitRecive();
+				if (rad->datainput == true)
+				{
+					//long int now;
+					//struct  timeval  ts;
+					//gettimeofday(&ts, NULL);
+					//now = ts.tv_sec * 1000 + ts.tv_usec / 1000;;
+					//printf("nows: %d\n", now);
+					Status.StatusSocet = CONNECTED;
+					Status.StatusServer = CONNECTED;
+					Status.StatusIterfece = CONNECTED;
+					wdcon = 0;
+					rad->SendPacket();
+					FormatString();
+					//gettimeofday(&ts, NULL);
+					//now = ts.tv_sec * 1000 + ts.tv_usec / 1000;;
+					//printf("nowd: %d\n", now);
+					//const char* cstr = rad->data.c_str();
+					if (CheckComnd((char*)rad->data.c_str(), rad->data.length()))
+					{
+						NewDataInput = true;
+						Error.wdserverrecv = 0;
+						
+					}
+					printf("cmdend");
+					rad->datainput = false;
+					
+				}
+				else
+				{
+					wdcon++;
+					if (wdcon > 12)
+					{
+						Status.StatusSocet = NOT_CONNECTED;
+						Status.StatusServer = NOT_CONNECTED;
+						Status.StatusIterfece = NOT_CONNECTED;
+						wdcon = 0;
+						//FormatString();
+						//if (WeildConfig.LOG_ON)if (Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
+					}
+					FormatString();
+					if (WeildConfig.LOG_ON)if (Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
+				}
+
+				usleep(10000);
+				//sleep(1);
+			}
+			});
+	}
+	else if (conn_type == "wifi")
 	{
 		WeildConfig.interface = "wlan0";
 		WeildConfig.wifi_sid = doc.child("config").child("wifi_ssid").attribute("value").as_string();
 		WeildConfig.wifi_pass = doc.child("config").child("wifi_pass").attribute("value").as_string();
-		WeildConfig.reserve_wifi_sid = doc.child("config").child("reserve_wifi_ssid").attribute("value").as_string();
-		WeildConfig.reserve_wifi_pass = doc.child("config").child("reserve_wifi_pass").attribute("value").as_string();
+	}
+	else if (conn_type.find("enx") != string::npos) 
+	{
+		//WeildConfig.interface = conn_type; 
+		string out_interface = wifi.set_comand_cmd("nmcli device | grep enx | awk '{print $1}'");
+		WeildConfig.interface = out_interface.substr(0, out_interface.length() - 1);
+
 	}
 	else {
-		WeildConfig.interface = "eth0";
+		WeildConfig.interface = "eth0"; 
 	}
+	WeildConfig.reserve_wifi_sid = doc.child("config").child("reserve_wifi_ssid").attribute("value").as_string(); //резервный wifi используется всегда
+	WeildConfig.reserve_wifi_pass = doc.child("config").child("reserve_wifi_pass").attribute("value").as_string();
+	WeildConfig.wifi_hidden = doc.child("config").child("hidden_wifi").attribute("value").as_bool();
 	WeildConfig.LOG_ON = doc.child("config").child("LOG_ON").attribute("value").as_bool();
 	WeildConfig.LOG_SIZE = doc.child("config").child("LOG_SIZE").attribute("value").as_uint();
-	WeildConfig.RFID_ON = doc.child("config").child("RFID_ON").attribute("value").as_bool();
+	WeildConfig.RFID_ON = doc.child("config").child("RFID_ON").attribute("value").as_uint();
 	WeildConfig.SENSOR_I_ON = doc.child("config").child("SENSOR_I_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_U_ON = doc.child("config").child("SENSOR_U_ON").attribute("value").as_bool();
 	WeildConfig.SENSOR_W_ON = doc.child("config").child("SENSOR_W_ON").attribute("value").as_bool();
+	WeildConfig.SENSOR_GAS_ON = doc.child("config").child("SENSOR_GAS_ON").attribute("value").as_bool();
+	WeildConfig.SENSOR_WIRE_ON = doc.child("config").child("SENSOR_WIRE_ON").attribute("value").as_bool();
 	WeildConfig.RTC_ON = doc.child("config").child("RTC_ON").attribute("value").as_bool();
 	WeildConfig.BlockMode = doc.child("config").child("BLOCK_MODE").attribute("value").as_string();
 	WeildConfig.Compare_I= doc.child("config").child("COMPARE_I").attribute("value").as_int();
@@ -138,14 +302,27 @@ void DevServer::ReadFileConfig(string path)
 	WeildConfig.ver = doc.child("config").child("version").attribute("value").as_string();
 	WeildConfig.Type_Dev=doc.child("config").child("type_dev").attribute("value").as_string();
 	WeildConfig.MercuryMeter = doc.child("config").child("MERCURY").attribute("value").as_bool();
-	FileMac.open("/sys/class/net/" + WeildConfig.interface + "/address", ios::in);
-	getline(FileMac, line);
-	transform(line.begin(), line.end(), line.begin(), ::toupper);
-	for (int i = 0; i < 5; i++)
+	WeildConfig.Power_min_wait = doc.child("config").child("POWER_MIN_WAIT").attribute("value").as_uint();
+	WeildConfig.Power_max_run = doc.child("config").child("POWER_MAX_RUN").attribute("value").as_uint();
+	try
 	{
-		line.erase(line.find(':'), 1);
+		if (WeildConfig.interface == "radio" || WeildConfig.interface.find("enx") != string::npos)
+			FileMac.open("/sys/class/net/wlan0/address", ios::in);
+		else
+			FileMac.open("/sys/class/net/" + WeildConfig.interface + "/address", ios::in);
+		getline(FileMac, line);
+		transform(line.begin(), line.end(), line.begin(), ::toupper);
+		for (int i = 0; i < 5; i++)
+		{
+			line.erase(line.find(':'), 1);
+		}
+		//WeildConfig.mac = "1281DD05BFAD";
+		WeildConfig.mac = line;
 	}
-	WeildConfig.mac = line;
+	catch (const std::exception& ex)
+	{
+		printf("Error:__Get MAC exeption__%s\n", ex);
+	}
 }
 
 void DevServer::CheckConnectInterface()
@@ -199,7 +376,7 @@ int DevServer::init_soket(string ip, int port) {
 	sockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sockfd < 0) { perror("ERROR: socket()");}
 
-	int val = 1000;//����� �� ����� ������
+	int val = 1000;//Время на прием данных
 	setsockopt(sockfd, SOL_SOCKET, SO_SNDTIMEO, (const char*)&val, sizeof(int));
 	setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&val, sizeof(int));
 	val = 1;
@@ -230,6 +407,15 @@ int DevServer::init_soket(string ip, int port) {
 
 }
 
+void DevServer::Socket_restart(string reason)
+{
+	printf("Restart socket why: %s \n",reason.c_str());
+	Status.StatusSocet = NOT_CONNECTED;
+	shutdown(sockfd, SHUT_RDWR);
+	close(sockfd);
+	sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+}
+
 
 void DevServer::ConectServer()
 {
@@ -237,31 +423,34 @@ void DevServer::ConectServer()
 		
 		if (!lastconected && !LANcheckconect)
 		{
-			ConnectInterfeceLAN();
+			ConnectInterfeceLAN("eth0"); //try connect with eth0 interface
 			if (count_try_connection > 6)
 			{
 				LANcheckconect = true;
 				count_try_connection = 0;
 			}
 		}
-		else if (count_try_connection > 10 && !lastconected)
+		else if (count_try_connection > 10*3 && !lastconected)
 		{
-			ConnectInterfeceWIFI(WeildConfig.reserve_wifi_sid, WeildConfig.reserve_wifi_pass);
+			ConnectInterfeceWIFI(WeildConfig.reserve_wifi_sid, WeildConfig.reserve_wifi_pass,0);
 		}
 		else 
 		{
 			ConnectInterfece(WeildConfig.wifi_sid, WeildConfig.wifi_pass);
 		}
 		count_try_connection++;
-		if (count_try_connection > 20)
+		if (count_try_connection > 20*3)
 		{
 			count_try_connection = 0;
+			wifi.set_comand_cmd("sudo systemctl restart NetworkManager");
+
 		}
 	}
 	else if (Status.StatusSocet == NOT_CONNECTED) 
 	{
 		if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) >= 0) {	
 			Log.DevLogClose();
+			lastconected = true;
 			Status.StatusSocet = CONNECTED;
 			StatusServerRecv = NOT_DATA;
 			printf("socket connect successful \n");
@@ -271,7 +460,25 @@ void DevServer::ConectServer()
 			CheckConnectInterface();
 			printf("socket connect failed \n");
 			printf("%d error \n\r", errno);
-			Status.StatusSocet = NOT_CONNECTED;
+			if ((errno == EINPROGRESS) || (errno == EALREADY)) //if connect 115 or 114, send packet for check connection
+			{
+				msleep(400);
+				if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) >= 0) 
+				{
+					Log.DevLogClose();
+					lastconected = true;
+					Status.StatusSocet = CONNECTED;
+					StatusServerRecv = NOT_DATA;
+					printf("_socket connect successful \n");
+				}
+				else
+				{
+					printf("socket connect failed send \n");
+					printf("%d error \n\r", errno);
+				}
+
+			}
+			//Status.StatusSocet = NOT_CONNECTED;
 			usleep(150000);
 			if (WeildConfig.server_dns != "")
 			{
@@ -283,9 +490,7 @@ void DevServer::ConectServer()
 					if (WeildConfig.server_ip != ips)
 					{
 						WeildConfig.server_ip = ips;
-						shutdown(sockfd, SHUT_RDWR);
-						close(sockfd);
-						sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+						Socket_restart("Get ip in dns");
 						//string path = "/weildpath/config_ubm4.xml";
 						//pugi::xml_document doc;
 						//pugi::xml_parse_result result = doc.load_file(path.c_str());
@@ -323,41 +528,42 @@ void DevServer::RecvServer()
 		{
 			if (errno != EAGAIN && errno != EWOULDBLOCK)
 			{
-				Status.StatusSocet = NOT_CONNECTED;
-				shutdown(sockfd, SHUT_RDWR);
-				close(sockfd);
-				sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+				
 			}
-			else if (wdserverrecv>20)
+			else if (Error.wdserverrecv>20)
 			{
-				wdserverrecv = 0;
-				Status.StatusSocet = NOT_CONNECTED;
+				Socket_restart("recive error");
+				Error.wdserverrecv = 0;
 				Status.StatusServer = NOT_CONNECTED;
-				shutdown(sockfd, SHUT_RDWR);
-				close(sockfd);
-				sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
 			}
-			wdserverrecv++;
+			Error.wdserverrecv++;
 		}
 
 		else if (rads == 0)
 		{
-			Status.StatusSocet = NOT_CONNECTED;
-			shutdown(sockfd, SHUT_RDWR);
-			close(sockfd);
-			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+			Error.wdserverrecv++;
 		}
 
-		else //������ ������.. ������,���������.
+		else //пришли данные.. парсим,проверяем.
 		{
-			if (CheckComnd(dataInput, rads)) 
+			Error.wdserverrecv = 0;
+			if (WeildConfig.Type_Dev == "RadioHUB")
 			{
+				ExternalDataSocket += dataInput;
 				NewDataInput = true;
-				wdserverrecv = 0;
+				Error.wdserverrecv = 0;
 			}
-			if (buff_str.length() > 0)
+			else
 			{
-				CheckComnd(0, 0);
+				if (CheckComnd(dataInput, rads))
+				{
+					NewDataInput = true;
+					Error.wdserverrecv = 0;
+				}
+				if (buff_str.length() > 0)
+				{
+					CheckComnd(0, 0);
+				}
 			}
 		}
 	}
@@ -372,10 +578,10 @@ void DevServer::SendServer()
 	{
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0) 
 		{
-			Status.StatusSocet = NOT_CONNECTED;
 			if (WeildConfig.LOG_ON)if(Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime=Everyhourcheck->GetMilis();
-			shutdown(sockfd, SHUT_RDWR);
-			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+			Error.wdsend++;
+			printf("socket failed send \n");
+			printf("%d error \n\r", errno);
 		}
 	}
 	else if (Status.StatusSocet == CONNECTED && Status.StatusServer == NOT_CONNECTED)
@@ -383,14 +589,19 @@ void DevServer::SendServer()
 		if (WeildConfig.LOG_ON)if (Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
 		if (send(sockfd, SendSoket.c_str(), SendSoket.size(), MSG_NOSIGNAL) < 0)
 		{
-			Status.StatusSocet = NOT_CONNECTED;
-			shutdown(sockfd, SHUT_RDWR);
-			sockfd = init_soket(WeildConfig.server_ip, WeildConfig.port);
+			Error.wdsend++;
+			printf("socket failed send \n");
+			printf("%d error \n\r", errno);
 		}
 	}
 	else 
 	{
 		if (WeildConfig.LOG_ON)if(Log.DevLogWrite(SendSoket, mutable_data))Everyhourcheck->LastTime = Everyhourcheck->GetMilis();
+	}
+	if (Error.wdsend > 5)
+	{
+		Socket_restart("Sendserver error");
+		Error.wdsend = 0;
 	}
 }
 
@@ -407,6 +618,7 @@ void DevServer::FormatString()
 {
 	SendSoket = ":";
 	SendSoket.append(WeildConfig.mac);
+	//SendSoket.append("1281F162A6F5"); //debug
 	SendSoket.append(";");
 	SendSoket.append(UartPackage);
 	SendSoket.append(";");
@@ -421,11 +633,13 @@ void DevServer::FormatString()
 	else
 		SendSoket.append("98");
 	SendSoket.append(";");
-	SendSoket.append(WeildConfig.router_ip);
+	if (WeildConfig.interface != "radio")
+		SendSoket.append(WeildConfig.router_ip);
 	SendSoket.append(";");
-	SendSoket.append(WeildConfig.ip_out);
+	if (WeildConfig.interface != "radio")
+		SendSoket.append(WeildConfig.ip_out);
 	SendSoket.append(";");
-	SendSoket.append(ORANGE_PROGRAM);
+	SendSoket.append(VERSION_BUILD);
 	SendSoket.append(";");
 	SendSoket.append(currentDateTime());
 	SendSoket.append(";");
@@ -436,7 +650,7 @@ void DevServer::FormatString()
 	printf(SendSoket.c_str());
 	printf("\r\n");*/
 	//string tmp = rfid + "\n\r";
-    //printf(tmp.c_str());
+ //   printf(tmp.c_str());
 	mutable_data = UartPackage + Perefir + rfid + QrCode;
 }
 unsigned char DevServer::Crc8(const char *pcBlock, unsigned char len)
@@ -500,7 +714,6 @@ bool  DevServer::CheckComnd(char * buff, int len ) {
 	try {
 		struct tm TimeServer;
 		uint8_t tmp=0;
-		time_t unix_time;
 		uint32_t lenMsg;
 		struct pak
 		{
@@ -514,21 +727,21 @@ bool  DevServer::CheckComnd(char * buff, int len ) {
 		};
 		if(len!=0)
 			buff_str += convertToString(buff, len);
-		uint16_t last_delimiter_index = buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 2; //����� ������ 
-		if (last_delimiter_index >= 0) //�c�� ���-�� ������
+		uint16_t last_delimiter_index = buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 2; //конец пакета 
+		if (last_delimiter_index >= 0) //еcли что-то пришло
 		{
 			string s = buff_str.substr(buff_str.find(":") + 1, buff_str.find("\r\n", buff_str.find("\r\n") + 1) - 3);
-			if ((count(s.begin(), s.end(), ';')) < 4) //���� ������ 4� ������������
+			if ((count(s.begin(), s.end(), ';')) < 4) //если меньше 4х разделителей
 				return false;
 			ArrayVector = split(s, ';');
 
-			//printf("\r\n");
-			//printf("recieve : ");
-			//printf(s.c_str());
-			//printf("\r\n");
+			/*printf("\r\n");
+			printf("recieve : ");
+			printf(s.c_str());
+			printf("\r\n");*/
 
 			lenMsg = last_delimiter_index + 4;
-			if (buff_str.length() > lenMsg) //�c�� ����������� �� ��c������ c�����
+			if (buff_str.length() > lenMsg) //Еcли разделитель не поcледний cимвол
 			{
 				buff_str = buff_str.substr(lenMsg, buff_str.length());
 			}
@@ -582,7 +795,7 @@ bool  DevServer::CheckComnd(char * buff, int len ) {
 						{
 							StatusServerRecv = NEW_DATA;
 						}
-						Status.StatusServer = CONNECTED; //������ � ������� ������ 
+						Status.StatusServer = CONNECTED; //данные с сервера пришли 
 						return true;
 					}
 					else
@@ -603,7 +816,9 @@ bool  DevServer::CheckComnd(char * buff, int len ) {
 	catch (const std::out_of_range& oror) {
 		std::cerr << "Out of Range error: " << oror.what() << '\n';
 	}
-	
+	catch (std::invalid_argument const& ex) {
+		std::cout << "#2 invalid_argument : " << ex.what() << '\n';
+	}
 	printf("fault check server comand:___%s\n",buff);
 	return false;
 }
